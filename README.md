@@ -32,14 +32,14 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
 | animeSeason      | `String`                                          |
 | picture          | `URL`                                             |
 
-### Synonyms
+### Synonyms (title alternatives used for searching animes)
 | Field   | Type     |
 | ------- | -------- |
 | ID      | `ID`     |
 | animeID | `ID`     |
 | synonym | `String` |
 
-### Relations
+### Relations (related animes)
 | Field    | Type |
 | -------- | ---- |
 | ID       | `ID` |
