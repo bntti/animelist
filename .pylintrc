@@ -1,0 +1,4 @@
+[MESSAGES CONTROL]
+disable=missing-docstring
+[TYPECHECK]
+ignored-classes=scoped_session
