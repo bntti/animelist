@@ -1,10 +1,13 @@
 {% extends "layout.html" %}
 {% block title %}Register{% endblock %}
 {% block content %}
-<p>Register</p>
+
+<h1>Register</h1>
+
 {% if error != "" %}
 <p>{{error}}</p>
 {% endif %}
+
 <form action="/register" method="POST">
   Username:
   <input type="text" name="username" />
@@ -17,4 +20,5 @@
   <br />
   <input type="submit" value="Submit" />
 </form>
+
 {% endblock %}

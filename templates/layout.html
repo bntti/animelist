@@ -8,9 +8,11 @@
 <body>
   <header>
     <a href="/">Home</a>
+
     {% if session.user %}
     {{session.user.username}}
     <a href="/logout">Logout</a>
+
     {% else %}
     <a href="/login">Log in</a>
     <a href="/register">Register</a>
