@@ -1,4 +1,6 @@
-<title>Register</title>
+{% extends "layout.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
 <p>Register</p>
 {% if error != "" %}
 <p>{{error}}</p>
@@ -15,7 +17,4 @@
   <br />
   <input type="submit" value="Submit" />
 </form>
-<br />
-<a href="/">
-  <button>Back</button>
-</a>
+{% endblock %}

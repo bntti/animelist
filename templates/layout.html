@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>AnimeList - {% block title %}{% endblock %}</title>
+</head>
+
+<body>
+  <header>
+    <a href="/">Home</a>
+    {% if session.user %}
+    {{session.user.username}}
+    <a href="/logout">Logout</a>
+    {% else %}
+    <a href="/login">Log in</a>
+    <a href="/register">Register</a>
+    {% endif %}
+  </header>
+
+  <hr />
+  {% block content %}{% endblock %}
+  <hr />
+
+  <footer>
+    <a href="https://github.com/bntti/AnimeList" target="_blank">Source code</a>
+  </footer>
+</body>
+
+</html>

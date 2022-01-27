@@ -1,4 +1,6 @@
-<title>Log in</title>
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
 <p>Log in</p>
 {% if error != "" %}
 <p>{{error}}</p>
@@ -12,7 +14,4 @@
   <br />
   <input type="submit" value="Submit" />
 </form>
-<br />
-<a href="/">
-  <button>Back</button>
-</a>
+{% endblock %}
