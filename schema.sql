@@ -4,3 +4,10 @@ CREATE TABLE users (
     salt TEXT NOT NULL,
     password TEXT NOT NULL
 );
+CREATE TABLE animes (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    episodes INT NOT NULL,
+    link TEXT NOT NULL,
+    picture TEXT NOT NULL
+)

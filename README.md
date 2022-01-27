@@ -22,6 +22,11 @@
     ```
     $ pip3 install -r requirements.txt
     ```
+5. Download 'anime-offline-database-minified.json' from [here](https://github.com/manami-project/anime-offline-database)
+6. Import 'anime-offline-database-minified.json'
+   ```
+   $ FLASK_APP=import.py flask run
+   ```
 ### Running project
 ```
 $ source venv/bin/activate
