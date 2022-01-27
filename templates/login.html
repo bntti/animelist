@@ -1,0 +1,18 @@
+<title>Log in</title>
+<p>Log in</p>
+{% if error != "" %}
+<p>{{error}}</p>
+{% endif %}
+<form action="/login" method="POST">
+  Username:
+  <input type="text" name="username" />
+  <br />
+  Password:
+  <input type="password" name="password" />
+  <br />
+  <input type="submit" value="Submit" />
+</form>
+<br />
+<a href="/">
+  <button>Back</button>
+</a>

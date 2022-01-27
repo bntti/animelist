@@ -1,0 +1,17 @@
+<title>AnimeList</title>
+<h1>AnimeList</h1>
+{% if session.user %}
+<p>Logged in</p>
+<p>Username {{session.user.username}}</p>
+<a href="/logout">
+  <button>Log out</button>
+</a>
+{% else %}
+<a href="/login">
+  <button>Log in</button>
+</a>
+<br />
+<a href="/register">
+  <button>Register</button>
+</a>
+{% endif %}
