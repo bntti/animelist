@@ -50,3 +50,15 @@ class DB:
         sql = "INSERT INTO animes (title, episodes, link, picture, thumbnail) " \
               "VALUES (:title, :episodes, :link, :picture, :thumbnail)"
         self.database.session.execute(sql, anime)
+
+    def get_anime(self, page: int) -> None:
+        sql = "SELECT title, thumbnail FROM animes "\
+              "ORDER BY title LIMIT 50 OFFSET :offset"
+        result = self.database.session.execute(sql, {"offset": page})
+        animes = []
+        for row in result.fetchall():
+            animes.append({
+                "title": row[0],
+                "thumbnail": row[1]
+            })
+        return animes

@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<h1>Animes</h1>
+
+{% for anime in animes %}
+<hr />
+<img alt="TODO:" src={{anime.thumbnail}} width=50 height=70>
+{{anime.title}}
+{% endfor %}
+
+{% endblock %}

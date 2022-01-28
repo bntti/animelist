@@ -16,6 +16,12 @@ def index() -> str:
     return render_template("index.html")
 
 
+@app.route("/animes")
+def animes() -> str:
+    animes = database.get_anime(0)
+    return render_template("animes.html", animes=animes)
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login() -> Union[str, Response]:
     error = ""
