@@ -21,6 +21,16 @@ anime_count = len(data["data"])
 for i, anime_data in enumerate(data["data"]):
     if i % (anime_count // 10) == 0:
         print(f"{100*i/anime_count:.0f}% done")
+
+    myanimelist_link = ""
+    for source in anime_data["sources"]:
+        if "myanimelist.net" in source:
+            myanimelist_link = source
+
+    # Ignore some animes
+    if myanimelist_link == "" or "year" not in anime_data["animeSeason"]:
+        continue
+
     link = ""
     for source in anime_data["sources"]:
         if "myanimelist.net" in source:
