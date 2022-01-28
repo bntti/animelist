@@ -3,11 +3,17 @@
 {% block content %}
 
 <h1>Animes</h1>
+<a href="{{prev_url}}">Previous page</a>
+<a href="{{next_url}}">Next page</a>
 
 {% for anime in animes %}
 <hr />
 <img alt="TODO:" src={{anime.thumbnail}} width=50 height=70>
 {{anime.title}}
 {% endfor %}
+
+<hr />
+<a href="{{prev_url}}">Previous page</a>
+<a href="{{next_url}}">Next page</a>
 
 {% endblock %}

@@ -46,6 +46,10 @@ class DB:
         return check_password(password, salt, password_hash)
 
     # Animes table
+    def anime_count(self) -> int:
+        sql = "SELECT COUNT(*) FROM animes"
+        return self.database.session.execute(sql).fetchone()[0]
+
     def add_anime(self, anime: dict) -> None:
         sql = "INSERT INTO animes (title, episodes, link, picture, thumbnail) " \
               "VALUES (:title, :episodes, :link, :picture, :thumbnail)"

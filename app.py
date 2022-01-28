@@ -10,6 +10,8 @@ app.secret_key = getenv("SECRET_KEY")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 database = DB(app)
 
+ANIME_COUNT = database.anime_count()
+
 
 @app.route("/")
 def index() -> str:
@@ -18,8 +20,21 @@ def index() -> str:
 
 @app.route("/animes")
 def animes() -> str:
-    animes = database.get_anime(0)
-    return render_template("animes.html", animes=animes)
+    if "page" in request.args and request.args["page"].isdigit():
+        page = int(request.args["page"])
+    else:
+        page = 0
+
+    page = max(0, min(ANIME_COUNT - 50, page))
+    prev_page = max(page - 50, 0)
+    next_page = min(page + 50, ANIME_COUNT - 50)
+    animes = database.get_anime(page)
+    return render_template(
+        "animes.html",
+        animes=animes,
+        prev_url=f"/animes?page={prev_page}",
+        next_url=f"/animes?page={next_page}"
+    )
 
 
 @app.route("/login", methods=["GET", "POST"])
