@@ -46,9 +46,9 @@ class DB:
         return check_password(password, salt, password_hash)
 
     # Animes table
-    def anime_count(self) -> int:
-        sql = "SELECT COUNT(*) FROM animes"
-        return self.database.session.execute(sql).fetchone()[0]
+    def anime_count(self, query: str) -> int:
+        sql = "SELECT COUNT(*) FROM animes WHERE title ILIKE :query"
+        return self.database.session.execute(sql, {"query": f"%{query}%"}).fetchone()[0]
 
     def add_anime(self, anime: dict) -> int:
         sql = "INSERT INTO animes (title, episodes, link, picture, thumbnail, hidden) " \
@@ -69,11 +69,13 @@ class DB:
             "picture": row[2]
         }
 
-    def get_animes(self, page: int) -> None:
+    def get_animes(self, page: int, query: str) -> None:
         sql = "SELECT id, title, thumbnail FROM animes " \
-              "WHERE NOT hidden " \
-              "ORDER BY title LIMIT 50 OFFSET :offset"
-        result = self.database.session.execute(sql, {"offset": page})
+            "WHERE NOT hidden AND title ILIKE :query " \
+            "ORDER BY title LIMIT 50 OFFSET :offset"
+        result = self.database.session.execute(
+            sql, {"offset": page, "query": f"%{query}%"}
+        )
         animes = []
         for row in result.fetchall():
             animes.append({
