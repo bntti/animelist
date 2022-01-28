@@ -30,7 +30,8 @@ for i, anime_data in enumerate(data["data"]):
         "episodes": anime_data["episodes"],
         "link": link,
         "picture": anime_data["picture"],
-        "thumbnail": anime_data["thumbnail"]
+        "thumbnail": anime_data["thumbnail"],
+        "hidden": "hentai" in anime_data["tags"]
     }
     anime_id = database.add_anime(anime)
     for tag in anime_data["tags"]:

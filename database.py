@@ -51,8 +51,8 @@ class DB:
         return self.database.session.execute(sql).fetchone()[0]
 
     def add_anime(self, anime: dict) -> int:
-        sql = "INSERT INTO animes (title, episodes, link, picture, thumbnail) " \
-              "VALUES (:title, :episodes, :link, :picture, :thumbnail) " \
+        sql = "INSERT INTO animes (title, episodes, link, picture, thumbnail, hidden) " \
+              "VALUES (:title, :episodes, :link, :picture, :thumbnail, :hidden) " \
               "Returning id"
         return self.database.session.execute(sql, anime).fetchone()[0]
 
@@ -70,7 +70,8 @@ class DB:
         }
 
     def get_animes(self, page: int) -> None:
-        sql = "SELECT id, title, thumbnail FROM animes "\
+        sql = "SELECT id, title, thumbnail FROM animes " \
+              "WHERE NOT hidden " \
               "ORDER BY title LIMIT 50 OFFSET :offset"
         result = self.database.session.execute(sql, {"offset": page})
         animes = []

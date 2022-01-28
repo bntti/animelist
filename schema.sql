@@ -10,7 +10,8 @@ CREATE TABLE animes (
     episodes INT NOT NULL,
     link TEXT NOT NULL,
     picture TEXT NOT NULL,
-    thumbnail TEXT NOT NULL
+    thumbnail TEXT NOT NULL,
+    hidden BOOLEAN NOT NULL
 );
 CREATE TABLE tags (
     id SERIAL PRIMARY KEY,
