@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 database = DB(app)
 
-print("Adding animes to database")
+print("Adding animes and tags to database")
 anime_count = len(data["data"])
 for i, anime_data in enumerate(data["data"]):
     if i % (anime_count // 10) == 0:
@@ -32,7 +32,9 @@ for i, anime_data in enumerate(data["data"]):
         "picture": anime_data["picture"],
         "thumbnail": anime_data["thumbnail"]
     }
-    database.add_anime(anime)
+    anime_id = database.add_anime(anime)
+    for tag in anime_data["tags"]:
+        database.add_tag(anime_id, tag)
 
 print("Commiting changes")
 database.commit()

@@ -11,4 +11,9 @@ CREATE TABLE animes (
     link TEXT NOT NULL,
     picture TEXT NOT NULL,
     thumbnail TEXT NOT NULL
-)
+);
+CREATE TABLE tags (
+    id SERIAL PRIMARY KEY,
+    anime_id INT REFERENCES animes NOT NULL,
+    tag TEXT NOT NULL
+);

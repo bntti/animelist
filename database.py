@@ -50,10 +50,11 @@ class DB:
         sql = "SELECT COUNT(*) FROM animes"
         return self.database.session.execute(sql).fetchone()[0]
 
-    def add_anime(self, anime: dict) -> None:
+    def add_anime(self, anime: dict) -> int:
         sql = "INSERT INTO animes (title, episodes, link, picture, thumbnail) " \
-              "VALUES (:title, :episodes, :link, :picture, :thumbnail)"
-        self.database.session.execute(sql, anime)
+              "VALUES (:title, :episodes, :link, :picture, :thumbnail) " \
+              "Returning id"
+        return self.database.session.execute(sql, anime).fetchone()[0]
 
     def get_anime(self, id: int) -> dict:
         sql = "SELECT title, episodes, picture FROM animes "\
@@ -80,3 +81,8 @@ class DB:
                 "thumbnail": row[2]
             })
         return animes
+
+    # Tags table
+    def add_tag(self, anime_id: int, tag: str) -> None:
+        sql = "INSERT INTO tags (anime_id, tag) VALUES (:anime_id, :tag) "
+        self.database.session.execute(sql, {"anime_id": anime_id, "tag": tag})
