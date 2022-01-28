@@ -47,6 +47,6 @@ class DB:
 
     # Animes table
     def add_anime(self, anime: dict) -> None:
-        sql = "INSERT INTO animes (title, episodes, link, picture) " \
-              "VALUES (:title, :episodes, :link, :picture)"
+        sql = "INSERT INTO animes (title, episodes, link, picture, thumbnail) " \
+              "VALUES (:title, :episodes, :link, :picture, :thumbnail)"
         self.database.session.execute(sql, anime)

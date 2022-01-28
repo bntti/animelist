@@ -9,5 +9,6 @@ CREATE TABLE animes (
     title TEXT NOT NULL,
     episodes INT NOT NULL,
     link TEXT NOT NULL,
-    picture TEXT NOT NULL
+    picture TEXT NOT NULL,
+    thumbnail TEXT NOT NULL
 )

@@ -26,7 +26,8 @@ for anime_data in data["data"]:
         "title": anime_data["title"],
         "episodes": anime_data["episodes"],
         "link": link,
-        "picture": anime_data["picture"]
+        "picture": anime_data["picture"],
+        "thumbnail": anime_data["thumbnail"]
     }
     database.add_anime(anime)
 
