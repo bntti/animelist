@@ -17,7 +17,10 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 database = DB(app)
 
 print("Adding animes to database")
-for anime_data in data["data"]:
+anime_count = len(data["data"])
+for i, anime_data in enumerate(data["data"]):
+    if i % (anime_count // 10) == 0:
+        print(f"{100*i/anime_count:.0f}% done")
     link = ""
     for source in anime_data["sources"]:
         if "myanimelist.net" in source:
