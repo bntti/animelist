@@ -55,14 +55,28 @@ class DB:
               "VALUES (:title, :episodes, :link, :picture, :thumbnail)"
         self.database.session.execute(sql, anime)
 
-    def get_anime(self, page: int) -> None:
-        sql = "SELECT title, thumbnail FROM animes "\
+    def get_anime(self, id: int) -> dict:
+        sql = "SELECT title, episodes, picture FROM animes "\
+              "WHERE id = :id"
+        result = self.database.session.execute(sql, {"id": id})
+        row = result.fetchone()
+        if not row:
+            return None
+        return {
+            "title": row[0],
+            "episodes": row[1],
+            "picture": row[2]
+        }
+
+    def get_animes(self, page: int) -> None:
+        sql = "SELECT id, title, thumbnail FROM animes "\
               "ORDER BY title LIMIT 50 OFFSET :offset"
         result = self.database.session.execute(sql, {"offset": page})
         animes = []
         for row in result.fetchall():
             animes.append({
-                "title": row[0],
-                "thumbnail": row[1]
+                "id": row[0],
+                "title": row[1],
+                "thumbnail": row[2]
             })
         return animes

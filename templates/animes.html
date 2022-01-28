@@ -9,7 +9,7 @@
 {% for anime in animes %}
 <hr />
 <img alt="TODO:" src={{anime.thumbnail}} width=50 height=70>
-{{anime.title}}
+<a href="/anime/{{anime.id}}">{{anime.title}}</a>
 {% endfor %}
 
 <hr />

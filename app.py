@@ -28,13 +28,19 @@ def animes() -> str:
     page = max(0, min(ANIME_COUNT - 50, page))
     prev_page = max(page - 50, 0)
     next_page = min(page + 50, ANIME_COUNT - 50)
-    animes = database.get_anime(page)
+    animes = database.get_animes(page)
     return render_template(
         "animes.html",
         animes=animes,
         prev_url=f"/animes?page={prev_page}",
         next_url=f"/animes?page={next_page}"
     )
+
+
+@app.route("/anime/<int:id>")
+def anime(id) -> str:
+    anime = database.get_anime(id)
+    return render_template("anime.html", anime=anime)
 
 
 @app.route("/login", methods=["GET", "POST"])

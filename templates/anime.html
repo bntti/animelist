@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+{% if anime %}
+<p style="float: left;">
+    <img alt="Anime picture" src={{anime.picture}}>
+</p>
+<h1>{{anime.title}}</h1>
+<p>Episodes: {{anime.episodes}}</p>
+<br style="clear: left;" />
+
+{% else %}
+<h1>No anime with this id</h1>
+{% endif %}
+
+{% endblock %}
