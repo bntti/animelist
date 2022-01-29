@@ -21,17 +21,24 @@ class DB:
 
         return result.fetchone()[0] > 0
 
+    def get_user_id(self, username: str) -> int:
+        username = username.lower()
+        sql = "SELECT id FROM users WHERE username = :username"
+        result = self.database.session.execute(sql, {"username": username})
+        return result.fetchone()[0]
+
     def add_user(self, username: str, password: str) -> None:
         username = username.lower()
         salt = generate_salt(16)
         password_hash = hash_password(password, salt)
 
         sql = "INSERT INTO users (username, salt, password) " \
-              "VALUES (:username, :salt, :password)"
-        self.database.session.execute(
+              "VALUES (:username, :salt, :password) RETURNING id"
+        result = self.database.session.execute(
             sql, {"username": username, "salt": salt, "password": password_hash}
         )
         self.commit()
+        return result.fetchone()[0]
 
     def login(self, username: str, password: str) -> bool:
         username = username.lower()
@@ -110,3 +117,34 @@ class DB:
         self.database.session.execute(
             sql, {"anime_id": anime_id, "synonym": synonym}
         )
+
+    # List table
+    def add_to_list(self, user_id: int, anime_id: int) -> None:
+        sql = "INSERT INTO list (user_id, anime_id, episodes, status) " \
+              "VALUES (:user_id, :anime_id, 0, 'WATCHING')"
+        self.database.session.execute(
+            sql, {"user_id": user_id, "anime_id": anime_id}
+        )
+        self.commit()
+
+    def get_list_ids(self, user_id) -> list:
+        sql = "SELECT  anime_id FROM list WHERE user_id = :user_id"
+        result = self.database.session.execute(sql, {"user_id": user_id})
+        return [row[0] for row in result.fetchall()]
+
+    def get_list(self, user_id: int, ) -> list:
+        sql = "SELECT  a.title, a.episodes, a.thumbnail, l.episodes, l.rating, l.status " \
+              "FROM list l, animes a WHERE l.anime_id = a.id AND l.user_id = :user_id"
+        result = self.database.session.execute(sql, {"user_id": user_id})
+
+        list = []
+        for row in result.fetchall():
+            list.append({
+                "title": row[0],
+                "episodes": row[1],
+                "thumbnail": row[2],
+                "watched_episodes": row[3],
+                "rating": row[4],
+                "status": row[5]
+            })
+        return list

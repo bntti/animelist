@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}List{% endblock %}
+{% block content %}
+
+<h1>List</h1>
+
+{% for anime in list %}
+<hr />
+<img alt="TODO:" src={{anime.thumbnail}} width=50 height=70>
+{{anime.title}}
+{{anime.watched_episodes}}/{{anime.episodes}}
+{% endfor %}
+
+{% endblock %}

@@ -16,8 +16,21 @@ def index() -> str:
     return render_template("index.html")
 
 
-@app.route("/animes")
+@app.route("/list")
+def list() -> str:
+    list = database.get_list(session["user"]["id"])
+    return render_template("list.html", list=list)
+
+
+@app.route("/animes", methods=["GET", "POST"])
 def animes() -> str:
+    list = database.get_list_ids(session["user"]["id"])
+    if request.method == "POST":
+        if session["user"]:
+            database.add_to_list(
+                session["user"]["id"], request.form["anime_id"]
+            )
+        list = database.get_list_ids(session["user"]["id"])
     page = 0
     query = request.args["query"] if "query" in request.args else ""
     if "page" in request.args and request.args["page"].isdigit():
@@ -32,11 +45,15 @@ def animes() -> str:
     base_url = "/animes?"
     if query:
         base_url += f"query={query}&"
-    print(query)
+    current_url = base_url
+    if page > 0:
+        current_url += f"page={page}"
     return render_template(
         "animes.html",
         animes=animes,
         query=query,
+        list=list,
+        current_url=current_url,
         prev_url=f"{base_url}page={prev_page}",
         next_url=f"{base_url}page={next_page}"
     )
@@ -56,7 +73,8 @@ def login() -> Union[str, Response]:
         password = request.form["password"]
         error = functions.login(database, username, password)
         if error == "OK":
-            session["user"] = {"username": request.form["username"]}
+            id = database.get_user_id(username)
+            session["user"] = {"username": request.form["username"], "id": id}
             return redirect("/")
 
     return render_template("login.html", error=error)
@@ -71,8 +89,8 @@ def register() -> Union[str, Response]:
         password2 = request.form["password2"]
         error = functions.register(database, username, password1, password2)
         if error == "OK":
-            database.add_user(username, password1)
-            session["user"] = {"username": request.form["username"]}
+            id = database.add_user(username, password1)
+            session["user"] = {"username": request.form["username"], "id": id}
             return redirect("/")
     return render_template("register.html", error=error)
 

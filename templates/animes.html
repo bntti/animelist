@@ -15,6 +15,17 @@
 <hr />
 <img alt="TODO:" src={{anime.thumbnail}} width=50 height=70>
 <a href="/anime/{{anime.id}}">{{anime.title}}</a>
+
+{% if session.user %}
+{% if anime.id not in list %}
+<form style="float: right;" action="{{current_url}}" method="POST">
+    <input type="hidden" value={{anime.id}} name="anime_id" />
+    <button type="submit">Add to list</button>
+</form>
+{% else %}
+<p style="float: right;">In list </p>
+{% endif %}
+{% endif %}
 {% endfor %}
 
 {% if animes | length == 0 %}

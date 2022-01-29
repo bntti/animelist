@@ -12,6 +12,7 @@
 
     {% if session.user %}
     {{session.user.username}}
+    <a href="/list">List</a>
     <a href="/logout">Logout</a>
 
     {% else %}
