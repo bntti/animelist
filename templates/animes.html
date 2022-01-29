@@ -1,21 +1,26 @@
 {% extends "layout.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Animes{% endblock %}
 {% block content %}
 
 <h1>Animes</h1>
+
+<!-- Search -->
 <form>
     Search: <input type="text" value="{{query}}" name="query" />
     <input type="submit" value="Submit" />
 </form>
 
+<!-- Previous and next page -->
 <a href="{{prev_url}}">Previous page</a>
 <a href="{{next_url}}">Next page</a>
 
+<!-- Animes -->
 {% for anime in animes %}
 <hr />
-<img alt="TODO:" src={{anime.thumbnail}} width=50 height=70>
+<img alt="Anime thumbnail" src={{anime.thumbnail}} width=50 height=70>
 <a href="/anime/{{anime.id}}">{{anime.title}}</a>
 
+<!-- List status -->
 {% if session.user %}
 {% if anime.id not in list %}
 <form style="float: right;" action="{{current_url}}" method="POST">
@@ -28,11 +33,14 @@
 {% endif %}
 {% endfor %}
 
+<!-- No animes found -->
 {% if animes | length == 0 %}
 <hr />
 <p><strong>No animes found</strong></p>
 {% endif %}
 
+
+<!-- Previous and next page -->
 <hr />
 <a href="{{prev_url}}">Previous page</a>
 <a href="{{next_url}}">Next page</a>

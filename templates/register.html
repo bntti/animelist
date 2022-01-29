@@ -4,10 +4,12 @@
 
 <h1>Register</h1>
 
+<!-- Error message -->
 {% if error != "" %}
 <p>{{error}}</p>
 {% endif %}
 
+<!-- Register form -->
 <form action="/register" method="POST">
   Username:
   <input type="text" name="username" />

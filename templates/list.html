@@ -4,9 +4,10 @@
 
 <h1>List</h1>
 
+<!-- List -->
 {% for anime in list %}
 <hr />
-<img alt="TODO:" src={{anime.thumbnail}} width=50 height=70>
+<img alt="Anime thumbnail" src={{anime.thumbnail}} width=50 height=70>
 {{anime.title}}
 {{anime.watched_episodes}}/{{anime.episodes}}
 {% endfor %}

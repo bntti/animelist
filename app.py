@@ -1,4 +1,3 @@
-from typing import Union
 from os import getenv
 from flask import Flask, Response
 from flask import render_template, request, session, redirect
@@ -25,29 +24,37 @@ def list() -> str:
 @app.route("/animes", methods=["GET", "POST"])
 def animes() -> str:
     list = database.get_list_ids(session["user"]["id"])
+
+    # Anime is added to list
     if request.method == "POST":
         if session["user"]:
             database.add_to_list(
-                session["user"]["id"], request.form["anime_id"]
+                session["user"]["id"], int(request.form["anime_id"])
             )
         list = database.get_list_ids(session["user"]["id"])
+
+    # Current page
     page = 0
     query = request.args["query"] if "query" in request.args else ""
     if "page" in request.args and request.args["page"].isdigit():
         page = int(request.args["page"])
 
+    # Anime Counts
     anime_count = database.anime_count(query)
     animes = database.get_animes(page, query)
 
     page = max(0, min(anime_count - 50, page))
     prev_page = max(page - 50, 0)
     next_page = min(page + 50, max(0, anime_count - 50))
+
+    # Base url and current url
     base_url = "/animes?"
     if query:
         base_url += f"query={query}&"
     current_url = base_url
     if page > 0:
         current_url += f"page={page}"
+
     return render_template(
         "animes.html",
         animes=animes,
@@ -66,7 +73,7 @@ def anime(id) -> str:
 
 
 @app.route("/login", methods=["GET", "POST"])
-def login() -> Union[str, Response]:
+def login() -> str | Response:
     error = ""
     if request.method == "POST":
         username = request.form["username"]
@@ -81,7 +88,7 @@ def login() -> Union[str, Response]:
 
 
 @app.route("/register", methods=["GET", "POST"])
-def register() -> Union[str, Response]:
+def register() -> str | Response:
     error = ""
     if request.method == "POST":
         username = request.form["username"]
@@ -92,6 +99,7 @@ def register() -> Union[str, Response]:
             id = database.add_user(username, password1)
             session["user"] = {"username": request.form["username"], "id": id}
             return redirect("/")
+
     return render_template("register.html", error=error)
 
 

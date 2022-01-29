@@ -15,10 +15,8 @@ class DB:
     # Users table
     def user_exists(self, username: str) -> bool:
         username = username.lower()
-
         sql = "SELECT COUNT(*) FROM users WHERE username = :username"
         result = self.database.session.execute(sql, {"username": username})
-
         return result.fetchone()[0] > 0
 
     def get_user_id(self, username: str) -> int:
@@ -27,7 +25,7 @@ class DB:
         result = self.database.session.execute(sql, {"username": username})
         return result.fetchone()[0]
 
-    def add_user(self, username: str, password: str) -> None:
+    def add_user(self, username: str, password: str) -> int:
         username = username.lower()
         salt = generate_salt(16)
         password_hash = hash_password(password, salt)
@@ -43,11 +41,8 @@ class DB:
     def login(self, username: str, password: str) -> bool:
         username = username.lower()
 
-        sql = "SELECT salt, password " \
-              "FROM users WHERE username = :username"
-        result = self.database.session.execute(
-            sql, {"username": username}
-        )
+        sql = "SELECT salt, password FROM users WHERE username = :username"
+        result = self.database.session.execute(sql, {"username": username})
         salt, password_hash = result.fetchall()[0]
 
         return check_password(password, salt, password_hash)
@@ -63,9 +58,7 @@ class DB:
         result = self.database.session.execute(
             sql, {"query": f"%{query}%"}
         ).fetchone()
-        if not result:
-            return 0
-        return result[0]
+        return result[0] if result else 0
 
     def add_anime(self, anime: dict) -> int:
         sql = "INSERT INTO animes (title, episodes, link, picture, thumbnail, hidden) " \
@@ -73,10 +66,9 @@ class DB:
               "Returning id"
         return self.database.session.execute(sql, anime).fetchone()[0]
 
-    def get_anime(self, id: int) -> dict:
-        sql = "SELECT title, episodes, picture FROM animes "\
-              "WHERE id = :id"
-        result = self.database.session.execute(sql, {"id": id})
+    def get_anime(self, anime_id: int) -> dict | None:
+        sql = "SELECT title, episodes, picture FROM animes WHERE id = :id"
+        result = self.database.session.execute(sql, {"id": anime_id})
         row = result.fetchone()
         if not row:
             return None
@@ -86,29 +78,28 @@ class DB:
             "picture": row[2]
         }
 
-    def get_animes(self, page: int, query: str) -> None:
+    def get_animes(self, page: int, query: str) -> list:
         if not query:
             sql = "SELECT id, title, thumbnail FROM animes " \
                   "WHERE NOT hidden ORDER BY title LIMIT 50 OFFSET :offset"
         else:
             sql = "SELECT a.id, a.title, a.thumbnail FROM animes a, synonyms s " \
-                "WHERE NOT a.hidden AND a.id = s.anime_id AND (a.title ILIKE :query OR s.synonym ILIKE :query) " \
+                "WHERE NOT a.hidden AND a.id = s.anime_id AND " \
+                "(a.title ILIKE :query OR s.synonym ILIKE :query) " \
                 "GROUP BY a.id ORDER BY title LIMIT 50 OFFSET :offset"
         result = self.database.session.execute(
             sql, {"offset": page, "query": f"%{query}%"}
         )
-        animes = []
-        for row in result.fetchall():
-            animes.append({
+
+        return [{
                 "id": row[0],
                 "title": row[1],
                 "thumbnail": row[2]
-            })
-        return animes
+                } for row in result.fetchall()]
 
     # Tags table
     def add_tag(self, anime_id: int, tag: str) -> None:
-        sql = "INSERT INTO tags (anime_id, tag) VALUES (:anime_id, :tag) "
+        sql = "INSERT INTO tags (anime_id, tag) VALUES (:anime_id, :tag)"
         self.database.session.execute(sql, {"anime_id": anime_id, "tag": tag})
 
     # Synonyms table
@@ -137,14 +128,11 @@ class DB:
               "FROM list l, animes a WHERE l.anime_id = a.id AND l.user_id = :user_id"
         result = self.database.session.execute(sql, {"user_id": user_id})
 
-        list = []
-        for row in result.fetchall():
-            list.append({
+        return [{
                 "title": row[0],
                 "episodes": row[1],
                 "thumbnail": row[2],
                 "watched_episodes": row[3],
                 "rating": row[4],
                 "status": row[5]
-            })
-        return list
+                } for row in result.fetchall()]

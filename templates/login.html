@@ -4,10 +4,12 @@
 
 <h1>Log in</h1>
 
+<!-- Error message -->
 {% if error != "" %}
 <p>{{error}}</p>
 {% endif %}
 
+<!-- Login form -->
 <form action="/login" method="POST">
   Username:
   <input type="text" name="username" />
