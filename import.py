@@ -46,6 +46,8 @@ for i, anime_data in enumerate(data["data"]):
     anime_id = database.add_anime(anime)
     for tag in anime_data["tags"]:
         database.add_tag(anime_id, tag)
+    for synonym in anime_data["synonyms"]:
+        database.add_synonym(anime_id, synonym)
 
 print("Commiting changes")
 database.commit()

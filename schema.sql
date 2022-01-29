@@ -18,3 +18,8 @@ CREATE TABLE tags (
     anime_id INT REFERENCES animes NOT NULL,
     tag TEXT NOT NULL
 );
+CREATE TABLE synonyms (
+    id SERIAL PRIMARY KEY,
+    anime_id INT REFERENCES animes NOT NULL,
+    synonym TEXT NOT NULL
+);

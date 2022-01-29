@@ -47,8 +47,18 @@ class DB:
 
     # Animes table
     def anime_count(self, query: str) -> int:
-        sql = "SELECT COUNT(*) FROM animes WHERE title ILIKE :query"
-        return self.database.session.execute(sql, {"query": f"%{query}%"}).fetchone()[0]
+        if not query:
+            sql = "SELECT COUNT(*) FROM animes WHERE NOT hidden"
+        else:
+            sql = "SELECT COUNT(*) FROM animes a, synonyms s " \
+                  "WHERE NOT a.hidden AND a.id = s.anime_id AND " \
+                  "(a.title ILIKE :query OR s.synonym ILIKE :query) GROUP BY a.id"
+        result = self.database.session.execute(
+            sql, {"query": f"%{query}%"}
+        ).fetchone()
+        if not result:
+            return 0
+        return result[0]
 
     def add_anime(self, anime: dict) -> int:
         sql = "INSERT INTO animes (title, episodes, link, picture, thumbnail, hidden) " \
@@ -70,9 +80,13 @@ class DB:
         }
 
     def get_animes(self, page: int, query: str) -> None:
-        sql = "SELECT id, title, thumbnail FROM animes " \
-            "WHERE NOT hidden AND title ILIKE :query " \
-            "ORDER BY title LIMIT 50 OFFSET :offset"
+        if not query:
+            sql = "SELECT id, title, thumbnail FROM animes " \
+                  "WHERE NOT hidden ORDER BY title LIMIT 50 OFFSET :offset"
+        else:
+            sql = "SELECT a.id, a.title, a.thumbnail FROM animes a, synonyms s " \
+                "WHERE NOT a.hidden AND a.id = s.anime_id AND (a.title ILIKE :query OR s.synonym ILIKE :query) " \
+                "GROUP BY a.id ORDER BY title LIMIT 50 OFFSET :offset"
         result = self.database.session.execute(
             sql, {"offset": page, "query": f"%{query}%"}
         )
@@ -89,3 +103,10 @@ class DB:
     def add_tag(self, anime_id: int, tag: str) -> None:
         sql = "INSERT INTO tags (anime_id, tag) VALUES (:anime_id, :tag) "
         self.database.session.execute(sql, {"anime_id": anime_id, "tag": tag})
+
+    # Synonyms table
+    def add_synonym(self, anime_id: int, synonym: str) -> None:
+        sql = "INSERT INTO synonyms (anime_id, synonym) VALUES (:anime_id, :synonym)"
+        self.database.session.execute(
+            sql, {"anime_id": anime_id, "synonym": synonym}
+        )
