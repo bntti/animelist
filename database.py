@@ -77,14 +77,16 @@ class DB:
         if not query:
             sql = "SELECT a.id, a.title, a.thumbnail, ROUND(AVG(l.rating), 2) FROM animes a " \
                   "LEFT JOIN list l ON l.anime_id = a.id WHERE NOT a.hidden " \
-                  "GROUP BY a.id ORDER BY COALESCE(AVG(l.rating), 0) DESC, a.title " \
+                  "GROUP BY a.id " \
+                  "ORDER BY COALESCE(AVG(l.rating), 0) DESC, COUNT(l.id) DESC, a.title " \
                   "LIMIT 50 OFFSET :offset"
         else:
             sql = "SELECT a.id, a.title, a.thumbnail, ROUND(AVG(l.rating), 2) "\
                   "FROM synonyms s, animes a LEFT JOIN list l ON l.anime_id = a.id " \
                   "WHERE NOT a.hidden AND a.id = s.anime_id AND " \
                   "(a.title ILIKE :query OR s.synonym ILIKE :query) " \
-                  "GROUP BY a.id ORDER BY COALESCE(AVG(l.rating), 0) DESC, a.title " \
+                  "GROUP BY a.id " \
+                  "ORDER BY COALESCE(AVG(l.rating), 0) DESC, COUNT(l.id) DESC, a.title " \
                   "LIMIT 50 OFFSET :offset"
         result = self.database.session.execute(
             sql, {"offset": page, "query": f"%{query}%"}
