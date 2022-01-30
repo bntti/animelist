@@ -122,21 +122,30 @@ class DB:
             # UNIQUE constraint fail
             self.database.session.rollback()
 
+    def set_score(self, user_id: int, anime_id: int, rating: int | None) -> None:
+        sql = "UPDATE list SET rating=:rating " \
+              "WHERE user_id = :user_id AND anime_id = :anime_id"
+        self.database.session.execute(
+            sql, {"user_id": user_id, "anime_id": anime_id, "rating": rating}
+        )
+        self.database.session.commit()
+
     def get_list_ids(self, user_id) -> list:
         sql = "SELECT  anime_id FROM list WHERE user_id = :user_id"
         result = self.database.session.execute(sql, {"user_id": user_id})
         return [row[0] for row in result.fetchall()]
 
     def get_list(self, user_id: int, ) -> list:
-        sql = "SELECT  a.title, a.episodes, a.thumbnail, l.episodes, l.rating, l.status " \
+        sql = "SELECT  a.id, a.title, a.episodes, a.thumbnail, l.episodes, l.rating, l.status " \
               "FROM list l, animes a WHERE l.anime_id = a.id AND l.user_id = :user_id"
         result = self.database.session.execute(sql, {"user_id": user_id})
 
         return [{
-                "title": row[0],
-                "episodes": row[1],
-                "thumbnail": row[2],
-                "watched_episodes": row[3],
-                "rating": row[4],
-                "status": row[5]
+                "id": row[0],
+                "title": row[1],
+                "episodes": row[2],
+                "thumbnail": row[3],
+                "watched_episodes": row[4],
+                "rating": row[5],
+                "status": row[6]
                 } for row in result.fetchall()]

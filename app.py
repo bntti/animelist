@@ -15,9 +15,25 @@ def index() -> str:
     return render_template("index.html")
 
 
-@app.route("/list")
+@app.route("/list", methods=["GET", "POST"])
 def list() -> str:
     list = database.get_list(session["user"]["id"])
+    if request.method == "POST":
+        change = False
+        for anime in list:
+            new_rating = request.form.get(str(anime["id"]))
+            new_rating = None if new_rating == "None" else int(new_rating)
+            if new_rating != anime["rating"]:
+                print(new_rating)
+                change = True
+                database.set_score(
+                    session["user"]["id"], anime["id"], new_rating
+                )
+
+        if change:
+            # TODO: Update anime scores
+            list = database.get_list(session["user"]["id"])
+
     return render_template("list.html", list=list)
 
 

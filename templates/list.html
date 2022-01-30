@@ -5,11 +5,35 @@
 <h1>List</h1>
 
 <!-- List -->
-{% for anime in list %}
-<hr />
-<img alt="Anime thumbnail" src={{anime.thumbnail}} width=50 height=70>
-{{anime.title}}
-{{anime.watched_episodes}}/{{anime.episodes}}
-{% endfor %}
+<form method="POST">
+    <input type="submit" value="Submit changes" />
+
+    {% for anime in list %}
+    <hr />
+    <!-- Anime information -->
+    <img alt="Anime thumbnail" src={{anime.thumbnail}} width=50 height=70>
+    {{anime.title}}
+    Watched: {{anime.watched_episodes}}/{{anime.episodes}}
+
+    <!-- Score selection -->
+    Score:
+    <select name="{{anime.id}}">
+        <option value="None" {% if not anime.rating %} selected {% endif %}></option>
+        <option value="1" {% if anime.rating==1 %} selected {% endif %}>1 Appaling</option>
+        <option value="2" {% if anime.rating==2 %} selected {% endif %}>2 Horrible</option>
+        <option value="3" {% if anime.rating==3 %} selected {% endif %}>3 Very bad</option>
+        <option value="4" {% if anime.rating==4 %} selected {% endif %}>4 Bad</option>
+        <option value="5" {% if anime.rating==5 %} selected {% endif %}>5 Average</option>
+        <option value="6" {% if anime.rating==6 %} selected {% endif %}>6 Fine</option>
+        <option value="7" {% if anime.rating==7 %} selected {% endif %}>7 Good</option>
+        <option value="8" {% if anime.rating==8 %} selected {% endif %}>8 Very good</option>
+        <option value="9" {% if anime.rating==9 %} selected {% endif %}>9 Great</option>
+        <option value="10" {% if anime.rating==10 %} selected {% endif %}>10 Masterpiece</option>
+    </select>
+    {% endfor %}
+
+    <hr />
+    <input type="submit" value="Submit changes" />
+</form>
 
 {% endblock %}
