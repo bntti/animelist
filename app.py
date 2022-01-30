@@ -21,6 +21,10 @@ def list() -> str:
     if request.method == "POST":
         change = False
         for anime in list:
+            if request.form.get(f"remove_{anime['id']}"):
+                change = True
+                database.remove_from_list(session["user"]["id"], anime["id"])
+                continue
             new_rating = request.form.get(str(anime["id"]))
             new_rating = None if new_rating == "None" else int(new_rating)
             if new_rating != anime["rating"]:

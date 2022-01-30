@@ -126,6 +126,13 @@ class DB:
             # UNIQUE constraint fail
             self.database.session.rollback()
 
+    def remove_from_list(self, user_id: int, anime_id: int) -> None:
+        sql = "DELETE FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
+        self.database.session.execute(
+            sql, {"user_id": user_id, "anime_id": anime_id}
+        )
+        self.database.session.commit()
+
     def set_score(self, user_id: int, anime_id: int, rating: int | None) -> None:
         sql = "UPDATE list SET rating=:rating " \
               "WHERE user_id = :user_id AND anime_id = :anime_id"
