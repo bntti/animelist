@@ -31,7 +31,6 @@ def list() -> str:
                 )
 
         if change:
-            # TODO: Update anime scores
             list = database.get_list(session["user"]["id"])
 
     return render_template("list.html", list=list)

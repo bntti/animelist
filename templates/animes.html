@@ -19,6 +19,7 @@
 <hr />
 <img alt="Anime thumbnail" src={{anime.thumbnail}} width=50 height=70>
 <a href="/anime/{{anime.id}}">{{anime.title}}</a>
+{% if anime.rating %}Rating: {{anime.rating}}{% endif %}
 
 <!-- List status -->
 {% if session.user %}

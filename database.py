@@ -80,13 +80,16 @@ class DB:
 
     def get_animes(self, page: int, query: str) -> list:
         if not query:
-            sql = "SELECT id, title, thumbnail FROM animes " \
-                  "WHERE NOT hidden ORDER BY title LIMIT 50 OFFSET :offset"
+            sql = "SELECT a.id, a.title, a.thumbnail, AVG(l.rating) FROM animes a " \
+                  "LEFT JOIN list l ON l.anime_id = a.id WHERE NOT a.hidden " \
+                  "GROUP BY a.id ORDER BY COALESCE(AVG(l.rating), 0) DESC, a.title " \
+                  "LIMIT 50 OFFSET :offset"
         else:
-            sql = "SELECT a.id, a.title, a.thumbnail FROM animes a, synonyms s " \
-                "WHERE NOT a.hidden AND a.id = s.anime_id AND " \
-                "(a.title ILIKE :query OR s.synonym ILIKE :query) " \
-                "GROUP BY a.id ORDER BY title LIMIT 50 OFFSET :offset"
+            sql = "SELECT a.id, a.title, a.thumbnail, AVG(l.rating) FROM synonyms s, animes a " \
+                  "LEFT JOIN list l ON l.anime_id = a.id WHERE NOT a.hidden AND " \
+                  "a.id = s.anime_id AND (a.title ILIKE :query OR s.synonym ILIKE :query) " \
+                  "GROUP BY a.id ORDER BY COALESCE(AVG(l.rating), 0) DESC, a.title " \
+                  "LIMIT 50 OFFSET :offset"
         result = self.database.session.execute(
             sql, {"offset": page, "query": f"%{query}%"}
         )
@@ -94,7 +97,8 @@ class DB:
         return [{
                 "id": row[0],
                 "title": row[1],
-                "thumbnail": row[2]
+                "thumbnail": row[2],
+                "rating": row[3] if not row[3] else round(row[3], 2)
                 } for row in result.fetchall()]
 
     # Tags table
