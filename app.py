@@ -23,7 +23,10 @@ def list() -> str:
 
 @app.route("/animes", methods=["GET", "POST"])
 def animes() -> str:
-    list = database.get_list_ids(session["user"]["id"])
+    if "user" in session:
+        list = database.get_list_ids(session["user"]["id"])
+    else:
+        list = []
 
     # Anime is added to list
     if request.method == "POST":
@@ -31,7 +34,8 @@ def animes() -> str:
             database.add_to_list(
                 session["user"]["id"], int(request.form["anime_id"])
             )
-        list = database.get_list_ids(session["user"]["id"])
+        if "user" in session:
+            list = database.get_list_ids(session["user"]["id"])
 
     # Current page
     page = 0
