@@ -14,24 +14,21 @@ class DB:
 
     # Users table
     def user_exists(self, username: str) -> bool:
-        username = username.lower()
-        sql = "SELECT COUNT(*) FROM users WHERE username = :username"
+        sql = "SELECT COUNT(*) FROM users WHERE username = LOWER(:username)"
         result = self.database.session.execute(sql, {"username": username})
         return result.fetchone()[0] > 0
 
     def get_user_id(self, username: str) -> int:
-        username = username.lower()
-        sql = "SELECT id FROM users WHERE username = :username"
+        sql = "SELECT id FROM users WHERE username = LOWER(:username)"
         result = self.database.session.execute(sql, {"username": username})
         return result.fetchone()[0]
 
     def add_user(self, username: str, password: str) -> int:
-        username = username.lower()
         salt = generate_salt(16)
         password_hash = hash_password(password, salt)
 
         sql = "INSERT INTO users (username, salt, password) " \
-              "VALUES (:username, :salt, :password) RETURNING id"
+              "VALUES (LOWER(:username), :salt, :password) RETURNING id"
         result = self.database.session.execute(
             sql, {"username": username, "salt": salt, "password": password_hash}
         )
@@ -39,9 +36,7 @@ class DB:
         return result.fetchone()[0]
 
     def login(self, username: str, password: str) -> bool:
-        username = username.lower()
-
-        sql = "SELECT salt, password FROM users WHERE username = :username"
+        sql = "SELECT salt, password FROM users WHERE username = LOWER(:username)"
         result = self.database.session.execute(sql, {"username": username})
         salt, password_hash = result.fetchall()[0]
 
@@ -80,14 +75,15 @@ class DB:
 
     def get_animes(self, page: int, query: str) -> list:
         if not query:
-            sql = "SELECT a.id, a.title, a.thumbnail, AVG(l.rating) FROM animes a " \
+            sql = "SELECT a.id, a.title, a.thumbnail, ROUND(AVG(l.rating), 2) FROM animes a " \
                   "LEFT JOIN list l ON l.anime_id = a.id WHERE NOT a.hidden " \
                   "GROUP BY a.id ORDER BY COALESCE(AVG(l.rating), 0) DESC, a.title " \
                   "LIMIT 50 OFFSET :offset"
         else:
-            sql = "SELECT a.id, a.title, a.thumbnail, AVG(l.rating) FROM synonyms s, animes a " \
-                  "LEFT JOIN list l ON l.anime_id = a.id WHERE NOT a.hidden AND " \
-                  "a.id = s.anime_id AND (a.title ILIKE :query OR s.synonym ILIKE :query) " \
+            sql = "SELECT a.id, a.title, a.thumbnail, ROUND(AVG(l.rating), 2) "\
+                  "FROM synonyms s, animes a LEFT JOIN list l ON l.anime_id = a.id " \
+                  "WHERE NOT a.hidden AND a.id = s.anime_id AND " \
+                  "(a.title ILIKE :query OR s.synonym ILIKE :query) " \
                   "GROUP BY a.id ORDER BY COALESCE(AVG(l.rating), 0) DESC, a.title " \
                   "LIMIT 50 OFFSET :offset"
         result = self.database.session.execute(
@@ -98,7 +94,7 @@ class DB:
                 "id": row[0],
                 "title": row[1],
                 "thumbnail": row[2],
-                "rating": row[3] if not row[3] else round(row[3], 2)
+                "rating": row[3]
                 } for row in result.fetchall()]
 
     # Tags table
@@ -142,12 +138,12 @@ class DB:
         self.database.session.commit()
 
     def get_list_ids(self, user_id) -> list:
-        sql = "SELECT  anime_id FROM list WHERE user_id = :user_id"
+        sql = "SELECT anime_id FROM list WHERE user_id = :user_id"
         result = self.database.session.execute(sql, {"user_id": user_id})
         return [row[0] for row in result.fetchall()]
 
     def get_list(self, user_id: int, ) -> list:
-        sql = "SELECT  a.id, a.title, a.episodes, a.thumbnail, l.episodes, l.rating, l.status " \
+        sql = "SELECT a.id, a.title, a.episodes, a.thumbnail, l.episodes, l.rating, l.status " \
               "FROM list l, animes a WHERE l.anime_id = a.id AND l.user_id = :user_id"
         result = self.database.session.execute(sql, {"user_id": user_id})
 
