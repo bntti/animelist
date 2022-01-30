@@ -111,12 +111,16 @@ class DB:
 
     # List table
     def add_to_list(self, user_id: int, anime_id: int) -> None:
-        sql = "INSERT INTO list (user_id, anime_id, episodes, status) " \
-              "VALUES (:user_id, :anime_id, 0, 'WATCHING')"
-        self.database.session.execute(
-            sql, {"user_id": user_id, "anime_id": anime_id}
-        )
-        self.commit()
+        try:
+            sql = "INSERT INTO list (user_id, anime_id, episodes, status) " \
+                "VALUES (:user_id, :anime_id, 0, 'WATCHING')"
+            self.database.session.execute(
+                sql, {"user_id": user_id, "anime_id": anime_id}
+            )
+            self.database.session.commit()
+        except:
+            # UNIQUE constraint fail
+            self.database.session.rollback()
 
     def get_list_ids(self, user_id) -> list:
         sql = "SELECT  anime_id FROM list WHERE user_id = :user_id"

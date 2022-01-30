@@ -29,5 +29,6 @@ CREATE TABLE list (
     anime_id INT REFERENCES animes NOT NULL,
     episodes INT NOT NULL,
     rating INT,
-    status TEXT NOT NULL
+    status TEXT NOT NULL,
+    UNIQUE (user_id, anime_id)
 );
