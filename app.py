@@ -17,6 +17,9 @@ def index() -> str:
 
 @app.route("/list", methods=["GET", "POST"])
 def list() -> str:
+    if "user" not in session:
+        return redirect("/login")
+
     list = database.get_list(session["user"]["id"])
     if request.method == "POST":
         change = False
