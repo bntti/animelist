@@ -156,7 +156,7 @@ class DB:
         self.database.session.commit()
 
     def get_user_anime_data(self, user_id: int, anime_id: int) -> float | None:
-        sql = "SELECT rating, times_watched FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
+        sql = "SELECT rating, episodes, times_watched FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
         result = self.database.session.execute(
             sql, {"user_id": user_id, "anime_id": anime_id}
         ).fetchone()
@@ -164,7 +164,8 @@ class DB:
             return None
         return {
             "rating": result[0],
-            "times_watched": result[1],
+            "episodes": result[1],
+            "times_watched": result[2],
             "in_list": True
         }
 
