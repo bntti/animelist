@@ -106,8 +106,11 @@ def login() -> str | Response:
             id = database.get_user_id(username)
             session["user"] = {"username": request.form["username"], "id": id}
             return redirect("/")
+    else:
+        username = ""
+        password = ""
 
-    return render_template("login.html", error=error)
+    return render_template("login.html", error=error, username=username, password=password)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -122,8 +125,18 @@ def register() -> str | Response:
             id = database.add_user(username, password1)
             session["user"] = {"username": request.form["username"], "id": id}
             return redirect("/")
+    else:
+        username = ""
+        password1 = ""
+        password2 = ""
 
-    return render_template("register.html", error=error)
+    return render_template(
+        "register.html",
+        error=error,
+        username=username,
+        password1=password1,
+        password2=password2
+    )
 
 
 @app.route("/logout")
