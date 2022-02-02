@@ -199,7 +199,8 @@ class DB:
 
     def get_list(self, user_id: int, ) -> list:
         sql = "SELECT a.id, a.title, a.episodes, a.thumbnail, l.episodes, l.rating, l.status " \
-              "FROM list l, animes a WHERE l.anime_id = a.id AND l.user_id = :user_id"
+              "FROM list l, animes a WHERE l.anime_id = a.id AND l.user_id = :user_id "\
+              "ORDER BY a.title"
         result = self.database.session.execute(sql, {"user_id": user_id})
 
         return [{
