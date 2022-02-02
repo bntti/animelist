@@ -1,12 +1,14 @@
 from os import getenv
 from flask import Flask, Response
 from flask import render_template, request, session, redirect
+from defusedxml.ElementTree import fromstring
 from database import DB
 import functions
 
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['MAX_CONTENT_LENGTH'] = 1024**2
 database = DB(app)
 
 
@@ -22,23 +24,47 @@ def list() -> str:
 
     list = database.get_list(session["user"]["id"])
     if request.method == "POST":
+        if "mal_import" in request.files:
+            file = request.files["mal_import"]
+            try:
+                root = fromstring(file.read())
+            except:
+                return "<h1>Error parsing xml file</h1>", 415
+
+            for anime_data in root:
+                if anime_data.tag == "anime":
+                    anime = {
+                        "id": anime_data.find("./series_animedb_id").text,
+                        "episodes": int(anime_data.find("./my_watched_episodes").text),
+                        "rating": anime_data.find("./my_score").text,
+                        "status": anime_data.find("./my_status").text,
+                        "times_watched": int(anime_data.find("./my_times_watched").text)
+                    }
+                    if anime["status"] == "Completed":
+                        anime["times_watched"] += 1
+                    database.import_to_list(session["user"]["id"], anime)
+
         change = False
         for anime in list:
-            if request.form.get(f"remove_{anime['id']}"):
-                change = True
-                database.remove_from_list(session["user"]["id"], anime["id"])
-                continue
-            new_rating = request.form.get(str(anime["id"]))
-            new_rating = None if new_rating == "None" else int(new_rating)
-            if new_rating != anime["rating"]:
-                print(new_rating)
-                change = True
-                database.set_score(
-                    session["user"]["id"], anime["id"], new_rating
-                )
+            if f"remove_{anime['id']}" in request.form:
+                if request.form.get(f"remove_{anime['id']}"):
+                    change = True
+                    database.remove_from_list(
+                        session["user"]["id"], anime["id"]
+                    )
+                    continue
+            if str(anime["id"]) in request.form:
+                new_rating = request.form.get(str(anime["id"]))
+                new_rating = None if new_rating == "None" else int(new_rating)
+                if new_rating != anime["rating"]:
+                    print(new_rating)
+                    change = True
+                    database.set_score(
+                        session["user"]["id"], anime["id"], new_rating
+                    )
 
-        if change:
-            list = database.get_list(session["user"]["id"])
+            if change:
+                list = database.get_list(session["user"]["id"])
 
     return render_template("list.html", list=list)
 

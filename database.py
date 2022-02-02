@@ -127,6 +127,29 @@ class DB:
             # UNIQUE constraint fail
             self.database.session.rollback()
 
+    def import_to_list(self, user_id, anime: dict):
+        sql = "SELECT id FROM animes WHERE link = :link"
+        result = self.database.session.execute(
+            sql, {"link": f"https://myanimelist.net/anime/{anime['id']}"}
+        ).fetchone()
+
+        if not result:
+            return
+
+        anime_id = result[0]
+
+        # Add user_id and anime_id to anime dict
+        anime.update({"user_id": user_id, "anime_id": anime_id})
+
+        try:
+            sql = "INSERT INTO list (user_id, anime_id, episodes, rating, status, times_watched) " \
+                  "VALUES (:user_id, :anime_id, :episodes, :rating, :status, :times_watched)"
+            self.database.session.execute(sql, anime)
+            self.database.session.commit()
+        except:
+            # UNIQUE constraint fail
+            self.database.session.rollback()
+
     def remove_from_list(self, user_id: int, anime_id: int) -> None:
         sql = "DELETE FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
         self.database.session.execute(
