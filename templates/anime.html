@@ -8,12 +8,14 @@
     <img alt="Anime picture" src="{{anime.picture}}">
 </p>
 <h1>{{anime.title}}</h1>
+
 {% if session.user and user_data.in_list %}
 <p>Episodes: {{user_data.episodes}}/{{anime.episodes}}</p>
 {% else %}
 <p>Episodes: {{anime.episodes}}</p>
 {% endif %}
-<p>Rating: {{anime.rating}}</p>
+
+{% if anime.rating %}<p>Rating: {{anime.rating}}</p>{% endif %}
 
 <!-- List data-->
 {% if session.user %}
