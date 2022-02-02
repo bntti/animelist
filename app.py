@@ -89,10 +89,46 @@ def animes() -> str:
     )
 
 
-@app.route("/anime/<int:id>")
+@app.route("/anime/<int:id>", methods=["GET", "POST"])
 def anime(id) -> str:
+    # Check if anime id is valid
     anime = database.get_anime(id)
-    return render_template("anime.html", anime=anime)
+    if not anime:
+        return render_template("anime.html", anime=anime)
+
+    if "user" in session:
+        list = database.get_list_ids(session["user"]["id"])
+        rating = database.get_user_rating(session["user"]["id"], id)
+    else:
+        list = []
+        rating = None
+
+    # Anime is added to list or list data is edited
+    if request.method == "POST":
+        if session["user"]:
+            if request.form["submit"] == "Add to list":
+                # Added to list
+                database.add_to_list(session["user"]["id"], id)
+                list = database.get_list_ids(session["user"]["id"])
+            if request.form["submit"] == "Remove from list":
+                # Removed from list
+                database.remove_from_list(session["user"]["id"], id)
+                list = database.get_list_ids(session["user"]["id"])
+                rating = None
+                anime = database.get_anime(id)
+            else:
+                # Rating change
+                new_rating = request.form.get("rating")
+                new_rating = None if new_rating == "None" else int(new_rating)
+                if new_rating != rating:
+                    print(new_rating)
+                    database.set_score(
+                        session["user"]["id"], anime["id"], new_rating
+                    )
+                    rating = new_rating
+                    anime = database.get_anime(id)
+
+    return render_template("anime.html", anime=anime, list=list, rating=rating)
 
 
 @app.route("/login", methods=["GET", "POST"])

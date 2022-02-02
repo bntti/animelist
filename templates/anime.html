@@ -9,6 +9,39 @@
 </p>
 <h1>{{anime.title}}</h1>
 <p>Episodes: {{anime.episodes}}</p>
+<p>Rating: {{anime.rating}}</p>
+
+<!-- List data-->
+{% if session.user %}
+<form method="POST">
+    Score:
+    <select name="rating">
+        <option value="None" {% if not rating %} selected {% endif %}></option>
+        <option value="10" {% if rating==10 %} selected {% endif %}>10 Masterpiece</option>
+        <option value="9" {% if rating==9 %} selected {% endif %}>9 Great</option>
+        <option value="8" {% if rating==8 %} selected {% endif %}>8 Very good</option>
+        <option value="7" {% if rating==7 %} selected {% endif %}>7 Good</option>
+        <option value="6" {% if rating==6 %} selected {% endif %}>6 Fine</option>
+        <option value="5" {% if rating==5 %} selected {% endif %}>5 Average</option>
+        <option value="4" {% if rating==4 %} selected {% endif %}>4 Bad</option>
+        <option value="3" {% if rating==3 %} selected {% endif %}>3 Very bad</option>
+        <option value="2" {% if rating==2 %} selected {% endif %}>2 Horrible</option>
+        <option value="1" {% if rating==1 %} selected {% endif %}>1 Appaling</option>
+    </select>
+    <br />
+
+    {% if anime.id not in list %}
+    <input type="submit" name="submit" value="Add to list"></input>
+
+    {% else %}
+    <input type="submit" name="submit" value="Submit changes" /></input>
+    <br />
+    <br />
+    <input type="submit" name="submit" value="Remove from list" /></input>
+    {% endif %}
+</form>
+{% endif %}
+
 <br style="clear: left;" />
 
 <!-- No anime found -->

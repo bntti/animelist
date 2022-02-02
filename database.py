@@ -62,15 +62,18 @@ class DB:
         return self.database.session.execute(sql, anime).fetchone()[0]
 
     def get_anime(self, anime_id: int) -> dict | None:
-        sql = "SELECT title, episodes, picture FROM animes WHERE id = :id"
+        sql = "SELECT a.id, a.title, a.episodes, ROUND(AVG(l.rating), 2), a.picture " \
+              "FROM animes a LEFT JOIN list l ON l.anime_id = a.id WHERE a.id = :id GROUP BY a.id"
         result = self.database.session.execute(sql, {"id": anime_id})
         row = result.fetchone()
         if not row:
             return None
         return {
-            "title": row[0],
-            "episodes": row[1],
-            "picture": row[2]
+            "id": row[0],
+            "title": row[1],
+            "episodes": row[2],
+            "rating": row[3],
+            "picture": row[4]
         }
 
     def get_animes(self, page: int, query: str) -> list:
@@ -138,6 +141,15 @@ class DB:
             sql, {"user_id": user_id, "anime_id": anime_id, "rating": rating}
         )
         self.database.session.commit()
+
+    def get_user_rating(self, user_id: int, anime_id: int) -> float | None:
+        sql = "SELECT rating FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
+        result = self.database.session.execute(
+            sql, {"user_id": user_id, "anime_id": anime_id}
+        ).fetchone()
+        if not result:
+            return None
+        return result[0]
 
     def get_list_ids(self, user_id) -> list:
         sql = "SELECT anime_id FROM list WHERE user_id = :user_id"
