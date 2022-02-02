@@ -29,7 +29,7 @@ for i, anime_data in enumerate(data["data"]):
             myanimelist_link = source
 
     # Ignore some animes
-    if myanimelist_link == "" or "year" not in anime_data["animeSeason"]:
+    if myanimelist_link == "":
         continue
 
     anime = {
