@@ -27,9 +27,9 @@ CREATE TABLE list (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users NOT NULL,
     anime_id INT REFERENCES animes NOT NULL,
-    episodes INT NOT NULL,
-    rating INT,
-    status TEXT NOT NULL,
+    episodes INT NOT NULL DEFAULT 0,
+    rating INT DEFAULT NULL,
+    status TEXT NOT NULL DEFAULT 'Watching',
     times_watched INT NOT NULL DEFAULT 0,
     UNIQUE (user_id, anime_id)
 );
