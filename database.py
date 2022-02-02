@@ -142,14 +142,31 @@ class DB:
         )
         self.database.session.commit()
 
-    def get_user_rating(self, user_id: int, anime_id: int) -> float | None:
-        sql = "SELECT rating FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
+    def set_times_watched(self, user_id: int, anime_id: int, times_watched: int) -> None:
+        sql = "UPDATE list SET times_watched=:times_watched " \
+              "WHERE user_id = :user_id AND anime_id = :anime_id"
+        self.database.session.execute(
+            sql,
+            {
+                "user_id": user_id,
+                "anime_id": anime_id,
+                "times_watched": times_watched
+            }
+        )
+        self.database.session.commit()
+
+    def get_user_anime_data(self, user_id: int, anime_id: int) -> float | None:
+        sql = "SELECT rating, times_watched FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
         result = self.database.session.execute(
             sql, {"user_id": user_id, "anime_id": anime_id}
         ).fetchone()
         if not result:
             return None
-        return result[0]
+        return {
+            "rating": result[0],
+            "times_watched": result[1],
+            "in_list": True
+        }
 
     def get_list_ids(self, user_id) -> list:
         sql = "SELECT anime_id FROM list WHERE user_id = :user_id"

@@ -100,11 +100,11 @@ def anime(id) -> str:
         return render_template("anime.html", anime=anime)
 
     if "user" in session:
-        list = database.get_list_ids(session["user"]["id"])
-        rating = database.get_user_rating(session["user"]["id"], id)
+        user_data = database.get_user_anime_data(session["user"]["id"], id)
+        if user_data == None:
+            user_data = {"in_list": False, "rating": None}
     else:
-        list = []
-        rating = None
+        user_data = {"in_list": False}
 
     # Anime is added to list or list data is edited
     if request.method == "POST":
@@ -112,26 +112,35 @@ def anime(id) -> str:
             if request.form["submit"] == "Add to list":
                 # Added to list
                 database.add_to_list(session["user"]["id"], id)
-                list = database.get_list_ids(session["user"]["id"])
+                user_data = database.get_user_anime_data(
+                    session["user"]["id"], id
+                )
             if request.form["submit"] == "Remove from list":
                 # Removed from list
                 database.remove_from_list(session["user"]["id"], id)
-                list = database.get_list_ids(session["user"]["id"])
-                rating = None
+                user_data = {"in_list": False, "rating": None}
                 anime = database.get_anime(id)
             else:
+                # Times watched change
+                if "times_watched" in request.form:
+                    new_watched = int(request.form.get("times_watched"))
+                    if new_watched != user_data["times_watched"]:
+                        user_data["times_watched"] = new_watched
+                        database.set_times_watched(
+                            session["user"]["id"], anime["id"], new_watched
+                        )
+
                 # Rating change
                 new_rating = request.form.get("rating")
                 new_rating = None if new_rating == "None" else int(new_rating)
-                if new_rating != rating:
-                    print(new_rating)
+                if new_rating != user_data["rating"]:
                     database.set_score(
                         session["user"]["id"], anime["id"], new_rating
                     )
-                    rating = new_rating
+                    user_data["rating"] = new_rating
                     anime = database.get_anime(id)
 
-    return render_template("anime.html", anime=anime, list=list, rating=rating)
+    return render_template("anime.html", anime=anime, user_data=user_data)
 
 
 @app.route("/login", methods=["GET", "POST"])

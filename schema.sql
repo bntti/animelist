@@ -30,5 +30,6 @@ CREATE TABLE list (
     episodes INT NOT NULL,
     rating INT,
     status TEXT NOT NULL,
+    times_watched INT NOT NULL DEFAULT 0,
     UNIQUE (user_id, anime_id)
 );
