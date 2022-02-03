@@ -12,78 +12,76 @@ app.config['MAX_CONTENT_LENGTH'] = 1024**2
 database = DB(app)
 
 
+# /
 @app.route("/")
 def index() -> str:
     return render_template("index.html")
 
 
-@app.route("/list", methods=["GET", "POST"])
-def list() -> str:
+# /list
+@app.route("/list", methods=["GET"])
+def list_get() -> str | Response:
     if "user_id" not in session:
         return redirect("/login")
 
     list = database.get_list(session["user_id"])
-    if request.method == "POST":
-        if "mal_import" in request.files:
-            file = request.files["mal_import"]
-            try:
-                root = fromstring(file.read())
-            except:
-                return "<h1>Error parsing xml file</h1>", 415
-
-            for anime_data in root:
-                if anime_data.tag == "anime":
-                    anime = {
-                        "id": anime_data.find("./series_animedb_id").text,
-                        "episodes": int(anime_data.find("./my_watched_episodes").text),
-                        "rating": anime_data.find("./my_score").text,
-                        "status": anime_data.find("./my_status").text,
-                        "times_watched": int(anime_data.find("./my_times_watched").text)
-                    }
-                    if anime["status"] == "Completed":
-                        anime["times_watched"] += 1
-                    database.import_to_list(session["user_id"], anime)
-
-        change = False
-        for anime in list:
-            if f"remove_{anime['id']}" in request.form:
-                if request.form.get(f"remove_{anime['id']}"):
-                    change = True
-                    database.remove_from_list(session["user_id"], anime["id"])
-                    continue
-            if str(anime["id"]) in request.form:
-                new_rating = request.form.get(str(anime["id"]))
-                new_rating = None if new_rating == "None" else int(new_rating)
-                if new_rating != anime["rating"]:
-                    change = True
-                    database.set_score(
-                        session["user_id"], anime["id"], new_rating
-                    )
-
-            if change:
-                list = database.get_list(session["user_id"])
-
     return render_template("list.html", list=list)
 
 
-@app.route("/animes", methods=["GET", "POST"])
-def animes() -> str:
+@app.route("/list", methods=["POST"])
+def list_post() -> str | Response:
+    if "user_id" not in session:
+        return redirect("/login")
+
+    list_animes = database.get_list(session["user_id"])
+
+    # Import from myanimelist
+    if "mal_import" in request.files:
+        file = request.files["mal_import"]
+        try:
+            root = fromstring(file.read())
+        except:
+            return "<h1>Error parsing xml file</h1>", 415
+
+        for anime_data in root:
+            if anime_data.tag == "anime":
+                anime = {
+                    "id": anime_data.find("./series_animedb_id").text,
+                    "episodes": int(anime_data.find("./my_watched_episodes").text),
+                    "rating": anime_data.find("./my_score").text,
+                    "status": anime_data.find("./my_status").text,
+                    "times_watched": int(anime_data.find("./my_times_watched").text)
+                }
+                if anime["status"] == "Completed":
+                    anime["times_watched"] += 1
+                database.import_to_list(session["user_id"], anime)
+
+        return list_get()
+
+    for anime in list_animes:
+        if f"remove_{anime['id']}" in request.form:
+            if request.form.get(f"remove_{anime['id']}"):
+                database.remove_from_list(session["user_id"], anime["id"])
+                continue
+        if f"rate_{anime['id']}" in request.form:
+            new_rating = request.form.get(f"rate_{anime['id']}")
+            new_rating = None if new_rating == "None" else int(new_rating)
+            if new_rating != anime["rating"]:
+                database.set_score(session["user_id"], anime["id"], new_rating)
+
+    return list_get()
+
+
+# /animes
+@app.route("/animes", methods=["GET"])
+def animes_get() -> str:
     if "user_id" in session:
         list = database.get_list_ids(session["user_id"])
     else:
         list = []
 
-    # Anime is added to list
-    if request.method == "POST":
-        if "user_id" in session:
-            database.add_to_list(
-                session["user_id"], int(request.form["anime_id"])
-            )
-            list.append(int(request.form["anime_id"]))
-
-    # Current page
-    page = 0
     query = request.args["query"] if "query" in request.args else ""
+    page = 0
     if "page" in request.args and request.args["page"].isdigit():
         page = int(request.args["page"])
 
@@ -94,12 +92,8 @@ def animes() -> str:
     animes = database.get_animes(page, query)
 
     # Base url and current url
-    base_url = "/animes?"
-    if query:
-        base_url += f"query={query}&"
-    current_url = base_url
-    if page > 0:
-        current_url += f"page={page}"
+    base_url = "/animes?" if not query else f"/animes?query={query}&"
+    current_url = base_url if page == 0 else f"{base_url}page={page}"
 
     return render_template(
         "animes.html",
@@ -112,57 +106,72 @@ def animes() -> str:
     )
 
 
-@app.route("/anime/<int:anime_id>", methods=["GET", "POST"])
-def anime(anime_id) -> str:
+@app.route("/animes", methods=["POST"])
+def animes_post() -> str:
+    # Anime is added to list
+    if "user_id" in session:
+        database.add_to_list(session["user_id"], int(request.form["anime_id"]))
+    return animes_get()
+
+
+# /anime/id
+@app.route("/anime/<int:anime_id>", methods=["GET"])
+def anime_get(anime_id) -> str:
+
     # Check if anime id is valid
     anime = database.get_anime(anime_id)
     if not anime:
         return render_template("anime.html", anime=anime)
 
+    user_data = {"in_list": False, "rating": None}
     if "user_id" in session:
-        user_data = database.get_user_anime_data(session["user_id"], anime_id)
-        if user_data is None:
-            user_data = {"in_list": False, "rating": None}
-    else:
-        user_data = {"in_list": False}
-
-    # Anime is added to list or list data is edited
-    if request.method == "POST":
-        if "user_id" in session:
-            if request.form["submit"] == "Add to list":
-                # Added to list
-                database.add_to_list(session["user_id"], anime_id)
-                user_data = database.get_user_anime_data(
-                    session["user_id"], anime_id
-                )
-            if request.form["submit"] == "Remove from list":
-                # Removed from list
-                database.remove_from_list(session["user_id"], anime_id)
-                user_data = {"in_list": False, "rating": None}
-                anime = database.get_anime(anime_id)
-            else:
-                # Times watched change
-                if "times_watched" in request.form:
-                    new_watched = int(request.form.get("times_watched"))
-                    if new_watched != user_data["times_watched"]:
-                        user_data["times_watched"] = new_watched
-                        database.set_times_watched(
-                            session["user_id"], anime["id"], new_watched
-                        )
-
-                # Rating change
-                new_rating = request.form.get("rating")
-                new_rating = None if new_rating == "None" else int(new_rating)
-                if new_rating != user_data["rating"]:
-                    database.set_score(
-                        session["user_id"], anime["id"], new_rating
-                    )
-                    user_data["rating"] = new_rating
-                    anime = database.get_anime(anime_id)
+        new_data = database.get_user_anime_data(session["user_id"], anime_id)
+        user_data = new_data if new_data else user_data  # new_data can be None
 
     return render_template("anime.html", anime=anime, user_data=user_data)
 
 
+@app.route("/anime/<int:anime_id>", methods=["POST"])
+def anime_post(anime_id) -> str:
+
+    # Check if anime id is valid and that user is logged in
+    anime = database.get_anime(anime_id)
+    if not anime or "user_id" not in session:
+        return anime_get()
+
+    # Get user data
+    user_data = database.get_user_anime_data(session["user_id"], anime_id)
+    if user_data is None:
+        user_data = {"in_list": False, "rating": None}
+
+    # Anime is removed from list
+    if request.form["submit"] == "Remove from list":
+        database.remove_from_list(session["user_id"], anime_id)
+        return anime_get()
+
+    # Anime is added to list
+    if request.form["submit"] == "Add to list":
+        database.add_to_list(session["user_id"], anime_id)
+        user_data = database.get_user_anime_data(session["user_id"], anime_id)
+
+    # Times watched is changed
+    if "times_watched" in request.form:
+        new_watched = int(request.form.get("times_watched"))
+        if new_watched != user_data["times_watched"]:
+            database.set_times_watched(
+                session["user_id"], anime["id"], new_watched
+            )
+
+    # Rating is changed
+    new_rating = request.form.get("rating")
+    new_rating = None if new_rating == "None" else int(new_rating)
+    if new_rating != user_data["rating"]:
+        database.set_score(session["user_id"], anime["id"], new_rating)
+
+    return anime_get()
+
+
+# /login
 @app.route("/login", methods=["GET", "POST"])
 def login() -> str | Response:
     error = ""
@@ -182,6 +191,7 @@ def login() -> str | Response:
     return render_template("login.html", error=error, username=username, password=password)
 
 
+# /register
 @app.route("/register", methods=["GET", "POST"])
 def register() -> str | Response:
     error = ""
@@ -209,6 +219,7 @@ def register() -> str | Response:
     )
 
 
+# /logout
 @app.route("/logout")
 def logout() -> Response:
     if "username" in session:
