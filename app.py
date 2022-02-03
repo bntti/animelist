@@ -137,7 +137,7 @@ def anime_post(anime_id) -> str:
     # Check if anime id is valid and that user is logged in
     anime = database.get_anime(anime_id)
     if not anime or "user_id" not in session:
-        return anime_get()
+        return anime_get(anime_id)
 
     # Get user data
     user_data = database.get_user_anime_data(session["user_id"], anime_id)
@@ -147,7 +147,7 @@ def anime_post(anime_id) -> str:
     # Anime is removed from list
     if request.form["submit"] == "Remove from list":
         database.remove_from_list(session["user_id"], anime_id)
-        return anime_get()
+        return anime_get(anime_id)
 
     # Anime is added to list
     if request.form["submit"] == "Add to list":
@@ -168,7 +168,7 @@ def anime_post(anime_id) -> str:
     if new_score != user_data["score"]:
         database.set_score(session["user_id"], anime["id"], new_score)
 
-    return anime_get()
+    return anime_get(anime_id)
 
 
 # /login
