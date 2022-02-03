@@ -17,7 +17,7 @@
 
     <!-- Score selection -->
     Score:
-    <select name="{{anime.id}}">
+    <select name="rate_{{anime.id}}">
         <option value="None" {% if not anime.rating %} selected {% endif %}></option>
         <option value="10" {% if anime.rating==10 %} selected {% endif %}>10 Masterpiece</option>
         <option value="9" {% if anime.rating==9 %} selected {% endif %}>9 Great</option>
