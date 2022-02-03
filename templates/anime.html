@@ -15,24 +15,24 @@
 <p>Episodes: {{anime.episodes}}</p>
 {% endif %}
 
-{% if anime.rating %}<p>Rating: {{anime.rating}}</p>{% endif %}
+{% if anime.score %}<p>Score: {{anime.score}}</p>{% endif %}
 
 <!-- List data-->
 {% if session.user_id %}
 <form method="POST">
     Score:
-    <select name="rating">
-        <option value="None" {% if not user_data.rating %} selected {% endif %}></option>
-        <option value="10" {% if user_data.rating==10 %} selected {% endif %}>10 Masterpiece</option>
-        <option value="9" {% if user_data.rating==9 %} selected {% endif %}>9 Great</option>
-        <option value="8" {% if user_data.rating==8 %} selected {% endif %}>8 Very good</option>
-        <option value="7" {% if user_data.rating==7 %} selected {% endif %}>7 Good</option>
-        <option value="6" {% if user_data.rating==6 %} selected {% endif %}>6 Fine</option>
-        <option value="5" {% if user_data.rating==5 %} selected {% endif %}>5 Average</option>
-        <option value="4" {% if user_data.rating==4 %} selected {% endif %}>4 Bad</option>
-        <option value="3" {% if user_data.rating==3 %} selected {% endif %}>3 Very bad</option>
-        <option value="2" {% if user_data.rating==2 %} selected {% endif %}>2 Horrible</option>
-        <option value="1" {% if user_data.rating==1 %} selected {% endif %}>1 Appaling</option>
+    <select name="score">
+        <option value="None" {% if not user_data.score %} selected {% endif %}></option>
+        <option value="10" {% if user_data.score==10 %} selected {% endif %}>10 Masterpiece</option>
+        <option value="9" {% if user_data.score==9 %} selected {% endif %}>9 Great</option>
+        <option value="8" {% if user_data.score==8 %} selected {% endif %}>8 Very good</option>
+        <option value="7" {% if user_data.score==7 %} selected {% endif %}>7 Good</option>
+        <option value="6" {% if user_data.score==6 %} selected {% endif %}>6 Fine</option>
+        <option value="5" {% if user_data.score==5 %} selected {% endif %}>5 Average</option>
+        <option value="4" {% if user_data.score==4 %} selected {% endif %}>4 Bad</option>
+        <option value="3" {% if user_data.score==3 %} selected {% endif %}>3 Very bad</option>
+        <option value="2" {% if user_data.score==2 %} selected {% endif %}>2 Horrible</option>
+        <option value="1" {% if user_data.score==1 %} selected {% endif %}>1 Appaling</option>
     </select>
     <br />
 

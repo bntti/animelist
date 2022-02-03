@@ -41,8 +41,8 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
 - Accounts
 - Listing all animes and sorting them
 - Searching animes
-- Anime user ratings
-- Adding animes to personal anime list and rating them
+- Anime user scores
+- Adding animes to personal anime list and score them
 - Editing personal anime list
 
 ### Features that will be added if I have enough time

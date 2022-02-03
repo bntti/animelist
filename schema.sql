@@ -28,7 +28,7 @@ CREATE TABLE list (
     user_id INT REFERENCES users NOT NULL,
     anime_id INT REFERENCES animes NOT NULL,
     episodes INT NOT NULL DEFAULT 0,
-    rating INT DEFAULT NULL,
+    score INT DEFAULT NULL,
     status TEXT NOT NULL DEFAULT 'Watching',
     times_watched INT NOT NULL DEFAULT 0,
     UNIQUE (user_id, anime_id)

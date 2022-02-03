@@ -48,7 +48,7 @@ def list_post() -> str | Response:
                 anime = {
                     "id": anime_data.find("./series_animedb_id").text,
                     "episodes": int(anime_data.find("./my_watched_episodes").text),
-                    "rating": anime_data.find("./my_score").text,
+                    "score": anime_data.find("./my_score").text,
                     "status": anime_data.find("./my_status").text,
                     "times_watched": int(anime_data.find("./my_times_watched").text)
                 }
@@ -64,10 +64,10 @@ def list_post() -> str | Response:
                 database.remove_from_list(session["user_id"], anime["id"])
                 continue
         if f"rate_{anime['id']}" in request.form:
-            new_rating = request.form.get(f"rate_{anime['id']}")
-            new_rating = None if new_rating == "None" else int(new_rating)
-            if new_rating != anime["rating"]:
-                database.set_score(session["user_id"], anime["id"], new_rating)
+            new_score = request.form.get(f"rate_{anime['id']}")
+            new_score = None if new_score == "None" else int(new_score)
+            if new_score != anime["score"]:
+                database.set_score(session["user_id"], anime["id"], new_score)
 
     return list_get()
 
@@ -123,7 +123,7 @@ def anime_get(anime_id) -> str:
     if not anime:
         return render_template("anime.html", anime=anime)
 
-    user_data = {"in_list": False, "rating": None}
+    user_data = {"in_list": False, "score": None}
     if "user_id" in session:
         new_data = database.get_user_anime_data(session["user_id"], anime_id)
         user_data = new_data if new_data else user_data  # new_data can be None
@@ -142,7 +142,7 @@ def anime_post(anime_id) -> str:
     # Get user data
     user_data = database.get_user_anime_data(session["user_id"], anime_id)
     if user_data is None:
-        user_data = {"in_list": False, "rating": None}
+        user_data = {"in_list": False, "score": None}
 
     # Anime is removed from list
     if request.form["submit"] == "Remove from list":
@@ -162,11 +162,11 @@ def anime_post(anime_id) -> str:
                 session["user_id"], anime["id"], new_watched
             )
 
-    # Rating is changed
-    new_rating = request.form.get("rating")
-    new_rating = None if new_rating == "None" else int(new_rating)
-    if new_rating != user_data["rating"]:
-        database.set_score(session["user_id"], anime["id"], new_rating)
+    # Score is changed
+    new_score = request.form.get("score")
+    new_score = None if new_score == "None" else int(new_score)
+    if new_score != user_data["score"]:
+        database.set_score(session["user_id"], anime["id"], new_score)
 
     return anime_get()
 

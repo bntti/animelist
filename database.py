@@ -62,7 +62,7 @@ class DB:
         return self.database.session.execute(sql, anime).fetchone()[0]
 
     def get_anime(self, anime_id: int) -> dict | None:
-        sql = "SELECT a.id, a.title, a.episodes, ROUND(AVG(l.rating), 2), a.picture " \
+        sql = "SELECT a.id, a.title, a.episodes, ROUND(AVG(l.score), 2), a.picture " \
               "FROM animes a LEFT JOIN list l ON l.anime_id = a.id WHERE a.id = :id GROUP BY a.id"
         result = self.database.session.execute(sql, {"id": anime_id})
         row = result.fetchone()
@@ -72,24 +72,24 @@ class DB:
             "id": row[0],
             "title": row[1],
             "episodes": row[2],
-            "rating": row[3],
+            "score": row[3],
             "picture": row[4]
         }
 
     def get_animes(self, page: int, query: str) -> list:
         if not query:
-            sql = "SELECT a.id, a.title, a.thumbnail, ROUND(AVG(l.rating), 2) FROM animes a " \
+            sql = "SELECT a.id, a.title, a.thumbnail, ROUND(AVG(l.score), 2) FROM animes a " \
                   "LEFT JOIN list l ON l.anime_id = a.id WHERE NOT a.hidden " \
                   "GROUP BY a.id " \
-                  "ORDER BY COALESCE(AVG(l.rating), 0) DESC, COUNT(l.id) DESC, a.title " \
+                  "ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.id) DESC, a.title " \
                   "LIMIT 50 OFFSET :offset"
         else:
-            sql = "SELECT a.id, a.title, a.thumbnail, ROUND(AVG(l.rating), 2) "\
+            sql = "SELECT a.id, a.title, a.thumbnail, ROUND(AVG(l.score), 2) "\
                   "FROM synonyms s, animes a LEFT JOIN list l ON l.anime_id = a.id " \
                   "WHERE NOT a.hidden AND a.id = s.anime_id AND " \
                   "(a.title ILIKE :query OR s.synonym ILIKE :query) " \
                   "GROUP BY a.id " \
-                  "ORDER BY COALESCE(AVG(l.rating), 0) DESC, COUNT(l.id) DESC, a.title " \
+                  "ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.id) DESC, a.title " \
                   "LIMIT 50 OFFSET :offset"
         result = self.database.session.execute(
             sql, {"offset": page, "query": f"%{query}%"}
@@ -99,7 +99,7 @@ class DB:
                 "id": row[0],
                 "title": row[1],
                 "thumbnail": row[2],
-                "rating": row[3]
+                "score": row[3]
                 } for row in result.fetchall()]
 
     # Tags table
@@ -142,8 +142,8 @@ class DB:
         anime.update({"user_id": user_id, "anime_id": anime_id})
 
         try:
-            sql = "INSERT INTO list (user_id, anime_id, episodes, rating, status, times_watched) " \
-                  "VALUES (:user_id, :anime_id, :episodes, :rating, :status, :times_watched)"
+            sql = "INSERT INTO list (user_id, anime_id, episodes, score, status, times_watched) " \
+                  "VALUES (:user_id, :anime_id, :episodes, :score, :status, :times_watched)"
             self.database.session.execute(sql, anime)
             self.database.session.commit()
         except:
@@ -157,11 +157,11 @@ class DB:
         )
         self.database.session.commit()
 
-    def set_score(self, user_id: int, anime_id: int, rating: int | None) -> None:
-        sql = "UPDATE list SET rating=:rating " \
+    def set_score(self, user_id: int, anime_id: int, score: int | None) -> None:
+        sql = "UPDATE list SET score=:score " \
               "WHERE user_id = :user_id AND anime_id = :anime_id"
         self.database.session.execute(
-            sql, {"user_id": user_id, "anime_id": anime_id, "rating": rating}
+            sql, {"user_id": user_id, "anime_id": anime_id, "score": score}
         )
         self.database.session.commit()
 
@@ -179,14 +179,14 @@ class DB:
         self.database.session.commit()
 
     def get_user_anime_data(self, user_id: int, anime_id: int) -> float | None:
-        sql = "SELECT rating, episodes, times_watched FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
+        sql = "SELECT score, episodes, times_watched FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
         result = self.database.session.execute(
             sql, {"user_id": user_id, "anime_id": anime_id}
         ).fetchone()
         if not result:
             return None
         return {
-            "rating": result[0],
+            "score": result[0],
             "episodes": result[1],
             "times_watched": result[2],
             "in_list": True
@@ -198,7 +198,7 @@ class DB:
         return [row[0] for row in result.fetchall()]
 
     def get_list(self, user_id: int, ) -> list:
-        sql = "SELECT a.id, a.title, a.episodes, a.thumbnail, l.episodes, l.rating, l.status " \
+        sql = "SELECT a.id, a.title, a.episodes, a.thumbnail, l.episodes, l.score, l.status " \
               "FROM list l, animes a WHERE l.anime_id = a.id AND l.user_id = :user_id "\
               "ORDER BY a.title"
         result = self.database.session.execute(sql, {"user_id": user_id})
@@ -209,6 +209,6 @@ class DB:
                 "episodes": row[2],
                 "thumbnail": row[3],
                 "watched_episodes": row[4],
-                "rating": row[5],
+                "score": row[5],
                 "status": row[6]
                 } for row in result.fetchall()]
