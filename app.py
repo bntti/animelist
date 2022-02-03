@@ -19,10 +19,10 @@ def index() -> str:
 
 @app.route("/list", methods=["GET", "POST"])
 def list() -> str:
-    if "user" not in session:
+    if "user_id" not in session:
         return redirect("/login")
 
-    list = database.get_list(session["user"]["id"])
+    list = database.get_list(session["user_id"])
     if request.method == "POST":
         if "mal_import" in request.files:
             file = request.files["mal_import"]
@@ -42,16 +42,14 @@ def list() -> str:
                     }
                     if anime["status"] == "Completed":
                         anime["times_watched"] += 1
-                    database.import_to_list(session["user"]["id"], anime)
+                    database.import_to_list(session["user_id"], anime)
 
         change = False
         for anime in list:
             if f"remove_{anime['id']}" in request.form:
                 if request.form.get(f"remove_{anime['id']}"):
                     change = True
-                    database.remove_from_list(
-                        session["user"]["id"], anime["id"]
-                    )
+                    database.remove_from_list(session["user_id"], anime["id"])
                     continue
             if str(anime["id"]) in request.form:
                 new_rating = request.form.get(str(anime["id"]))
@@ -59,30 +57,29 @@ def list() -> str:
                 if new_rating != anime["rating"]:
                     change = True
                     database.set_score(
-                        session["user"]["id"], anime["id"], new_rating
+                        session["user_id"], anime["id"], new_rating
                     )
 
             if change:
-                list = database.get_list(session["user"]["id"])
+                list = database.get_list(session["user_id"])
 
     return render_template("list.html", list=list)
 
 
 @app.route("/animes", methods=["GET", "POST"])
 def animes() -> str:
-    if "user" in session:
-        list = database.get_list_ids(session["user"]["id"])
+    if "user_id" in session:
+        list = database.get_list_ids(session["user_id"])
     else:
         list = []
 
     # Anime is added to list
     if request.method == "POST":
-        if session["user"]:
+        if "user_id" in session:
             database.add_to_list(
-                session["user"]["id"], int(request.form["anime_id"])
+                session["user_id"], int(request.form["anime_id"])
             )
-        if "user" in session:
-            list = database.get_list_ids(session["user"]["id"])
+            list.append(int(request.form["anime_id"]))
 
     # Current page
     page = 0
@@ -90,13 +87,11 @@ def animes() -> str:
     if "page" in request.args and request.args["page"].isdigit():
         page = int(request.args["page"])
 
-    # Anime Counts
     anime_count = database.anime_count(query)
-    animes = database.get_animes(page, query)
-
     page = max(0, min(anime_count - 50, page))
     prev_page = max(page - 50, 0)
     next_page = min(page + 50, max(0, anime_count - 50))
+    animes = database.get_animes(page, query)
 
     # Base url and current url
     base_url = "/animes?"
@@ -124,9 +119,8 @@ def anime(anime_id) -> str:
     if not anime:
         return render_template("anime.html", anime=anime)
 
-    if "user" in session:
-        user_data = database.get_user_anime_data(
-            session["user"]["id"], anime_id)
+    if "user_id" in session:
+        user_data = database.get_user_anime_data(session["user_id"], anime_id)
         if user_data is None:
             user_data = {"in_list": False, "rating": None}
     else:
@@ -134,16 +128,16 @@ def anime(anime_id) -> str:
 
     # Anime is added to list or list data is edited
     if request.method == "POST":
-        if session["user"]:
+        if "user_id" in session:
             if request.form["submit"] == "Add to list":
                 # Added to list
-                database.add_to_list(session["user"]["id"], anime_id)
+                database.add_to_list(session["user_id"], anime_id)
                 user_data = database.get_user_anime_data(
-                    session["user"]["id"], anime_id
+                    session["user_id"], anime_id
                 )
             if request.form["submit"] == "Remove from list":
                 # Removed from list
-                database.remove_from_list(session["user"]["id"], anime_id)
+                database.remove_from_list(session["user_id"], anime_id)
                 user_data = {"in_list": False, "rating": None}
                 anime = database.get_anime(anime_id)
             else:
@@ -153,7 +147,7 @@ def anime(anime_id) -> str:
                     if new_watched != user_data["times_watched"]:
                         user_data["times_watched"] = new_watched
                         database.set_times_watched(
-                            session["user"]["id"], anime["id"], new_watched
+                            session["user_id"], anime["id"], new_watched
                         )
 
                 # Rating change
@@ -161,7 +155,7 @@ def anime(anime_id) -> str:
                 new_rating = None if new_rating == "None" else int(new_rating)
                 if new_rating != user_data["rating"]:
                     database.set_score(
-                        session["user"]["id"], anime["id"], new_rating
+                        session["user_id"], anime["id"], new_rating
                     )
                     user_data["rating"] = new_rating
                     anime = database.get_anime(anime_id)
@@ -178,8 +172,8 @@ def login() -> str | Response:
         error = functions.login(database, username, password)
         if error == "OK":
             user_id = database.get_user_id(username)
-            session["user"] = {
-                "username": request.form["username"], "id": user_id}
+            session["username"] = username
+            session["user_id"] = user_id
             return redirect("/")
     else:
         username = ""
@@ -198,8 +192,8 @@ def register() -> str | Response:
         error = functions.register(database, username, password1, password2)
         if error == "OK":
             user_id = database.add_user(username, password1)
-            session["user"] = {
-                "username": request.form["username"], "id": user_id}
+            session["username"] = username
+            session["user_id"] = user_id
             return redirect("/")
     else:
         username = ""
@@ -217,6 +211,7 @@ def register() -> str | Response:
 
 @app.route("/logout")
 def logout() -> Response:
-    if "user" in session:
-        del session["user"]
+    if "username" in session:
+        del session["username"]
+        del session["user_id"]
     return redirect("/")

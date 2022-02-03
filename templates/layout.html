@@ -10,8 +10,8 @@
     <a href="/">Home</a>
     <a href="/animes">Animes</a>
 
-    {% if session.user %}
-    {{session.user.username}}
+    {% if session.username %}
+    {{session.username}}
     <a href="/list">List</a>
     <a href="/logout">Logout</a>
 
