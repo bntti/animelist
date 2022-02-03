@@ -20,7 +20,7 @@ print("Adding animes, tags, and synonyms to database")
 anime_count = len(data["data"])
 for i, anime_data in enumerate(data["data"]):
     if i % (anime_count // 10) == 0:
-        print(f"{100*i/anime_count:.0f}% done")
+        print(f"{100 * i / anime_count:.0f}% done")
 
     # Get MyAnimeList link from anime sources
     myanimelist_link = ""

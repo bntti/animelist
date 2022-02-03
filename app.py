@@ -8,7 +8,7 @@ import functions
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config['MAX_CONTENT_LENGTH'] = 1024**2
+app.config['MAX_CONTENT_LENGTH'] = 1024 ** 2
 database = DB(app)
 
 
@@ -117,7 +117,6 @@ def animes_post() -> str:
 # /anime/id
 @app.route("/anime/<int:anime_id>", methods=["GET"])
 def anime_get(anime_id) -> str:
-
     # Check if anime id is valid
     anime = database.get_anime(anime_id)
     if not anime:
@@ -133,7 +132,6 @@ def anime_get(anime_id) -> str:
 
 @app.route("/anime/<int:anime_id>", methods=["POST"])
 def anime_post(anime_id) -> str:
-
     # Check if anime id is valid and that user is logged in
     anime = database.get_anime(anime_id)
     if not anime or "user_id" not in session:

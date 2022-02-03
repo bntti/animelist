@@ -84,7 +84,7 @@ class DB:
                   "ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.id) DESC, a.title " \
                   "LIMIT 50 OFFSET :offset"
         else:
-            sql = "SELECT a.id, a.title, a.thumbnail, ROUND(AVG(l.score), 2) "\
+            sql = "SELECT a.id, a.title, a.thumbnail, ROUND(AVG(l.score), 2) " \
                   "FROM synonyms s, animes a LEFT JOIN list l ON l.anime_id = a.id " \
                   "WHERE NOT a.hidden AND a.id = s.anime_id AND " \
                   "(a.title ILIKE :query OR s.synonym ILIKE :query) " \
@@ -96,11 +96,11 @@ class DB:
         )
 
         return [{
-                "id": row[0],
-                "title": row[1],
-                "thumbnail": row[2],
-                "score": row[3]
-                } for row in result.fetchall()]
+            "id": row[0],
+            "title": row[1],
+            "thumbnail": row[2],
+            "score": row[3]
+        } for row in result.fetchall()]
 
     # Tags table
     def add_tag(self, anime_id: int, tag: str) -> None:
@@ -118,7 +118,7 @@ class DB:
     def add_to_list(self, user_id: int, anime_id: int) -> None:
         try:
             sql = "INSERT INTO list (user_id, anime_id) " \
-                "VALUES (:user_id, :anime_id)"
+                  "VALUES (:user_id, :anime_id)"
             self.database.session.execute(
                 sql, {"user_id": user_id, "anime_id": anime_id}
             )
@@ -158,7 +158,7 @@ class DB:
         self.database.session.commit()
 
     def set_score(self, user_id: int, anime_id: int, score: int | None) -> None:
-        sql = "UPDATE list SET score=:score " \
+        sql = "UPDATE list SET score = :score " \
               "WHERE user_id = :user_id AND anime_id = :anime_id"
         self.database.session.execute(
             sql, {"user_id": user_id, "anime_id": anime_id, "score": score}
@@ -166,7 +166,7 @@ class DB:
         self.database.session.commit()
 
     def set_times_watched(self, user_id: int, anime_id: int, times_watched: int) -> None:
-        sql = "UPDATE list SET times_watched=:times_watched " \
+        sql = "UPDATE list SET times_watched = :times_watched " \
               "WHERE user_id = :user_id AND anime_id = :anime_id"
         self.database.session.execute(
             sql,
@@ -178,7 +178,7 @@ class DB:
         )
         self.database.session.commit()
 
-    def get_user_anime_data(self, user_id: int, anime_id: int) -> float | None:
+    def get_user_anime_data(self, user_id: int, anime_id: int) -> dict | None:
         sql = "SELECT score, episodes, times_watched FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
         result = self.database.session.execute(
             sql, {"user_id": user_id, "anime_id": anime_id}
@@ -199,16 +199,16 @@ class DB:
 
     def get_list(self, user_id: int, ) -> list:
         sql = "SELECT a.id, a.title, a.episodes, a.thumbnail, l.episodes, l.score, l.status " \
-              "FROM list l, animes a WHERE l.anime_id = a.id AND l.user_id = :user_id "\
+              "FROM list l, animes a WHERE l.anime_id = a.id AND l.user_id = :user_id " \
               "ORDER BY a.title"
         result = self.database.session.execute(sql, {"user_id": user_id})
 
         return [{
-                "id": row[0],
-                "title": row[1],
-                "episodes": row[2],
-                "thumbnail": row[3],
-                "watched_episodes": row[4],
-                "score": row[5],
-                "status": row[6]
-                } for row in result.fetchall()]
+            "id": row[0],
+            "title": row[1],
+            "episodes": row[2],
+            "thumbnail": row[3],
+            "watched_episodes": row[4],
+            "score": row[5],
+            "status": row[6]
+        } for row in result.fetchall()]
