@@ -7,7 +7,10 @@ from password import generate_salt, hash_password, check_password
 
 class DB:
     def __init__(self, app: Flask) -> None:
-        app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
+        url = getenv("DATABASE_URL")
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        app.config["SQLALCHEMY_DATABASE_URI"] = url
         self.database = SQLAlchemy(app)
 
     def commit(self) -> None:
