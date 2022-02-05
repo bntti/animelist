@@ -22,6 +22,10 @@
     ```
     $ pip3 install -r requirements.txt
     ```
+    If installing requirements fails, try installing alternative requirements
+    ```
+    $ pip3 install -r requirements-alt.txt
+    ```
 5. Download 'anime-offline-database-minified.json' from [here](https://github.com/manami-project/anime-offline-database)
 6. Import 'anime-offline-database-minified.json'
    ```
