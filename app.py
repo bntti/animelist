@@ -2,6 +2,7 @@ from os import getenv
 from flask import Flask, Response
 from flask import render_template, request, session, redirect
 from defusedxml.ElementTree import fromstring
+from typing import Union
 from database import DB
 import functions
 
@@ -20,7 +21,7 @@ def index() -> str:
 
 # /list
 @app.route("/list", methods=["GET"])
-def list_get() -> str | Response:
+def list_get() -> Union[str, Response]:
     if "user_id" not in session:
         return redirect("/login")
 
@@ -29,7 +30,7 @@ def list_get() -> str | Response:
 
 
 @app.route("/list", methods=["POST"])
-def list_post() -> str | Response:
+def list_post() -> Union[str, Response]:
     if "user_id" not in session:
         return redirect("/login")
 
@@ -171,7 +172,7 @@ def anime_post(anime_id) -> str:
 
 # /login
 @app.route("/login", methods=["GET", "POST"])
-def login() -> str | Response:
+def login() -> Union[str, Response]:
     error = ""
     if request.method == "POST":
         username = request.form["username"]
@@ -191,7 +192,7 @@ def login() -> str | Response:
 
 # /register
 @app.route("/register", methods=["GET", "POST"])
-def register() -> str | Response:
+def register() -> Union[str, Response]:
     error = ""
     if request.method == "POST":
         username = request.form["username"]

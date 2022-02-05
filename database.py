@@ -1,6 +1,7 @@
 from os import getenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from typing import Optional
 from password import generate_salt, hash_password, check_password
 
 
@@ -61,7 +62,7 @@ class DB:
               "Returning id"
         return self.database.session.execute(sql, anime).fetchone()[0]
 
-    def get_anime(self, anime_id: int) -> dict | None:
+    def get_anime(self, anime_id: int) -> Optional[dict]:
         sql = "SELECT a.id, a.title, a.episodes, ROUND(AVG(l.score), 2), a.picture " \
               "FROM animes a LEFT JOIN list l ON l.anime_id = a.id WHERE a.id = :id GROUP BY a.id"
         result = self.database.session.execute(sql, {"id": anime_id})
@@ -157,7 +158,7 @@ class DB:
         )
         self.database.session.commit()
 
-    def set_score(self, user_id: int, anime_id: int, score: int | None) -> None:
+    def set_score(self, user_id: int, anime_id: int, score: Optional[int]) -> None:
         sql = "UPDATE list SET score = :score " \
               "WHERE user_id = :user_id AND anime_id = :anime_id"
         self.database.session.execute(
@@ -178,7 +179,7 @@ class DB:
         )
         self.database.session.commit()
 
-    def get_user_anime_data(self, user_id: int, anime_id: int) -> dict | None:
+    def get_user_anime_data(self, user_id: int, anime_id: int) -> Optional[dict]:
         sql = "SELECT score, episodes, times_watched FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
         result = self.database.session.execute(
             sql, {"user_id": user_id, "anime_id": anime_id}
