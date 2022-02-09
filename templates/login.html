@@ -4,9 +4,13 @@
 
 <h1>Log in</h1>
 
-<!-- Error message -->
-{% if error != "" %}
-<p>{{error}}</p>
+<!-- Error messages -->
+{% if errors %}
+<ul>
+  {% for error in errors %}
+  <li style="color: red;">{{error}}</li>
+  {% endfor %}
+</ul>
 {% endif %}
 
 <!-- Login form -->

@@ -174,12 +174,12 @@ def anime_post(anime_id) -> str:
 # /login
 @app.route("/login", methods=["GET", "POST"])
 def login() -> Union[str, Response]:
-    error = ""
+    errors = []
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        error = functions.login(database, username, password)
-        if error == "OK":
+        errors = functions.login(database, username, password)
+        if not errors:
             user_id = database.get_user_id(username)
             session["username"] = username
             session["user_id"] = user_id
@@ -188,19 +188,19 @@ def login() -> Union[str, Response]:
         username = ""
         password = ""
 
-    return render_template("login.html", error=error, username=username, password=password)
+    return render_template("login.html", errors=errors, username=username, password=password)
 
 
 # /register
 @app.route("/register", methods=["GET", "POST"])
 def register() -> Union[str, Response]:
-    error = ""
+    errors = []
     if request.method == "POST":
         username = request.form["username"]
         password1 = request.form["password1"]
         password2 = request.form["password2"]
-        error = functions.register(database, username, password1, password2)
-        if error == "OK":
+        errors = functions.register(database, username, password1, password2)
+        if not errors:
             user_id = database.add_user(username, password1)
             session["username"] = username
             session["user_id"] = user_id
@@ -212,7 +212,7 @@ def register() -> Union[str, Response]:
 
     return render_template(
         "register.html",
-        error=error,
+        errors=errors,
         username=username,
         password1=password1,
         password2=password2
