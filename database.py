@@ -79,9 +79,7 @@ class DB:
               "FROM animes a LEFT JOIN list l ON l.anime_id = a.id WHERE a.id = :id GROUP BY a.id"
         result = self.database.session.execute(sql, {"id": anime_id})
         row = result.fetchone()
-        if not row:
-            return None
-        return {
+        return None if not row else {
             "id": row[0],
             "title": row[1],
             "episodes": row[2],
@@ -151,14 +149,12 @@ class DB:
             return
 
         anime_id = result[0]
-
-        # Add user_id and anime_id to anime dict
-        anime.update({"user_id": user_id, "anime_id": anime_id})
+        data = {**anime, "user_id": user_id, "anime_id": anime_id}
 
         try:
             sql = "INSERT INTO list (user_id, anime_id, episodes, score, status, times_watched) " \
                   "VALUES (:user_id, :anime_id, :episodes, :score, :status, :times_watched)"
-            self.database.session.execute(sql, anime)
+            self.database.session.execute(sql, data)
             self.database.session.commit()
         except IntegrityError as error:
             # UNIQUE constraint fail
@@ -196,15 +192,13 @@ class DB:
     def get_user_anime_data(self, user_id: int, anime_id: int) -> Optional[dict]:
         sql = "SELECT score, episodes, times_watched FROM list " \
               "WHERE user_id = :user_id AND anime_id = :anime_id"
-        result = self.database.session.execute(
+        row = self.database.session.execute(
             sql, {"user_id": user_id, "anime_id": anime_id}
         ).fetchone()
-        if not result:
-            return None
-        return {
-            "score": result[0],
-            "episodes": result[1],
-            "times_watched": result[2],
+        return None if not row else {
+            "score": row[0],
+            "episodes": row[1],
+            "times_watched": row[2],
             "in_list": True
         }
 
