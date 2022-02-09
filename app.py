@@ -1,8 +1,9 @@
 from os import getenv
+from typing import Union
 from flask import Flask, Response
 from flask import render_template, request, session, redirect
 from defusedxml.ElementTree import fromstring
-from typing import Union
+from defusedxml.ElementTree import ParseError
 from database import DB
 import functions
 
@@ -25,8 +26,8 @@ def list_get() -> Union[str, Response]:
     if "user_id" not in session:
         return redirect("/login")
 
-    list = database.get_list(session["user_id"])
-    return render_template("list.html", list=list)
+    user_list = database.get_list(session["user_id"])
+    return render_template("list.html", user_list=user_list)
 
 
 @app.route("/list", methods=["POST"])
@@ -41,7 +42,7 @@ def list_post() -> Union[str, Response]:
         file = request.files["mal_import"]
         try:
             root = fromstring(file.read())
-        except:
+        except ParseError:
             return "<h1>Error parsing xml file</h1>", 415
 
         for anime_data in root:
@@ -77,9 +78,9 @@ def list_post() -> Union[str, Response]:
 @app.route("/animes", methods=["GET"])
 def animes_get() -> str:
     if "user_id" in session:
-        list = database.get_list_ids(session["user_id"])
+        list_ids = database.get_list_ids(session["user_id"])
     else:
-        list = []
+        list_ids = []
 
     query = request.args["query"] if "query" in request.args else ""
     page = 0
@@ -100,7 +101,7 @@ def animes_get() -> str:
         "animes.html",
         animes=animes,
         query=query,
-        list=list,
+        list_ids=list_ids,
         current_url=current_url,
         prev_url=f"{base_url}page={prev_page}",
         next_url=f"{base_url}page={next_page}"

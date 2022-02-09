@@ -23,7 +23,7 @@
 
 <!-- List status -->
 {% if session.user_id %}
-{% if anime.id not in list %}
+{% if anime.id not in list_ids %}
 <form style="float: right;" action="{{current_url}}" method="POST">
     <input type="hidden" value="{{anime.id}}" name="anime_id" />
     <button type="submit">Add to list</button>

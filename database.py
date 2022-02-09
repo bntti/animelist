@@ -1,7 +1,9 @@
 from os import getenv
+from typing import Optional
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from typing import Optional
+from sqlalchemy.exc import IntegrityError
+from psycopg2.errors import UniqueViolation
 from password import generate_salt, hash_password, check_password
 
 
@@ -127,8 +129,9 @@ class DB:
                 sql, {"user_id": user_id, "anime_id": anime_id}
             )
             self.database.session.commit()
-        except:
+        except IntegrityError as error:
             # UNIQUE constraint fail
+            assert isinstance(error.orig, UniqueViolation)
             self.database.session.rollback()
 
     def import_to_list(self, user_id, anime: dict):
@@ -150,8 +153,9 @@ class DB:
                   "VALUES (:user_id, :anime_id, :episodes, :score, :status, :times_watched)"
             self.database.session.execute(sql, anime)
             self.database.session.commit()
-        except:
+        except IntegrityError as error:
             # UNIQUE constraint fail
+            assert isinstance(error.orig, UniqueViolation)
             self.database.session.rollback()
 
     def remove_from_list(self, user_id: int, anime_id: int) -> None:
@@ -183,7 +187,8 @@ class DB:
         self.database.session.commit()
 
     def get_user_anime_data(self, user_id: int, anime_id: int) -> Optional[dict]:
-        sql = "SELECT score, episodes, times_watched FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
+        sql = "SELECT score, episodes, times_watched FROM list " \
+              "WHERE user_id = :user_id AND anime_id = :anime_id"
         result = self.database.session.execute(
             sql, {"user_id": user_id, "anime_id": anime_id}
         ).fetchone()

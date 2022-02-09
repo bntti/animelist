@@ -1,4 +1,5 @@
 import json
+import sys
 from flask import Flask
 from database import DB
 
@@ -10,7 +11,7 @@ try:
 except FileNotFoundError:
     print("Download 'anime-offline-database-minified.json' from here:")
     print("https://github.com/manami-project/anime-offline-database/")
-    exit(0)
+    sys.exit(0)
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -52,4 +53,4 @@ print("Committing changes")
 database.commit()
 
 print("Done!")
-exit(0)
+sys.exit(0)
