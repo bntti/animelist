@@ -43,7 +43,7 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
 5. Download 'anime-offline-database-minified.json' from [here](https://github.com/manami-project/anime-offline-database) and place the file at this projects root
 6. Initialize database
    ```
-   $ FLASK_APP=init_db.py flask run
+   $ INIT=True flask run
    ```
 ### Running project
 ```
