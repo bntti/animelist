@@ -15,6 +15,13 @@ class DB:
         app.config["SQLALCHEMY_DATABASE_URI"] = url
         self.database = SQLAlchemy(app)
 
+    def init_tables(self) -> None:
+        sql = "DROP TABLE IF EXISTS users, animes, tags, synonyms, list"
+        self.database.session.execute(sql)
+        with open("schema.sql", "r", encoding="utf-8") as file:
+            sql = ''.join(file.readlines())
+        self.database.session.execute(sql)
+
     def commit(self) -> None:
         self.database.session.commit()
 
