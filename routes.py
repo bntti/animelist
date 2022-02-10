@@ -109,7 +109,11 @@ def anime_get(anime_id) -> str:
         )
         user_data = new_data if new_data else user_data
 
-    return render_template("anime.html", anime=anime, user_data=user_data)
+    related_anime = relation_service.get_anime_related_anime(anime_id)
+
+    return render_template(
+        "anime.html", anime=anime, user_data=user_data, related_anime=related_anime
+    )
 
 
 @app.route("/anime/<int:anime_id>", methods=["POST"])
@@ -157,7 +161,7 @@ def anime_post(anime_id) -> str:
 def related_get() -> Union[str, Response]:
     if "user_id" not in session:
         return redirect("/login")
-    related_anime = relation_service.get_related_anime(session["user_id"])
+    related_anime = relation_service.get_user_related_anime(session["user_id"])
     return render_template("relations.html", related_anime=related_anime)
 
 

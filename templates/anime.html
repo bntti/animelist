@@ -50,6 +50,18 @@
 </form>
 {% endif %}
 
+
+{% if related_anime %}
+<h2>Related anime</h2>
+{% for anime in related_anime %}
+<hr />
+<img alt="Anime thumbnail" src="{{anime.thumbnail}}" width=50 height=70>
+<a href="/anime/{{anime.id}}">{{anime.title}}</a>
+{% if anime.score %}Score: {{anime.score}}{% endif %}
+{% endfor %}
+<hr />
+{% endif %}
+
 <br style="clear: left;" />
 
 <!-- No anime found -->
