@@ -18,7 +18,7 @@ def import_data():
     print("Initializing tables")
     database.init_tables()
 
-    print("Adding animes, tags, and synonyms to database")
+    print("Adding animes and synonyms to database")
     anime_count = len(data["data"])
     for i, anime_data in enumerate(data["data"]):
         if i % (anime_count // 10) == 0:
@@ -44,9 +44,7 @@ def import_data():
         }
         anime_id = anime_service.add_anime(anime)
 
-        # Add tags and synonyms
-        for tag in anime_data["tags"]:
-            database.add_tag(anime_id, tag)
+        # Add synonyms
         for synonym in anime_data["synonyms"]:
             database.add_synonym(anime_id, synonym)
 

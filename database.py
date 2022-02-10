@@ -17,15 +17,6 @@ def init_tables() -> None:
     database.session.execute(sql)
 
 
-def commit() -> None:
-    database.session.commit()
-
-
-def add_tag(anime_id: int, tag: str) -> None:
-    sql = "INSERT INTO tags (anime_id, tag) VALUES (:anime_id, :tag)"
-    database.session.execute(sql, {"anime_id": anime_id, "tag": tag})
-
-
 def add_synonym(anime_id: int, synonym: str) -> None:
     sql = "INSERT INTO synonyms (anime_id, synonym) VALUES (:anime_id, :synonym)"
     database.session.execute(

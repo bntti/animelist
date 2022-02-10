@@ -13,11 +13,6 @@ CREATE TABLE animes (
     thumbnail TEXT NOT NULL,
     hidden BOOLEAN NOT NULL
 );
-CREATE TABLE tags (
-    id SERIAL PRIMARY KEY,
-    anime_id INT REFERENCES animes NOT NULL,
-    tag TEXT NOT NULL
-);
 CREATE TABLE synonyms (
     id SERIAL PRIMARY KEY,
     anime_id INT REFERENCES animes NOT NULL,
