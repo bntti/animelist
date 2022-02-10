@@ -20,6 +20,12 @@ def add_anime(anime: dict) -> int:
     return database.session.execute(sql, anime).fetchone()[0]
 
 
+def get_anime_id(mal_link: str) -> Optional[int]:
+    sql = "SELECT id FROM animes WHERE link = :link"
+    row = database.session.execute(sql, {"link": mal_link}).fetchone()
+    return None if not row else row[0]
+
+
 def get_anime(anime_id: int) -> Optional[dict]:
     sql = "SELECT a.id, a.title, a.episodes, ROUND(AVG(l.score), 2), a.picture " \
           "FROM animes a LEFT JOIN list l ON l.anime_id = a.id WHERE a.id = :id GROUP BY a.id"

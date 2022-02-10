@@ -3,6 +3,7 @@ from flask import Response, render_template, request, session, redirect
 import user_service
 import list_service
 import anime_service
+import relation_service
 from app import app
 
 
@@ -149,6 +150,23 @@ def anime_post(anime_id) -> str:
         list_service.set_score(session["user_id"], anime["id"], new_score)
 
     return anime_get(anime_id)
+
+
+# /related
+@app.route("/related", methods=["GET"])
+def related_get() -> Union[str, Response]:
+    if "user_id" not in session:
+        return redirect("/login")
+    related_anime = relation_service.get_related_anime(session["user_id"])
+    return render_template("relations.html", related_anime=related_anime)
+
+
+@app.route("/related", methods=["POST"])
+def related_post() -> Union[str, Response]:
+    if "user_id" not in session:
+        return redirect("/login")
+    list_service.add_to_list(session["user_id"], int(request.form["anime_id"]))
+    return related_get()
 
 
 # /login

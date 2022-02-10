@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %}Related Anime{% endblock %}
+{% block content %}
+
+<h1>Related anime</h1>
+
+<!-- Related anime -->
+{% for anime in related_anime %}
+<hr />
+<img alt="Anime thumbnail" src="{{anime.thumbnail}}" width=50 height=70>
+<a href="/anime/{{anime.id}}">{{anime.title}}</a>
+{% if anime.score %}Score: {{anime.score}}{% endif %}
+
+<!-- Add to list button -->
+{% if session.user_id %}
+<form style="float: right;" action="{{current_url}}" method="POST">
+    <input type="hidden" value="{{anime.id}}" name="anime_id" />
+    <button type="submit">Add to list</button>
+</form>
+{% endif %}
+{% endfor %}
+
+<!-- No related anime found -->
+{% if related_anime | length == 0 %}
+<hr />
+<p><strong>No related anime found</strong></p>
+{% endif %}
+
+{% endblock %}

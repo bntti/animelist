@@ -8,7 +8,7 @@ CREATE TABLE animes (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     episodes INT NOT NULL,
-    link TEXT NOT NULL,
+    link TEXT UNIQUE NOT NULL,
     picture TEXT NOT NULL,
     thumbnail TEXT NOT NULL,
     hidden BOOLEAN NOT NULL
@@ -17,6 +17,11 @@ CREATE TABLE synonyms (
     id SERIAL PRIMARY KEY,
     anime_id INT REFERENCES animes NOT NULL,
     synonym TEXT NOT NULL
+);
+CREATE TABLE relations (
+    id SERIAL PRIMARY KEY,
+    anime_id INT REFERENCES animes NOT NULL,
+    related_id INT REFERENCES animes NOT NULL
 );
 CREATE TABLE list (
     id SERIAL PRIMARY KEY,
