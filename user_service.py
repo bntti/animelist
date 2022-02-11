@@ -5,27 +5,33 @@ from database import database
 
 
 def check_password(username: str, password: str) -> bool:
-    sql = "SELECT password FROM users WHERE username = LOWER(:username)"
+    sql = "SELECT password FROM users WHERE username = :username"
     result = database.session.execute(sql, {"username": username})
     password_hash = result.fetchone()[0]
     return check_password_hash(password_hash, password)
 
 
-def user_exists(username: str) -> bool:
-    sql = "SELECT COUNT(*) FROM users WHERE username = LOWER(:username)"
+def username_taken(username: str) -> bool:
+    sql = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(:username)"
+    result = database.session.execute(sql, {"username": username})
+    return result.fetchone()[0] > 0
+
+
+def username_exists(username: str) -> bool:
+    sql = "SELECT COUNT(*) FROM users WHERE username = :username"
     result = database.session.execute(sql, {"username": username})
     return result.fetchone()[0] > 0
 
 
 def get_user_id(username: str) -> int:
-    sql = "SELECT id FROM users WHERE username = LOWER(:username)"
+    sql = "SELECT id FROM users WHERE username = :username"
     result = database.session.execute(sql, {"username": username})
     return result.fetchone()[0]
 
 
 def add_user(username: str, password: str) -> int:
     password_hash = generate_password_hash(password)
-    sql = "INSERT INTO users (username, password) VALUES (LOWER(:username), :password) RETURNING id"
+    sql = "INSERT INTO users (username, password) VALUES (:username, :password) RETURNING id"
     result = database.session.execute(
         sql, {"username": username, "password": password_hash}
     )
@@ -40,7 +46,7 @@ def check_register(username: str, password1: str, password2: str) -> list:
         errors.append("Username can't be empty")
     elif len(username) > 64:
         errors.append("Username too long (max 64 characters)")
-    if user_exists(username):
+    if username_taken(username):
         errors.append("Username taken")
 
     allowed_characters = string.ascii_letters + string.digits + string.punctuation
@@ -70,7 +76,7 @@ def register(username: str, password1: str, password2: str) -> list:
 
 
 def login(username: str, password: str) -> bool:
-    if user_exists(username) and check_password(username, password):
+    if username_exists(username) and check_password(username, password):
         user_id = get_user_id(username)
         session["username"] = username
         session["user_id"] = user_id
