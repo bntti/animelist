@@ -1,7 +1,24 @@
 import string
-from flask import session
+from secrets import token_hex
+from flask import Response, session, abort
 from werkzeug.security import check_password_hash, generate_password_hash
 from database import database
+
+
+def logout() -> None:
+    session.pop("username", None)
+    session.pop("user_id", None)
+    session.pop("csrf_token", None)
+
+
+def check_user() -> None:
+    if "username" not in session or "user_id" not in session or "csrf_token" not in session:
+        abort(Response("You need to be loggen in to perform this action", 403))
+
+
+def check_csrf(csrf_token: str) -> None:
+    if session["csrf_token"] != csrf_token:
+        abort(403)
 
 
 def check_password(username: str, password: str) -> bool:
@@ -71,6 +88,7 @@ def register(username: str, password1: str, password2: str) -> list:
         user_id = add_user(username, password1)
         session["username"] = username
         session["user_id"] = user_id
+        session["csrf_token"] = token_hex(16)
         return []
     return errors
 
@@ -80,5 +98,6 @@ def login(username: str, password: str) -> bool:
         user_id = get_user_id(username)
         session["username"] = username
         session["user_id"] = user_id
+        session["csrf_token"] = token_hex(16)
         return True
     return False

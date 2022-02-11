@@ -35,6 +35,7 @@
         <option value="1" {% if user_data.score==1 %} selected {% endif %}>1 Appaling</option>
     </select>
     <br />
+    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
 
     {% if not user_data.in_list %}
     <input type="submit" name="submit" value="Add to list"></input>

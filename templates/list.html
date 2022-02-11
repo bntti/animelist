@@ -37,6 +37,7 @@
     {% endfor %}
 
     <hr />
+    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
     <input type="submit" value="Submit changes" />
 </form>
 
@@ -46,6 +47,7 @@
     <br />
     <input type="file" name="mal_import" accept=".xml">
     <br />
+    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
     <input type="submit" value="Submit file" />
 </form>
 

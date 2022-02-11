@@ -1,5 +1,5 @@
 from typing import Union
-from flask import Response, render_template, request, session, redirect
+from flask import Response, render_template, request, session, redirect, abort
 import user_service
 import list_service
 import anime_service
@@ -16,8 +16,7 @@ def index() -> str:
 # /list
 @app.route("/list", methods=["GET"])
 def list_get() -> Union[str, Response]:
-    if "user_id" not in session:
-        return redirect("/login")
+    user_service.check_user()
 
     list_data = list_service.get_list_data(session["user_id"])
     return render_template("list.html", list_data=list_data)
@@ -25,8 +24,8 @@ def list_get() -> Union[str, Response]:
 
 @app.route("/list", methods=["POST"])
 def list_post() -> Union[str, Response]:
-    if "user_id" not in session:
-        return redirect("/login")
+    user_service.check_user()
+    user_service.check_csrf(request.form["csrf_token"])
 
     list_data = list_service.get_list_data(session["user_id"])
 
@@ -35,7 +34,7 @@ def list_post() -> Union[str, Response]:
         file = request.files["mal_import"]
         if list_service.import_from_myanimelist(file):
             return list_get()
-        return "<h1>Error parsing xml file</h1>", 415
+        abort(Response("Error parsing XML file", 415))
 
     for anime in list_data:
         if f"remove_{anime['id']}" in request.form:
@@ -88,10 +87,9 @@ def animes_get() -> str:
 
 @app.route("/animes", methods=["POST"])
 def animes_post() -> str:
-    if "user_id" in session:
-        list_service.add_to_list(
-            session["user_id"], int(request.form["anime_id"])
-        )
+    user_service.check_user()
+    user_service.check_csrf(request.form["csrf_token"])
+    list_service.add_to_list(session["user_id"], int(request.form["anime_id"]))
     return animes_get()
 
 
@@ -118,12 +116,13 @@ def anime_get(anime_id) -> str:
 
 @app.route("/anime/<int:anime_id>", methods=["POST"])
 def anime_post(anime_id) -> str:
-    # Check if anime id is valid and that user is logged in
+    user_service.check_user()
+    user_service.check_csrf(request.form["csrf_token"])
+
     anime = anime_service.get_anime(anime_id)
-    if not anime or "user_id" not in session:
+    if not anime:
         return anime_get(anime_id)
 
-    # Get user data
     user_data = list_service.get_user_anime_data(session["user_id"], anime_id)
     user_data = user_data if user_data else {"in_list": False, "score": None}
 
@@ -159,16 +158,15 @@ def anime_post(anime_id) -> str:
 # /related
 @app.route("/related", methods=["GET"])
 def related_get() -> Union[str, Response]:
-    if "user_id" not in session:
-        return redirect("/login")
+    user_service.check_user()
     related_anime = relation_service.get_user_related_anime(session["user_id"])
     return render_template("relations.html", related_anime=related_anime)
 
 
 @app.route("/related", methods=["POST"])
 def related_post() -> Union[str, Response]:
-    if "user_id" not in session:
-        return redirect("/login")
+    user_service.check_user()
+    user_service.check_csrf(request.form["csrf_token"])
     list_service.add_to_list(session["user_id"], int(request.form["anime_id"]))
     return related_get()
 
@@ -216,7 +214,5 @@ def register() -> Union[str, Response]:
 # /logout
 @app.route("/logout")
 def logout() -> Response:
-    if "username" in session:
-        del session["username"]
-        del session["user_id"]
+    user_service.logout()
     return redirect("/")

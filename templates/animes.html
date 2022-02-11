@@ -26,6 +26,7 @@
 {% if anime.id not in list_ids %}
 <form style="float: right;" action="{{current_url}}" method="POST">
     <input type="hidden" value="{{anime.id}}" name="anime_id" />
+    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
     <button type="submit">Add to list</button>
 </form>
 {% else %}
