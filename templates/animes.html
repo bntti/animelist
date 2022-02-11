@@ -11,8 +11,8 @@
 </form>
 
 <!-- Previous and next page -->
-<a href="{{prev_url}}">Previous page</a>
-<a href="{{next_url}}">Next page</a>
+{% if show_prev %} <a href="{{prev_url}}">Previous page</a> {% endif %}
+{% if show_next %} <a href="{{next_url}}">Next page</a> {% endif %}
 
 <!-- Animes -->
 {% for anime in animes %}
@@ -43,8 +43,10 @@
 
 
 <!-- Previous and next page -->
+{% if show_prev or show_next %}
 <hr />
-<a href="{{prev_url}}">Previous page</a>
-<a href="{{next_url}}">Next page</a>
+{% endif %}
+{% if show_prev %} <a href="{{prev_url}}">Previous page</a> {% endif %}
+{% if show_next %} <a href="{{next_url}}">Next page</a> {% endif %}
 
 {% endblock %}

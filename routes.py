@@ -81,7 +81,9 @@ def animes_get() -> str:
         list_ids=list_ids,
         current_url=current_url,
         prev_url=f"{base_url}page={prev_page}",
-        next_url=f"{base_url}page={next_page}"
+        next_url=f"{base_url}page={next_page}",
+        show_prev=prev_page != page,
+        show_next=next_page != page
     )
 
 
