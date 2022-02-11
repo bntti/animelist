@@ -6,9 +6,9 @@ def anime_count(query: str) -> int:
     if not query:
         sql = "SELECT COUNT(*) FROM animes WHERE NOT hidden"
     else:
-        sql = "SELECT COUNT(*) FROM animes a, synonyms s " \
+        sql = "SELECT COUNT(DISTINCT a.id) FROM animes a, synonyms s " \
               "WHERE NOT a.hidden AND a.id = s.anime_id AND " \
-              "(a.title ILIKE :query OR s.synonym ILIKE :query) GROUP BY a.id"
+              "(a.title ILIKE :query OR s.synonym ILIKE :query)"
     row = database.session.execute(sql, {"query": f"%{query}%"}).fetchone()
     return row[0] if row else 0
 
