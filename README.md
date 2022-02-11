@@ -23,16 +23,15 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
 1. Create a `.env` file at project root and add the following lines to it:
     ```
     SECRET_KEY=<secret_key>
-    PEPPER=<pepper>
     DATABASE_URL=<postgresql:///user>
     ```
-    and replace with corresponding values. SECRET_KEY and PEPPER should be long random strings.
-3. Start virtual environment
+    and replace with corresponding values. SECRET_KEY should be a long random string
+2. Create and start virtual environment
    ```
     $ python3 -m venv venv
     $ source venv/bin/activate
     ```
-4. Install dependencies
+3. Install dependencies
     ```
     $ pip3 install -r requirements.txt
     ```
@@ -40,8 +39,8 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
     ```
     $ pip3 install -r requirements-alt.txt
     ```
-5. Download 'anime-offline-database-minified.json' from [here](https://github.com/manami-project/anime-offline-database) and place the file at this projects root
-6. Initialize database
+4. Download 'anime-offline-database-minified.json' from [here](https://github.com/manami-project/anime-offline-database) and place the file at this projects root
+5. Initialize database
    ```
    $ INIT=True flask run
    ```

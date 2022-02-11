@@ -5,12 +5,8 @@
 <h1>Log in</h1>
 
 <!-- Error messages -->
-{% if errors %}
-<ul>
-  {% for error in errors %}
-  <li style="color: red;">{{error}}</li>
-  {% endfor %}
-</ul>
+{% if error %}
+<p style="color: red;">Wrong username or password</p>
 {% endif %}
 
 <!-- Login form -->

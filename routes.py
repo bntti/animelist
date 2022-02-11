@@ -176,20 +176,17 @@ def related_post() -> Union[str, Response]:
 # /login
 @app.route("/login", methods=["GET", "POST"])
 def login() -> Union[str, Response]:
-    errors = []
+    error = False
     username = ""
     password = ""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        errors = user_service.check_login(username, password)
-        if not errors:
-            user_id = user_service.get_user_id(username)
-            session["username"] = username
-            session["user_id"] = user_id
+        error = not user_service.login(username, password)
+        if not error:
             return redirect("/")
 
-    return render_template("login.html", errors=errors, username=username, password=password)
+    return render_template("login.html", error=error, username=username, password=password)
 
 
 # /register
@@ -203,11 +200,8 @@ def register() -> Union[str, Response]:
         username = request.form["username"]
         password1 = request.form["password1"]
         password2 = request.form["password2"]
-        errors = user_service.check_register(username, password1, password2)
+        errors = user_service.register(username, password1, password2)
         if not errors:
-            user_id = user_service.add_user(username, password1)
-            session["username"] = username
-            session["user_id"] = user_id
             return redirect("/")
 
     return render_template(
