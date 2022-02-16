@@ -1,52 +1,100 @@
 {% extends "layout.html" %}
 {% block title %}Animes{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/animes.css">
+{% endblock %}
+
 {% block content %}
 
 <h1>Animes</h1>
 
 <!-- Search -->
 <form>
-    Search: <input type="text" value="{{query}}" name="query" />
-    <input type="submit" value="Submit" />
+    <input type="text" value="{{query}}" name="query" placeholder="Search" />
+    <input type="submit" value="Search" />
 </form>
 
-<!-- Previous and next page -->
-{% if show_prev %} <a href="{{prev_url}}">Previous page</a> {% endif %}
-{% if show_next %} <a href="{{next_url}}">Next page</a> {% endif %}
+<!-- Previous and next page buttons -->
+{% if animes %}
+<div class="pages">
+    {% if show_prev %}
+    <a class="enabled" href="{{prev_url}}">Previous page</a>
+    {% else %}
+    <a class="disabled">Previous page</a>
+    {% endif %}
+
+    {% if show_next %}
+    <a class="enabled" href="{{next_url}}">Next page</a>
+    {% else %}
+    <a class="disabled">Next page</a>
+    {% endif %}
+</div>
+{% endif %}
 
 <!-- Animes -->
-{% for anime in animes %}
-<hr />
-<img alt="Anime thumbnail" src="{{anime.thumbnail}}" width=50 height=70>
-<a href="/anime/{{anime.id}}">{{anime.title}}</a>
-{% if anime.score %}Score: {{anime.score}}{% endif %}
-
-<!-- List status -->
-{% if session.user_id %}
-{% if anime.id not in list_ids %}
-<form style="float: right;" action="{{current_url}}" method="POST">
-    <input type="hidden" value="{{anime.id}}" name="anime_id" />
-    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
-    <button type="submit">Add to list</button>
-</form>
+{% if animes %}
+<table>
+    <tr>
+        <th class="a"></th>
+        <th class="b">Title</th>
+        <th class="c">Score</th>
+        <th class="d">Status</th>
+    </tr>
+    {% for anime in animes %}
+    <tr>
+        <td class="a">
+            {% if anime.thumbnail %}
+            <img src="{{anime.thumbnail}}" width=50 height=70>
+            {% else %}
+            <img src="https://cdn.myanimelist.net/images/qm_50.gif" width=50 height=70>
+            {% endif %}
+        </td>
+        <td class="b">
+            <div>
+                <a href="/anime/{{anime.id}}">{{anime.title}}</a>
+                <br>
+                Episodes: {{anime.episodes}}
+            </div>
+        </td>
+        <td class="c">
+            {% if anime.score %}{{anime.score}}{% endif %}
+        </td>
+        <td class="d">
+            <!-- List status -->
+            {% if session.user_id %}
+            {% if anime.id not in list_ids %}
+            <form action="{{current_url}}" method="POST">
+                <input type="hidden" value="{{anime.id}}" name="anime_id" />
+                <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
+                <input type="submit" value="Add to list">
+            </form>
+            {% else %}
+            In list
+            {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
 {% else %}
-<p style="float: right;">In list </p>
-{% endif %}
-{% endif %}
-{% endfor %}
-
-<!-- No animes found -->
-{% if animes | length == 0 %}
-<hr />
 <p><strong>No animes found</strong></p>
 {% endif %}
 
+<!-- Previous and next page buttons -->
+{% if animes %}
+<div class="pages">
+    {% if show_prev %}
+    <a class="enabled" href="{{prev_url}}">Previous page</a>
+    {% else %}
+    <a class="disabled">Previous page</a>
+    {% endif %}
 
-<!-- Previous and next page -->
-{% if show_prev or show_next %}
-<hr />
+    {% if show_next %}
+    <a class="enabled" href="{{next_url}}">Next page</a>
+    {% else %}
+    <a class="disabled">Next page</a>
+    {% endif %}
+</div>
 {% endif %}
-{% if show_prev %} <a href="{{prev_url}}">Previous page</a> {% endif %}
-{% if show_next %} <a href="{{next_url}}">Next page</a> {% endif %}
 
 {% endblock %}

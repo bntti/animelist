@@ -1,0 +1,11 @@
+input[type="text"] {
+  padding: 6px;
+}
+
+input[type="password"] {
+  padding: 6px;
+}
+
+.a {
+  width: 110px;
+}

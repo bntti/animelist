@@ -1,0 +1,29 @@
+table {
+  width: 100%;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr {
+  vertical-align: middle;
+}
+
+.a {
+  width: 0px;
+}
+
+.c {
+  text-align: center;
+  width: 70px;
+}
+
+.d {
+  text-align: center;
+  width: 160px;
+}
+
+.e {
+  width: 50px;
+}

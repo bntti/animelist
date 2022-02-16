@@ -173,6 +173,12 @@ def related_post() -> Union[str, Response]:
     return related_get()
 
 
+# /profile
+@app.route("/profile")
+def profile() -> str:
+    return render_template("profile.html")
+
+
 # /login
 @app.route("/login", methods=["GET", "POST"])
 def login() -> Union[str, Response]:

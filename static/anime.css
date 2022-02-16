@@ -1,0 +1,22 @@
+.grid-container {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 25% 73%;
+}
+
+table.relations {
+  width: 100%;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.a {
+  width: 0px;
+}
+
+.c {
+  text-align: center;
+  width: 60px;
+}

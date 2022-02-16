@@ -1,69 +1,113 @@
 {% extends "layout.html" %}
 {% block title %}{{anime.title}}{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/anime.css">
+{% endblock %}
+
 {% block content %}
 
 <!-- Anime -->
 {% if anime %}
-<p style="float: left;">
-    <img alt="Anime picture" src="{{anime.picture}}">
-</p>
-<h1>{{anime.title}}</h1>
+<div class="grid-container">
+    <div>
+        {% if anime.picture %}
+        <img src="{{anime.picture}}">
+        {% else %}
+        <img src="https://cdn.myanimelist.net/images/qm_50.gif">
+        {% endif %}
+    </div>
+    <div>
+        <h1>{{anime.title}}</h1>
 
-{% if session.user_id and user_data.in_list %}
-<p>Episodes: {{user_data.episodes}}/{{anime.episodes}}</p>
-{% else %}
-<p>Episodes: {{anime.episodes}}</p>
-{% endif %}
+        <table>
+            <tr>
+                <td>Episodes:</td>
+                {% if session.user_id and user_data.in_list %}
+                <td>{{user_data.episodes}} / {{anime.episodes}}</td>
+                {% else %}
+                <td>{{anime.episodes}}</td>
+                {% endif %}
+            </tr>
 
-{% if anime.score %}<p>Score: {{anime.score}}</p>{% endif %}
+            <tr>
+                <td>Score:</td>
+                {% if anime.score %}<td>{{anime.score}}</td>
+                {% else %}<td>N/A</td>
+                {% endif %}
+            </tr>
 
-<!-- List data-->
-{% if session.user_id %}
-<form method="POST">
-    Score:
-    <select name="score">
-        <option value="None" {% if not user_data.score %} selected {% endif %}></option>
-        <option value="10" {% if user_data.score==10 %} selected {% endif %}>10 Masterpiece</option>
-        <option value="9" {% if user_data.score==9 %} selected {% endif %}>9 Great</option>
-        <option value="8" {% if user_data.score==8 %} selected {% endif %}>8 Very good</option>
-        <option value="7" {% if user_data.score==7 %} selected {% endif %}>7 Good</option>
-        <option value="6" {% if user_data.score==6 %} selected {% endif %}>6 Fine</option>
-        <option value="5" {% if user_data.score==5 %} selected {% endif %}>5 Average</option>
-        <option value="4" {% if user_data.score==4 %} selected {% endif %}>4 Bad</option>
-        <option value="3" {% if user_data.score==3 %} selected {% endif %}>3 Very bad</option>
-        <option value="2" {% if user_data.score==2 %} selected {% endif %}>2 Horrible</option>
-        <option value="1" {% if user_data.score==1 %} selected {% endif %}>1 Appaling</option>
-    </select>
-    <br />
-    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
+            <!-- List data-->
+            {% if session.user_id %}
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
+                <tr>
+                    <td>Score:</td>
+                    <td>
+                        <select style="width:138px" name="score">
+                            <option value="None" {% if not user_data.score %} selected {% endif %}></option>
+                            <option value="10" {% if user_data.score==10 %} selected {% endif %}>10 Masterpiece</option>
+                            <option value="9" {% if user_data.score==9 %} selected {% endif %}>9 Great</option>
+                            <option value="8" {% if user_data.score==8 %} selected {% endif %}>8 Very good</option>
+                            <option value="7" {% if user_data.score==7 %} selected {% endif %}>7 Good</option>
+                            <option value="6" {% if user_data.score==6 %} selected {% endif %}>6 Fine</option>
+                            <option value="5" {% if user_data.score==5 %} selected {% endif %}>5 Average</option>
+                            <option value="4" {% if user_data.score==4 %} selected {% endif %}>4 Bad</option>
+                            <option value="3" {% if user_data.score==3 %} selected {% endif %}>3 Very bad</option>
+                            <option value="2" {% if user_data.score==2 %} selected {% endif %}>2 Horrible</option>
+                            <option value="1" {% if user_data.score==1 %} selected {% endif %}>1 Appaling</option>
+                        </select>
+                    </td>
+                </tr>
 
-    {% if not user_data.in_list %}
-    <input type="submit" name="submit" value="Add to list"></input>
+                {% if not user_data.in_list %}
+                <tr>
+                    <td><input type="submit" name="submit" value="Add to list"></input></td>
+                </tr>
 
-    {% else %}
-    Times watched: <input type="number" name="times_watched" value={{user_data.times_watched}}>
-    <br />
-    <input type="submit" name="submit" value="Submit changes" /></input>
-    <br />
-    <br />
-    <input type="submit" name="submit" value="Remove from list" /></input>
-    {% endif %}
-</form>
-{% endif %}
+                {% else %}
+                <tr>
+                    <td>Times watched:</td>
+                    <td>
+                        <input style="width:130px" type="number" name="times_watched" value={{user_data.times_watched}}>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="submit" name="submit" value="Submit changes" /></input></td>
+                    <td><input type="submit" name="submit" value="Remove from list" /></input></td>
+                </tr>
+                {% endif %}
+            </form>
+            {% endif %}
+        </table>
 
 
-{% if related_anime %}
-<h2>Related anime</h2>
-{% for anime in related_anime %}
-<hr />
-<img alt="Anime thumbnail" src="{{anime.thumbnail}}" width=50 height=70>
-<a href="/anime/{{anime.id}}">{{anime.title}}</a>
-{% if anime.score %}Score: {{anime.score}}{% endif %}
-{% endfor %}
-<hr />
-{% endif %}
+        {% if related_anime %}
+        <h2>Related anime</h2>
+        <table class="relations">
+            <tr>
+                <th class="a"></th>
+                <th class="b">Title</th>
+                <th class="c">Score</th>
+            </tr>
 
-<br style="clear: left;" />
+            {% for anime in related_anime %}
+            <tr>
+                <td class="a">
+                    <img alt="Anime thumbnail" src="{{anime.thumbnail}}" width=50 height=70>
+                </td>
+                <td class="b">
+                    <a href="/anime/{{anime.id}}">{{anime.title}}</a>
+                </td>
+                <td class="c">
+                    {% if anime.score %}{{anime.score}}{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+    </div>
+</div>
+
 
 <!-- No anime found -->
 {% else %}

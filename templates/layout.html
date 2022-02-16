@@ -3,32 +3,37 @@
 
 <head>
   <title>AnimeList - {% block title %}{% endblock %}</title>
+  {% block stylesheet %}{% endblock %}
+  <link rel="stylesheet" href="/static/layout.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
-  <header>
-    <a href="/">Home</a>
-    <a href="/animes">Animes</a>
+  <div>
+    <ul class="navbar">
+      <li><a href="/">Home</a></li>
+      <li><a href="/animes">Animes</a></li>
 
-    {% if session.username %}
-    {{session.username}}
-    <a href="/list">List</a>
-    <a href="/related">Related anime</a>
-    <a href="/logout">Logout</a>
+      {% if session.username %}
+      <li><a href="/list">List</a></li>
+      <li><a href="/related">Related anime</a></li>
+      <li style="float:right"><a href="/logout">Logout</a></li>
+      <li style="float:right"><a href="/profile">{{session.username}}</a></li>
 
-    {% else %}
-    <a href="/login">Log in</a>
-    <a href="/register">Register</a>
-    {% endif %}
-  </header>
+      {% else %}
+      <li style="float:right"><a href="/login">Log in</a></li>
+      <li style="float:right"><a href="/register">Register</a></li>
+      {% endif %}
+    </ul>
+  </div>
 
-  <hr />
-  {% block content %}{% endblock %}
-  <hr />
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
 
-  <footer>
+  <div class="footer">
     <a href="https://github.com/bntti/AnimeList" target="_blank">Source code</a>
-  </footer>
+  </div>
 </body>
 
 </html>

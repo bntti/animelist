@@ -1,25 +1,48 @@
 {% extends "layout.html" %}
 {% block title %}Related Anime{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/relations.css">
+{% endblock %}
+
 {% block content %}
 
 <h1>Related anime</h1>
 
 <!-- Related anime -->
-{% for anime in related_anime %}
-<hr />
-<img alt="Anime thumbnail" src="{{anime.thumbnail}}" width=50 height=70>
-<a href="/anime/{{anime.id}}">{{anime.title}}</a>
-{% if anime.score %}Score: {{anime.score}}{% endif %}
-
-<!-- Add to list button -->
-{% if session.user_id %}
-<form style="float: right;" action="{{current_url}}" method="POST">
-    <input type="hidden" value="{{anime.id}}" name="anime_id" />
-    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
-    <button type="submit">Add to list</button>
-</form>
-{% endif %}
-{% endfor %}
+<table>
+    <tr>
+        <th class="a"></th>
+        <th class="b">Title</th>
+        <th class="c">Score</th>
+        <th class="d">Status</th>
+    </tr>
+    {% for anime in related_anime %}
+    <tr>
+        <td class="a">
+            {% if anime.thumbnail %}
+            <img src="{{anime.thumbnail}}" width=50 height=70>
+            {% else %}
+            <img src="https://cdn.myanimelist.net/images/qm_50.gif" width=50 height=70>
+            {% endif %}
+        </td>
+        <td class="b">
+            <a href="/anime/{{anime.id}}">{{anime.title}}</a>
+            <br>
+            Episodes: {{anime.episodes}}
+        </td>
+        <td class="c">{% if anime.score %}{{anime.score}}{% endif %}</td>
+        <td class="d">
+            {% if session.user_id %}
+            <form action="{{current_url}}" method="POST">
+                <input type="hidden" value="{{anime.id}}" name="anime_id" />
+                <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
+                <button type="submit">Add to list</button>
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
 
 <!-- No related anime found -->
 {% if related_anime | length == 0 %}

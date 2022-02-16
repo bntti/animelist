@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 {% block title %}Register{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/register.css">
+{% endblock %}
+
 {% block content %}
 
 <h1>Register</h1>
@@ -15,15 +19,21 @@
 
 <!-- Register form -->
 <form action="/register" method="POST">
-  Username:
-  <input type="text" name="username" value="{{username}}" />
-  <br />
-  Password:
-  <input type="password" name="password1" value="{{password1}}" />
-  <br />
-  Repeat password:
-  <input type="password" name="password2" value="{{password2}}" />
-  <br />
+  <table>
+    <tr>
+      <td class="a"><label for="username">Username:</label></td>
+      <td><input id="username" type="text" name="username" value="{{username}}" placeholder="Username" /></td>
+    </tr>
+    <tr>
+      <td class="a"><label for="password1">Password:</label></td>
+      <td><input id="password1" type="password" name="password1" value="{{password1}}" placeholder="Password" /></td>
+    </tr>
+    <tr>
+      <td class="a"><label for="password2">Repeat password:</label></td>
+      <td><input id="password2" type="password" name="password2" value="{{password2}}" placeholder="Repeat password" />
+      </td>
+    </tr>
+  </table>
   <input type="submit" value="Submit" />
 </form>
 

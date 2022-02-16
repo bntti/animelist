@@ -77,7 +77,7 @@ def check_register(username: str, password1: str, password2: str) -> list:
     elif len(password1) > 64 or len(password2) > 64:
         errors.append("Password too long (max 64 characters)")
     if password1 != password2:
-        errors.append("Passwords do not mach")
+        errors.append("Passwords do not match")
 
     return errors
 

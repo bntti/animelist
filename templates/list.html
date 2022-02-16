@@ -1,50 +1,72 @@
 {% extends "layout.html" %}
 {% block title %}List{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/list.css">
+{% endblock %}
+
 {% block content %}
 
 <h1>List</h1>
-
-<!-- List -->
+{% if list_data | length > 0 %}
 <form method="POST">
     <input type="submit" value="Submit changes" />
 
-    {% for anime in list_data %}
-    <hr />
-    <!-- Anime information -->
-    <img alt="Anime thumbnail" src="{{anime.thumbnail}}" width=50 height=70>
-    <a href="/anime/{{anime.id}}">{{anime.title}}</a>
-    Watched: {{anime.watched_episodes}}/{{anime.episodes}}
+    <table>
+        <tr>
+            <th class="a"></th>
+            <th class="b">Title</th>
+            <th class="c">Progress</th>
+            <th class="d">Score</th>
+            <th class="e">Remove</th>
+        </tr>
+        {% for anime in list_data %}
+        <tr>
+            <td class="a">
+                {% if anime.thumbnail %}
+                <img src="{{anime.thumbnail}}" width=50 height=70>
+                {% else %}
+                <img src="https://cdn.myanimelist.net/images/qm_50.gif" width=50 height=70>
+                {% endif %}
+            </td>
+            <td class="b">
+                <a href="/anime/{{anime.id}}">{{anime.title}}</a>
+            </td>
+            <td class="c">{{anime.watched_episodes}} / {{anime.episodes}}</td>
+            <td class="d">
+                <select name="rate_{{anime.id}}">
+                    <option value="None" {% if not anime.score %} selected {% endif %}></option>
+                    <option value="10" {% if anime.score==10 %} selected {% endif %}>10 Masterpiece</option>
+                    <option value="9" {% if anime.score==9 %} selected {% endif %}>9 Great</option>
+                    <option value="8" {% if anime.score==8 %} selected {% endif %}>8 Very good</option>
+                    <option value="7" {% if anime.score==7 %} selected {% endif %}>7 Good</option>
+                    <option value="6" {% if anime.score==6 %} selected {% endif %}>6 Fine</option>
+                    <option value="5" {% if anime.score==5 %} selected {% endif %}>5 Average</option>
+                    <option value="4" {% if anime.score==4 %} selected {% endif %}>4 Bad</option>
+                    <option value="3" {% if anime.score==3 %} selected {% endif %}>3 Very bad</option>
+                    <option value="2" {% if anime.score==2 %} selected {% endif %}>2 Horrible</option>
+                    <option value="1" {% if anime.score==1 %} selected {% endif %}>1 Appaling</option>
+                </select>
+            </td>
+            <td class="e">
+                <div style="text-align:center">
+                    <input type="checkbox" name="remove_{{anime.id}}" style="width:30px; height:30px;">
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br />
 
-    <!-- Score selection -->
-    Score:
-    <select name="rate_{{anime.id}}">
-        <option value="None" {% if not anime.score %} selected {% endif %}></option>
-        <option value="10" {% if anime.score==10 %} selected {% endif %}>10 Masterpiece</option>
-        <option value="9" {% if anime.score==9 %} selected {% endif %}>9 Great</option>
-        <option value="8" {% if anime.score==8 %} selected {% endif %}>8 Very good</option>
-        <option value="7" {% if anime.score==7 %} selected {% endif %}>7 Good</option>
-        <option value="6" {% if anime.score==6 %} selected {% endif %}>6 Fine</option>
-        <option value="5" {% if anime.score==5 %} selected {% endif %}>5 Average</option>
-        <option value="4" {% if anime.score==4 %} selected {% endif %}>4 Bad</option>
-        <option value="3" {% if anime.score==3 %} selected {% endif %}>3 Very bad</option>
-        <option value="2" {% if anime.score==2 %} selected {% endif %}>2 Horrible</option>
-        <option value="1" {% if anime.score==1 %} selected {% endif %}>1 Appaling</option>
-    </select>
-
-    <!-- Remove from list button -->
-    Remove from list
-    <input type="checkbox" name="remove_{{anime.id}}" style="width:30px; height:30px;">
-    {% endfor %}
-
-    <hr />
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
     <input type="submit" value="Submit changes" />
 </form>
+{% else %}
+<p><strong>No animes in list</strong></p>
+{% endif %}
 
 <hr />
 <form method="POST" enctype="multipart/form-data">
-    Import from myanimelist (.xml file):
-    <br />
+    <p>Import data from myanimelist (.xml file):</p>
     <input type="file" name="mal_import" accept=".xml">
     <br />
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />

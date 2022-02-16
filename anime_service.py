@@ -41,12 +41,13 @@ def get_anime(anime_id: int) -> Optional[dict]:
 
 def get_animes(page: int, query: str) -> list:
     if not query:
-        sql = "SELECT a.id, a.title, a.thumbnail, ROUND(AVG(l.score), 2) FROM animes a " \
-              "LEFT JOIN list l ON l.anime_id = a.id WHERE NOT a.hidden GROUP BY a.id " \
+        sql = "SELECT a.id, a.thumbnail, a.title, a.episodes, ROUND(AVG(l.score), 2) " \
+              "FROM animes a LEFT JOIN list l ON l.anime_id = a.id " \
+              "WHERE NOT a.hidden GROUP BY a.id " \
               "ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.id) DESC, a.title " \
               "LIMIT 50 OFFSET :offset"
     else:
-        sql = "SELECT a.id, a.title, a.thumbnail, ROUND(AVG(l.score), 2) " \
+        sql = "SELECT a.id, a.thumbnail, a.title, a.episodes, ROUND(AVG(l.score), 2) " \
               "FROM synonyms s, animes a LEFT JOIN list l ON l.anime_id = a.id " \
               "WHERE NOT a.hidden AND a.id = s.anime_id AND " \
               "(a.title ILIKE :query OR s.synonym ILIKE :query) GROUP BY a.id " \
@@ -58,7 +59,8 @@ def get_animes(page: int, query: str) -> list:
 
     return [{
         "id": row[0],
-        "title": row[1],
-        "thumbnail": row[2],
-        "score": row[3]
+        "thumbnail": row[1],
+        "title": row[2],
+        "episodes": row[3],
+        "score": row[4]
     } for row in result.fetchall()]
