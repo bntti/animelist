@@ -93,6 +93,25 @@ def set_times_watched(user_id: int, anime_id: int, times_watched: int) -> None:
     database.session.commit()
 
 
+def add_times_watched(user_id: int, anime_id: int, add: int) -> None:
+    sql = "UPDATE list SET times_watched = times_watched + :add " \
+          "WHERE user_id = :user_id AND anime_id = :anime_id"
+    database.session.execute(
+        sql,
+        {"user_id": user_id, "anime_id": anime_id, "add": add}
+    )
+    database.session.commit()
+
+
+def set_status(user_id: int, anime_id: int, status: str) -> None:
+    sql = "UPDATE list SET status = :status WHERE user_id = :user_id AND anime_id = :anime_id"
+    database.session.execute(
+        sql,
+        {"user_id": user_id, "anime_id": anime_id, "status": status}
+    )
+    database.session.commit()
+
+
 def set_episodes_watched(user_id: int, anime_id: int, episodes_watched: int) -> None:
     sql = "UPDATE list SET episodes = :episodes_watched " \
           "WHERE user_id = :user_id AND anime_id = :anime_id"
@@ -109,7 +128,7 @@ def set_episodes_watched(user_id: int, anime_id: int, episodes_watched: int) -> 
 
 
 def get_user_anime_data(user_id: int, anime_id: int) -> Optional[dict]:
-    sql = "SELECT score, episodes, times_watched FROM list " \
+    sql = "SELECT score, episodes, status, times_watched FROM list " \
           "WHERE user_id = :user_id AND anime_id = :anime_id"
     row = database.session.execute(
         sql, {"user_id": user_id, "anime_id": anime_id}
@@ -118,7 +137,8 @@ def get_user_anime_data(user_id: int, anime_id: int) -> Optional[dict]:
     return None if not row else {
         "score": row[0],
         "episodes": row[1],
-        "times_watched": row[2],
+        "status": row[2],
+        "times_watched": row[3],
         "in_list": True
     }
 

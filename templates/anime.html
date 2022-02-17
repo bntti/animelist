@@ -63,6 +63,30 @@
                     </td>
                 </tr>
 
+                <tr>
+                    <td>Status:</td>
+                    <td>
+                        <select style="width:138px" name="status">
+                            <option value="Completed" {% if user_data.status=="Completed" %} selected {% endif %}>
+                                Completed
+                            </option>
+                            <option value="Watching" {% if user_data.status=="Watching" %} selected {% endif %}>
+                                Watching
+                            </option>
+                            <option value="On-Hold" {% if user_data.status=="On-Hold" %} selected {% endif %}>
+                                On-Hold
+                            </option>
+                            <option value="Dropped" {% if user_data.status=="Dropped" %} selected {% endif %}>
+                                Dropped
+                            </option>
+                            <option value="Plan to Watch" {% if user_data.status=="Plan to Watch" %} selected {% endif
+                                %}>
+                                Plan to Watch
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+
                 {% if not user_data.in_list %}
                 <tr>
                     <td><input type="submit" name="submit" value="Add to list"></input></td>
