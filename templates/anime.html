@@ -20,28 +20,32 @@
         <h1>{{anime.title}}</h1>
 
         <table>
-            <tr>
-                <td>Episodes:</td>
-                {% if session.user_id and user_data.in_list %}
-                <td>{{user_data.episodes}} / {{anime.episodes}}</td>
-                {% else %}
-                <td>{{anime.episodes}}</td>
-                {% endif %}
-            </tr>
-
-            <tr>
-                <td>Score:</td>
-                {% if anime.score %}<td>{{anime.score}}</td>
-                {% else %}<td>N/A</td>
-                {% endif %}
-            </tr>
-
-            <!-- List data-->
-            {% if session.user_id %}
             <form method="POST">
-                <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
+                <tr>
+                    <td>Episodes:</td>
+                    {% if session.user_id and user_data.in_list %}
+                    <td>
+                        <input style="width:35px" type="number" name="watched" value={{user_data.episodes}} min="0"
+                            max="{{anime.episodes}}">
+                        / {{anime.episodes}}
+                    </td>
+                    {% else %}
+                    <td>{{anime.episodes}}</td>
+                    {% endif %}
+                </tr>
+
                 <tr>
                     <td>Score:</td>
+                    {% if anime.score %}<td>{{anime.score}}</td>
+                    {% else %}<td>N/A</td>
+                    {% endif %}
+                </tr>
+
+                <!-- List data-->
+                {% if session.user_id %}
+                <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
+                <tr>
+                    <td>Your score:</td>
                     <td>
                         <select style="width:138px" name="score">
                             <option value="None" {% if not user_data.score %} selected {% endif %}></option>

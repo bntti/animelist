@@ -41,6 +41,16 @@ def list_post() -> Union[str, Response]:
             if request.form.get(f"remove_{anime['id']}"):
                 list_service.remove_from_list(session["user_id"], anime["id"])
                 continue
+
+        if f"watched_{anime['id']}" in request.form:
+            new_watched = request.form.get(f"watched_{anime['id']}")
+            if new_watched:
+                new_watched = int(new_watched)
+                if new_watched != anime["episodes_watched"]:
+                    list_service.set_episodes_watched(
+                        session["user_id"], anime["id"], new_watched
+                    )
+
         if f"rate_{anime['id']}" in request.form:
             new_score = request.form.get(f"rate_{anime['id']}")
             new_score = None if new_score == "None" else int(new_score)
@@ -146,6 +156,15 @@ def anime_post(anime_id) -> str:
         if new_watched != user_data["times_watched"]:
             list_service.set_times_watched(
                 session["user_id"], anime["id"], new_watched
+            )
+
+    # Episodes watched is changed
+    new_episodes = request.form.get("watched")
+    if new_episodes:
+        new_episodes = int(new_episodes)
+        if new_episodes != user_data["episodes"]:
+            list_service.set_episodes_watched(
+                session["user_id"], anime["id"], new_episodes
             )
 
     # Score is changed

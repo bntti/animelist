@@ -93,6 +93,21 @@ def set_times_watched(user_id: int, anime_id: int, times_watched: int) -> None:
     database.session.commit()
 
 
+def set_episodes_watched(user_id: int, anime_id: int, episodes_watched: int) -> None:
+    sql = "UPDATE list SET episodes = :episodes_watched " \
+          "WHERE user_id = :user_id AND anime_id = :anime_id"
+
+    database.session.execute(
+        sql,
+        {
+            "user_id": user_id,
+            "anime_id": anime_id,
+            "episodes_watched": episodes_watched
+        }
+    )
+    database.session.commit()
+
+
 def get_user_anime_data(user_id: int, anime_id: int) -> Optional[dict]:
     sql = "SELECT score, episodes, times_watched FROM list " \
           "WHERE user_id = :user_id AND anime_id = :anime_id"
@@ -124,7 +139,7 @@ def get_list_data(user_id: int, ) -> list:
         "title": row[1],
         "episodes": row[2],
         "thumbnail": row[3],
-        "watched_episodes": row[4],
+        "episodes_watched": row[4],
         "score": row[5],
         "status": row[6]
     } for row in result.fetchall()]

@@ -31,7 +31,11 @@
             <td class="b">
                 <a href="/anime/{{anime.id}}">{{anime.title}}</a>
             </td>
-            <td class="c">{{anime.watched_episodes}} / {{anime.episodes}}</td>
+            <td class="c">
+                <input style="width:35px" type="number" name="watched_{{anime.id}}" value={{anime.episodes_watched}}
+                    min="0" max="{{anime.episodes}}">
+                / {{anime.episodes}}
+            </td>
             <td class="d">
                 <select name="rate_{{anime.id}}">
                     <option value="None" {% if not anime.score %} selected {% endif %}></option>
