@@ -26,3 +26,8 @@ tr {
 .e {
   width: 50px;
 }
+
+.selected {
+  text-decoration: none;
+  color: #000;
+}

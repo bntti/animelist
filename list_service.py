@@ -149,10 +149,14 @@ def get_list_ids(user_id) -> list:
     return [row[0] for row in result.fetchall()]
 
 
-def get_list_data(user_id: int, ) -> list:
-    sql = "SELECT a.id, a.title, a.episodes, a.thumbnail, l.episodes, l.score, l.status " \
-          "FROM list l, animes a WHERE l.anime_id = a.id AND l.user_id = :user_id ORDER BY a.title"
-    result = database.session.execute(sql, {"user_id": user_id})
+def get_list_data(user_id: int, status: str) -> list:
+    sql = "SELECT a.id, a.title, a.episodes, a.thumbnail, l.episodes, l.score " \
+          "FROM list l, animes a WHERE l.anime_id = a.id AND l.user_id = :user_id " \
+          "AND (l.status = :status OR :status = 'All') ORDER BY a.title"
+
+    result = database.session.execute(
+        sql, {"user_id": user_id, "status": status}
+    )
 
     return [{
         "id": row[0],
@@ -160,6 +164,5 @@ def get_list_data(user_id: int, ) -> list:
         "episodes": row[2],
         "thumbnail": row[3],
         "episodes_watched": row[4],
-        "score": row[5],
-        "status": row[6]
+        "score": row[5]
     } for row in result.fetchall()]
