@@ -50,6 +50,7 @@ def list_post() -> Union[str, Response]:
             if new_watched:
                 new_watched = int(new_watched)
                 if new_watched != anime["episodes_watched"]:
+                    anime["episodes_watched"] = new_watched
                     list_service.set_episodes_watched(
                         session["user_id"], anime["id"], new_watched
                     )
@@ -70,6 +71,13 @@ def list_post() -> Union[str, Response]:
                 list_service.set_status(
                     session["user_id"], anime["id"], new_status
                 )
+                if new_status == "Completed" and anime["episodes_watched"] != anime["episodes"]:
+                    list_service.set_episodes_watched(
+                        session["user_id"], anime["id"], anime["episodes"]
+                    )
+                    list_service.add_times_watched(
+                        session["user_id"], anime["id"], 1
+                    )
 
         if f"rate_{anime['id']}" in request.form:
             new_score = request.form.get(f"rate_{anime['id']}")
@@ -183,6 +191,7 @@ def anime_post(anime_id) -> str:
     if new_watched:
         new_watched = int(new_watched)
         if new_watched != user_data["episodes"]:
+            user_data["episodes"] = new_watched
             list_service.set_episodes_watched(
                 session["user_id"], anime["id"], new_watched
             )
@@ -202,6 +211,13 @@ def anime_post(anime_id) -> str:
     new_status = request.form.get("status")
     if new_status != user_data["status"]:
         list_service.set_status(session["user_id"], anime["id"], new_status)
+        if new_status == "Completed" and user_data["episodes"] != anime["episodes"]:
+            list_service.set_episodes_watched(
+                session["user_id"], anime["id"], anime["episodes"]
+            )
+            list_service.add_times_watched(
+                session["user_id"], anime["id"], 1
+            )
 
     # Score is changed
     new_score = request.form.get("score")
