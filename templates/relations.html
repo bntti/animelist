@@ -8,7 +8,7 @@
 
 <h1>Related anime</h1>
 
-<!-- Related anime -->
+{% if related_anime %}
 <table>
     <tr>
         <th class="a"></th>
@@ -43,10 +43,7 @@
     </tr>
     {% endfor %}
 </table>
-
-<!-- No related anime found -->
-{% if related_anime | length == 0 %}
-<hr />
+{% else %}
 <p><strong>No related anime found</strong></p>
 {% endif %}
 
