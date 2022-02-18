@@ -64,6 +64,12 @@ def list_post() -> Union[str, Response]:
                         list_service.set_status(
                             session["user_id"], anime["id"], "Watching"
                         )
+        if f"status_{anime['id']}" in request.form:
+            new_status = request.form.get(f"status_{anime['id']}")
+            if new_status != anime["status"]:
+                list_service.set_status(
+                    session["user_id"], anime["id"], new_status
+                )
 
         if f"rate_{anime['id']}" in request.form:
             new_score = request.form.get(f"rate_{anime['id']}")

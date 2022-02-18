@@ -20,11 +20,16 @@ tr {
 
 .d {
   text-align: center;
-  width: 160px;
+  width: 133px;
 }
 
 .e {
-  width: 50px;
+  text-align: center;
+  width: 75px;
+}
+
+.f {
+  width: 75px;
 }
 
 .selected {
