@@ -1,7 +1,8 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    show_hidden BOOLEAN NOT NULL DEFAULT false
 );
 CREATE TABLE animes (
     id SERIAL PRIMARY KEY,
@@ -16,6 +17,11 @@ CREATE TABLE synonyms (
     id SERIAL PRIMARY KEY,
     anime_id INT REFERENCES animes NOT NULL,
     synonym TEXT NOT NULL
+);
+CREATE TABLE tags (
+    id SERIAL PRIMARY KEY,
+    anime_id INT REFERENCES animes NOT NULL,
+    tag TEXT NOT NULL
 );
 CREATE TABLE relations (
     id SERIAL PRIMARY KEY,

@@ -1,0 +1,57 @@
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+h3 {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+p {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.grid-container {
+  display: grid;
+  gap: 20px;
+  grid-template-areas:
+    "counts tag_counts"
+    "counts tag_counts"
+    "settings tag_counts"
+    "import tag_counts";
+}
+
+.counts {
+  grid-area: counts;
+}
+.tag_counts {
+  grid-area: tag_counts;
+}
+.settings {
+  grid-area: settings;
+}
+.import {
+  grid-area: import;
+}
+
+.tableFixHead {
+  overflow-y: auto;
+  height: 500px;
+  width: fit-content;
+  border: double;
+}
+
+.tableFixHead thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+th {
+  background: #eee;
+}
+
+table {
+  border-collapse: collapse;
+}

@@ -1,15 +1,18 @@
 from typing import Optional
+from flask import session
 from database import database
 
 
 def anime_count(query: str) -> int:
-    if not query:
-        sql = "SELECT COUNT(*) FROM animes WHERE NOT hidden"
-    else:
-        sql = "SELECT COUNT(DISTINCT a.id) FROM animes a, synonyms s " \
-              "WHERE NOT a.hidden AND a.id = s.anime_id AND " \
-              "(a.title ILIKE :query OR s.synonym ILIKE :query)"
-    row = database.session.execute(sql, {"query": f"%{query}%"}).fetchone()
+    sql = "SELECT COUNT(DISTINCT a.id) FROM animes a, synonyms s " \
+          "WHERE (NOT a.hidden OR :show_hidden) AND a.id = s.anime_id " \
+          "AND (:query = '%%' OR (a.title ILIKE :query OR s.synonym ILIKE :query))"
+    row = database.session.execute(
+        sql, {
+            "query": f"%{query}%",
+            "show_hidden": session["show_hidden"] if "show_hidden" in session else False
+        }
+    ).fetchone()
     return row[0] if row else 0
 
 
@@ -40,21 +43,18 @@ def get_anime(anime_id: int) -> Optional[dict]:
 
 
 def get_animes(page: int, query: str) -> list:
-    if not query:
-        sql = "SELECT a.id, a.thumbnail, a.title, a.episodes, ROUND(AVG(l.score), 2) " \
-              "FROM animes a LEFT JOIN list l ON l.anime_id = a.id " \
-              "WHERE NOT a.hidden GROUP BY a.id " \
-              "ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.id) DESC, a.title " \
-              "LIMIT 50 OFFSET :offset"
-    else:
-        sql = "SELECT a.id, a.thumbnail, a.title, a.episodes, ROUND(AVG(l.score), 2) " \
-              "FROM synonyms s, animes a LEFT JOIN list l ON l.anime_id = a.id " \
-              "WHERE NOT a.hidden AND a.id = s.anime_id AND " \
-              "(a.title ILIKE :query OR s.synonym ILIKE :query) GROUP BY a.id " \
-              "ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.id) DESC, a.title " \
-              "LIMIT 50 OFFSET :offset"
+    sql = "SELECT a.id, a.thumbnail, a.title, a.episodes, ROUND(AVG(l.score), 2) " \
+          "FROM synonyms s, animes a LEFT JOIN list l ON l.anime_id = a.id " \
+          "WHERE (NOT a.hidden OR :show_hidden) AND a.id = s.anime_id " \
+          "AND (:query = '%%' OR (a.title ILIKE :query OR s.synonym ILIKE :query)) " \
+          "GROUP BY a.id ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.id) DESC, a.title " \
+          "LIMIT 50 OFFSET :offset"
     result = database.session.execute(
-        sql, {"offset": page, "query": f"%{query}%"}
+        sql, {
+            "offset": page,
+            "query": f"%{query}%",
+            "show_hidden": session["show_hidden"] if "show_hidden" in session else False
+        }
     )
 
     return [{

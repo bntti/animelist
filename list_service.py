@@ -185,6 +185,32 @@ def handle_change(
             set_score(user_id, anime_id, new_score)
 
 
+def get_counts(user_id) -> list:
+    sql = "SELECT COUNT(*), COUNT(CASE WHEN status LIKE 'Completed' THEN 1 END), " \
+          "COUNT(CASE WHEN status LIKE 'Watching' THEN 1 END), "\
+          "COUNT(CASE WHEN status LIKE 'On-Hold' THEN 1 END), "\
+          "COUNT(CASE WHEN status LIKE 'Dropped' THEN 1 END), "\
+          "COUNT(CASE WHEN status LIKE 'Plan to Watch' THEN 1 END) "\
+          "FROM list WHERE user_id = :user_id"
+    row = database.session.execute(sql, {"user_id": user_id}).fetchone()
+    return {
+        "total": row[0],
+        "completed": row[1],
+        "watching": row[2],
+        "on_hold": row[3],
+        "dropped": row[4],
+        "plan_to_watch": row[5]
+    }
+
+
+def get_tag_counts(user_id) -> list:
+    sql = "SELECT t.tag, COUNT(l.id) FROM list l, tags t " \
+          "WHERE user_id = :user_id AND t.anime_id = l.anime_id " \
+          "GROUP BY t.tag ORDER BY COUNT(l.id) DESC, t.tag"
+    result = database.session.execute(sql, {"user_id": user_id}).fetchall()
+    return result
+
+
 def get_list_ids(user_id) -> list:
     sql = "SELECT anime_id FROM list WHERE user_id = :user_id"
     result = database.session.execute(sql, {"user_id": user_id})

@@ -99,13 +99,4 @@
 <p><strong>No animes in list with status {{status}}</strong></p>
 {% endif %}
 
-<hr />
-<form method="POST" enctype="multipart/form-data">
-    <p>Import data from myanimelist (.xml file):</p>
-    <input type="file" name="mal_import" accept=".xml">
-    <br />
-    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
-    <input type="submit" value="Submit file" />
-</form>
-
 {% endblock %}

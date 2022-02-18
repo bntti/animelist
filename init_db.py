@@ -4,7 +4,7 @@ import anime_service
 import database
 
 
-def add_animes_and_synonyms(data):
+def add_anime_data(data):
     anime_count = len(data["data"])
     for i, anime_data in enumerate(data["data"]):
         if i % (anime_count // 10) == 0:
@@ -33,6 +33,10 @@ def add_animes_and_synonyms(data):
         # Add synonyms
         for synonym in anime_data["synonyms"]:
             database.add_synonym(anime_id, synonym)
+
+        # Add tags
+        for tag in anime_data["tags"]:
+            database.add_tag(anime_id, tag)
 
 
 def add_relations(data):
@@ -73,10 +77,10 @@ def import_data():
     print("Initializing tables")
     database.init_tables()
 
-    print("Adding animes and synonyms to database")
-    add_animes_and_synonyms(data)
+    print("Adding animes, tags, and synonyms to the database")
+    add_anime_data(data)
 
-    print("Adding related anime")
+    print("Adding anime relations data to the database")
     add_relations(data)
 
     print("Committing changes")

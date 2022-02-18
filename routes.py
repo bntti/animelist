@@ -32,13 +32,6 @@ def list_post() -> Union[str, Response]:
     status = request.args["status"] if "status" in request.args else "All"
     list_data = list_service.get_list_data(session["user_id"], status)
 
-    # Import from myanimelist
-    if "mal_import" in request.files:
-        file = request.files["mal_import"]
-        if list_service.import_from_myanimelist(file):
-            return list_get()
-        abort(Response("Error parsing XML file", 415))
-
     # Handle list data change
     for anime in list_data:
         if request.form.get(f"remove_{anime['id']}"):
@@ -166,9 +159,32 @@ def related_post() -> Union[str, Response]:
 
 
 # /profile
-@app.route("/profile")
-def profile() -> str:
-    return render_template("profile.html")
+@app.route("/profile", methods=["GET"])
+def profile_get() -> str:
+    user_service.check_user()
+    counts = list_service.get_counts(session["user_id"])
+    tag_counts = list_service.get_tag_counts(session["user_id"])
+    return render_template("profile.html", counts=counts, tag_counts=tag_counts)
+
+
+@app.route("/profile", methods=["POST"])
+def profile_post() -> str:
+    user_service.check_user()
+    user_service.check_csrf(request.form["csrf_token"])
+
+    # Import from myanimelist
+    if "mal_import" in request.files:
+        file = request.files["mal_import"]
+        if list_service.import_from_myanimelist(file):
+            return profile_get()
+        abort(Response("Error parsing XML file", 415))
+
+    # "Show hidden" setting change
+    new_show_hidden = True if request.form.get("show hidden") else False
+    if new_show_hidden != session["show_hidden"]:
+        session["show_hidden"] = new_show_hidden
+        user_service.set_show_hidden(new_show_hidden)
+    return profile_get()
 
 
 # /login

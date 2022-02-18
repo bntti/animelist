@@ -10,7 +10,7 @@ database = SQLAlchemy(app)
 
 
 def init_tables() -> None:
-    sql = "DROP TABLE IF EXISTS users, animes, relations, synonyms, list"
+    sql = "DROP TABLE IF EXISTS users, animes, relations, synonyms, list, tags"
     database.session.execute(sql)
     with open("schema.sql", "r", encoding="utf-8") as file:
         sql = ''.join(file.readlines())
@@ -22,6 +22,11 @@ def add_synonym(anime_id: int, synonym: str) -> None:
     database.session.execute(
         sql, {"anime_id": anime_id, "synonym": synonym}
     )
+
+
+def add_tag(anime_id: int, tag: str) -> None:
+    sql = "INSERT INTO tags (anime_id, tag) VALUES (:anime_id, :tag)"
+    database.session.execute(sql, {"anime_id": anime_id, "tag": tag})
 
 
 def add_relation(anime_id: int, related_id: int) -> None:

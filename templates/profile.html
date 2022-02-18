@@ -1,8 +1,93 @@
 {% extends "layout.html" %}
-{% block title %}Profile{% endblock %}
+{% block title %}{{session.username}}'s Profile{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/profile.css">
+{% endblock %}
+
 {% block content %}
 
-<h1>Profile</h1>
-<h3>Not implemented yet</h3>
+<h1>{{session.username}}'s Profile</h1>
+
+<div class="grid-container">
+    <div class="counts">
+        <h3>Anime watched</h3>
+        <p>Total anime watched: {{counts.total}}</p>
+        <table style="border-style: double; ">
+            <thead>
+                <th>Status</th>
+                <th>Count</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="/list?status=Completed">Completed</a></td>
+                    <td>{{counts.completed}}</td>
+                </tr>
+                <tr>
+                    <td><a href="/list?status=Watching">Watching</a></td>
+                    <td>{{counts.watching}}</td>
+                </tr>
+                <tr>
+                    <td><a href="/list?status=On-Hold">On-Hold</a></td>
+                    <td>{{counts.on_hold}}</td>
+                </tr>
+                <tr>
+                    <td><a href="/list?status=Dropped">Dropped</a></td>
+                    <td>{{counts.dropped}}</td>
+                </tr>
+                <tr>
+                    <td><a href="/list?status=Plan%20to%20Watch">Plan to Watch</a></td>
+                    <td>{{counts.plan_to_watch}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="tag_counts">
+        <h3>Anime watched by tag</h3>
+        {% if tag_counts %}
+        <div class="tableFixHead">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tag</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tag, count in tag_counts %}
+                    <tr>
+                        <td>{{tag}}</td>
+                        <td>{{count}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>No animes in list</p>
+        {% endif %}
+    </div>
+    <div class="settings">
+        <h3>Settings</h3>
+        <form method="POST">
+            <label for="show hidden">Show hidden animes:</label>
+            <input id="show hidden" type="checkbox" name="show hidden" {% if session.show_hidden %} checked {% endif %}>
+            <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
+            <br />
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <div class="import">
+        <form method="POST" enctype="multipart/form-data">
+            <h3>Import data from myanimelist</h3>
+            <a href="https://myanimelist.net/panel.php?go=export">Link to export page</a>
+            <br />
+            <br />
+            <input type="file" name="mal_import" accept=".xml">
+            <br />
+            <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
+            <input type="submit" value="Submit file" />
+        </form>
+    </div>
+</div>
 
 {% endblock %}
