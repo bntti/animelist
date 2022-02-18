@@ -145,11 +145,11 @@ def get_user_anime_data(user_id: int, anime_id: int) -> Optional[dict]:
 
 
 def handle_change(
-    anime_id: int,
-    new_times_watched: Optional[str],
-    new_episodes_watched: str,
-    new_status: str,
-    new_score: str
+        anime_id: int,
+        new_times_watched: Optional[str],
+        new_episodes_watched: str,
+        new_status: str,
+        new_score: str
 ) -> None:
     user_id = session["user_id"]
     user_data = get_user_anime_data(user_id, anime_id)
@@ -185,12 +185,12 @@ def handle_change(
             set_score(user_id, anime_id, new_score)
 
 
-def get_counts(user_id) -> list:
+def get_counts(user_id) -> dict:
     sql = "SELECT COUNT(*), COUNT(CASE WHEN status LIKE 'Completed' THEN 1 END), " \
-          "COUNT(CASE WHEN status LIKE 'Watching' THEN 1 END), "\
-          "COUNT(CASE WHEN status LIKE 'On-Hold' THEN 1 END), "\
-          "COUNT(CASE WHEN status LIKE 'Dropped' THEN 1 END), "\
-          "COUNT(CASE WHEN status LIKE 'Plan to Watch' THEN 1 END) "\
+          "COUNT(CASE WHEN status LIKE 'Watching' THEN 1 END), " \
+          "COUNT(CASE WHEN status LIKE 'On-Hold' THEN 1 END), " \
+          "COUNT(CASE WHEN status LIKE 'Dropped' THEN 1 END), " \
+          "COUNT(CASE WHEN status LIKE 'Plan to Watch' THEN 1 END) " \
           "FROM list WHERE user_id = :user_id"
     row = database.session.execute(sql, {"user_id": user_id}).fetchone()
     return {

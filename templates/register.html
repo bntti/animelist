@@ -11,30 +11,34 @@
 <!-- Error messages -->
 {% if errors %}
 <ul>
-  {% for error in errors %}
-  <li style="color: red;">{{error}}</li>
-  {% endfor %}
+    {% for error in errors %}
+    <li style="color: red;">{{error}}</li>
+    {% endfor %}
 </ul>
 {% endif %}
 
 <!-- Register form -->
 <form action="/register" method="POST">
-  <table>
-    <tr>
-      <td class="a"><label for="username">Username:</label></td>
-      <td><input id="username" type="text" name="username" value="{{username}}" placeholder="Username" /></td>
-    </tr>
-    <tr>
-      <td class="a"><label for="password1">Password:</label></td>
-      <td><input id="password1" type="password" name="password1" value="{{password1}}" placeholder="Password" /></td>
-    </tr>
-    <tr>
-      <td class="a"><label for="password2">Repeat password:</label></td>
-      <td><input id="password2" type="password" name="password2" value="{{password2}}" placeholder="Repeat password" />
-      </td>
-    </tr>
-  </table>
-  <input type="submit" value="Submit" />
+    <table>
+        <tbody>
+            <tr>
+                <td class="a"><label for="username">Username:</label></td>
+                <td><input id="username" type="text" name="username" value="{{username}}" placeholder="Username" /></td>
+            </tr>
+            <tr>
+                <td class="a"><label for="password1">Password:</label></td>
+                <td><input id="password1" type="password" name="password1" value="{{password1}}"
+                        placeholder="Password" /></td>
+            </tr>
+            <tr>
+                <td class="a"><label for="password2">Repeat password:</label></td>
+                <td><input id="password2" type="password" name="password2" value="{{password2}}"
+                        placeholder="Repeat password" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="submit" value="Submit" />
 </form>
 
 {% endblock %}

@@ -17,7 +17,7 @@ def check_user() -> None:
             or "user_id" not in session
             or "show_hidden" not in session
             or "csrf_token" not in session):
-        abort(Response("You need to be loggen in to perform this action", 403))
+        abort(Response("You need to be logged in to perform this action", 403))
 
 
 def check_csrf(csrf_token: str) -> None:

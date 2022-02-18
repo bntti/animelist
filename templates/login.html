@@ -15,17 +15,21 @@
 
 <!-- Login form -->
 <form action="/login" method="POST">
-  <table>
-    <tr>
-      <td class="a"><label for="username">Username:</label></td>
-      <td><input id="username" type="text" name="username" value="{{username}}" placeholder="Username" /></td>
-    </tr>
-    <tr>
-      <td class="a"><label for="username">Password:</label></td>
-      <td><input id="password" type="password" name="password" value="{{password}}" placeholder="Password" /></td>
-    </tr>
-  </table>
-  <input type="submit" value="Submit" />
+    <table>
+        <tbody>
+            <tr>
+                <td class="a"><label for="username">Username:</label></td>
+                <td><input id="username" type="text" name="username" value="{{username}}" placeholder="Username" /></td>
+            </tr>
+            <tr>
+                <td class="a"><label for="username">Password:</label></td>
+                <td>
+                    <input id="password" type="password" name="password" value="{{password}}" placeholder="Password" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="submit" value="Submit" />
 </form>
 
 {% endblock %}

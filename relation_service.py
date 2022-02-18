@@ -20,7 +20,7 @@ def get_user_related_anime(user_id: int) -> list:
 
 def get_anime_related_anime(anime_id: int) -> list:
     sql = "SELECT a.id, a.title, a.episodes, a.thumbnail, ROUND(AVG(l.score), 2) " \
-          "FROM relations r, animes a LEFT JOIN list l ON l.anime_id = a.id "\
+          "FROM relations r, animes a LEFT JOIN list l ON l.anime_id = a.id " \
           "WHERE a.id = r.related_id AND r.anime_id = :anime_id GROUP BY a.id"
     data = database.session.execute(sql, {"anime_id": anime_id}).fetchall()
     return [{

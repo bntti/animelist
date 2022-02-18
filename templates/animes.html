@@ -34,47 +34,51 @@
 <!-- Animes -->
 {% if animes %}
 <table>
-    <tr>
-        <th class="a"></th>
-        <th class="b">Title</th>
-        <th class="c">Score</th>
-        <th class="d">Status</th>
-    </tr>
-    {% for anime in animes %}
-    <tr>
-        <td class="a">
-            {% if anime.thumbnail %}
-            <img src="{{anime.thumbnail}}" width=50 height=70>
-            {% else %}
-            <img src="https://cdn.myanimelist.net/images/qm_50.gif" width=50 height=70>
-            {% endif %}
-        </td>
-        <td class="b">
-            <div>
-                <a href="/anime/{{anime.id}}">{{anime.title}}</a>
-                <br>
-                Episodes: {{anime.episodes}}
-            </div>
-        </td>
-        <td class="c">
-            {% if anime.score %}{{anime.score}}{% endif %}
-        </td>
-        <td class="d">
-            <!-- List status -->
-            {% if session.user_id %}
-            {% if anime.id not in list_ids %}
-            <form action="{{current_url}}" method="POST">
-                <input type="hidden" value="{{anime.id}}" name="anime_id" />
-                <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
-                <input type="submit" value="Add to list">
-            </form>
-            {% else %}
-            In list
-            {% endif %}
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
+    <thead>
+        <tr>
+            <th class="a"></th>
+            <th class="b">Title</th>
+            <th class="c">Score</th>
+            <th class="d">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for anime in animes %}
+        <tr>
+            <td class="a">
+                {% if anime.thumbnail %}
+                <img src="{{anime.thumbnail}}" width=50 height=70>
+                {% else %}
+                <img src="https://cdn.myanimelist.net/images/qm_50.gif" width=50 height=70>
+                {% endif %}
+            </td>
+            <td class="b">
+                <div>
+                    <a href="/anime/{{anime.id}}">{{anime.title}}</a>
+                    <br>
+                    Episodes: {{anime.episodes}}
+                </div>
+            </td>
+            <td class="c">
+                {% if anime.score %}{{anime.score}}{% endif %}
+            </td>
+            <td class="d">
+                <!-- List status -->
+                {% if session.user_id %}
+                {% if anime.id not in list_ids %}
+                <form action="{{current_url}}" method="POST">
+                    <input type="hidden" value="{{anime.id}}" name="anime_id" />
+                    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
+                    <input type="submit" value="Add to list">
+                </form>
+                {% else %}
+                In list
+                {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% else %}
 <p><strong>No animes found</strong></p>
