@@ -18,8 +18,9 @@ def index() -> str:
 def list_get() -> Union[str, Response]:
     user_service.check_user()
 
+    tag = request.args["tag"] if "tag" in request.args else ""
     status = request.args["status"] if "status" in request.args else "All"
-    list_data = list_service.get_list_data(session["user_id"], status)
+    list_data = list_service.get_list_data(session["user_id"], status, tag)
 
     return render_template("list.html", list_data=list_data, status=status)
 
@@ -29,8 +30,9 @@ def list_post() -> Union[str, Response]:
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])
 
+    tag = request.args["tag"] if "tag" in request.args else ""
     status = request.args["status"] if "status" in request.args else "All"
-    list_data = list_service.get_list_data(session["user_id"], status)
+    list_data = list_service.get_list_data(session["user_id"], status, tag)
 
     # Handle list data change
     for anime in list_data:

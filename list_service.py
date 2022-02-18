@@ -217,13 +217,14 @@ def get_list_ids(user_id) -> list:
     return [row[0] for row in result.fetchall()]
 
 
-def get_list_data(user_id: int, status: str) -> list:
+def get_list_data(user_id: int, status: str, tag: str) -> list:
     sql = "SELECT a.id, a.thumbnail, a.title, l.episodes, a.episodes, l.status, l.score " \
-          "FROM list l, animes a WHERE l.anime_id = a.id AND l.user_id = :user_id " \
-          "AND (l.status = :status OR :status = 'All') ORDER BY a.title"
+          "FROM list l, animes a, tags t WHERE l.anime_id = a.id AND t.anime_id = a.id " \
+          "AND l.user_id = :user_id AND (:tag = '' OR t.tag = :tag) " \
+          "AND (l.status = :status OR :status = 'All') GROUP BY a.id, l.id ORDER BY a.title"
 
     result = database.session.execute(
-        sql, {"user_id": user_id, "status": status}
+        sql, {"user_id": user_id, "status": status, "tag": tag}
     )
 
     return [{

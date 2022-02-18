@@ -55,7 +55,7 @@
                 <tbody>
                     {% for tag, count in tag_counts %}
                     <tr>
-                        <td>{{tag}}</td>
+                        <td><a href="/list?tag={{tag}}">{{tag}}</a></td>
                         <td>{{count}}</td>
                     </tr>
                     {% endfor %}
