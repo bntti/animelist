@@ -67,6 +67,7 @@
                     <td>Status:</td>
                     <td>
                         <select style="width:138px" name="status">
+                            <option value="" {% if not user_data.status %} selected {% endif %}></option>
                             <option value="Completed" {% if user_data.status=="Completed" %} selected {% endif %}>
                                 Completed
                             </option>

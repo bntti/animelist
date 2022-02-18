@@ -160,7 +160,8 @@ def handle_change(
         if new_times_watched != user_data["times_watched"]:
             set_times_watched(user_id, anime_id, new_times_watched)
 
-    if str.isdigit(new_episodes_watched) and 0 <= int(new_episodes_watched) <= anime["episodes"]:
+    if (new_episodes_watched and str.isdigit(new_episodes_watched)
+            and 0 <= int(new_episodes_watched) <= anime["episodes"]):
         new_episodes_watched = int(new_episodes_watched)
         if new_episodes_watched != user_data["episodes"]:
             user_data["episodes"] = new_episodes_watched
