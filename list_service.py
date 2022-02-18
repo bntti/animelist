@@ -5,6 +5,7 @@ from defusedxml.ElementTree import fromstring, ParseError
 from werkzeug.datastructures import FileStorage
 from flask import session
 from database import database
+import anime_service
 
 
 # Helper functions
@@ -141,6 +142,46 @@ def get_user_anime_data(user_id: int, anime_id: int) -> Optional[dict]:
         "times_watched": row[3],
         "in_list": True
     }
+
+
+def handle_change(
+    anime_id: int,
+    new_times_watched: Optional[str],
+    new_episodes_watched: str,
+    new_status: str,
+    new_score: str
+) -> None:
+    user_id = session["user_id"]
+    user_data = get_user_anime_data(user_id, anime_id)
+    anime = anime_service.get_anime(anime_id)
+
+    if new_times_watched and str.isdigit(new_times_watched) and 0 <= int(new_times_watched):
+        new_times_watched = int(new_times_watched)
+        if new_times_watched != user_data["times_watched"]:
+            set_times_watched(user_id, anime_id, new_times_watched)
+
+    if str.isdigit(new_episodes_watched) and 0 <= int(new_episodes_watched) <= anime["episodes"]:
+        new_episodes_watched = int(new_episodes_watched)
+        if new_episodes_watched != user_data["episodes"]:
+            user_data["episodes"] = new_episodes_watched
+            set_episodes_watched(user_id, anime_id, new_episodes_watched)
+            if new_episodes_watched == anime["episodes"]:
+                set_status(user_id, anime_id, "Completed")
+                add_times_watched(user_id, anime_id, 1)
+            else:
+                set_status(user_id, anime_id, "Watching")
+
+    if new_status in ["Completed", "Watching", "On-Hold", "Dropped", "Plan to Watch"]:
+        if new_status != user_data["status"]:
+            set_status(user_id, anime_id, new_status)
+            if new_status == "Completed" and user_data["episodes"] != anime["episodes"]:
+                set_episodes_watched(user_id, anime_id, anime["episodes"])
+                add_times_watched(user_id, anime_id, 1)
+
+    if new_score == "None" or (str.isdigit(new_score) and 1 <= int(new_score) <= 10):
+        new_score = None if new_score == "None" else int(new_score)
+        if new_score != user_data["score"]:
+            set_score(user_id, anime_id, new_score)
 
 
 def get_list_ids(user_id) -> list:

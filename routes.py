@@ -39,53 +39,18 @@ def list_post() -> Union[str, Response]:
             return list_get()
         abort(Response("Error parsing XML file", 415))
 
+    # Handle list data change
     for anime in list_data:
-        if f"remove_{anime['id']}" in request.form:
-            if request.form.get(f"remove_{anime['id']}"):
-                list_service.remove_from_list(session["user_id"], anime["id"])
-                continue
-
-        if f"watched_{anime['id']}" in request.form:
-            new_watched = request.form.get(f"watched_{anime['id']}")
-            if new_watched:
-                new_watched = int(new_watched)
-                if new_watched != anime["episodes_watched"]:
-                    anime["episodes_watched"] = new_watched
-                    list_service.set_episodes_watched(
-                        session["user_id"], anime["id"], new_watched
-                    )
-                    if new_watched == anime["episodes"]:
-                        list_service.set_status(
-                            session["user_id"], anime["id"], "Completed"
-                        )
-                        list_service.add_times_watched(
-                            session["user_id"], anime["id"], 1
-                        )
-                    else:
-                        list_service.set_status(
-                            session["user_id"], anime["id"], "Watching"
-                        )
-        if f"status_{anime['id']}" in request.form:
-            new_status = request.form.get(f"status_{anime['id']}")
-            if new_status != anime["status"]:
-                list_service.set_status(
-                    session["user_id"], anime["id"], new_status
-                )
-                if new_status == "Completed" and anime["episodes_watched"] != anime["episodes"]:
-                    list_service.set_episodes_watched(
-                        session["user_id"], anime["id"], anime["episodes"]
-                    )
-                    list_service.add_times_watched(
-                        session["user_id"], anime["id"], 1
-                    )
-
-        if f"rate_{anime['id']}" in request.form:
-            new_score = request.form.get(f"rate_{anime['id']}")
-            new_score = None if new_score == "None" else int(new_score)
-            if new_score != anime["score"]:
-                list_service.set_score(
-                    session["user_id"], anime["id"], new_score
-                )
+        if request.form.get(f"remove_{anime['id']}"):
+            list_service.remove_from_list(session["user_id"], anime["id"])
+        else:
+            list_service.handle_change(
+                anime["id"],
+                None,
+                request.form.get(f"episodes_watched_{anime['id']}"),
+                request.form.get(f"status_{anime['id']}"),
+                request.form.get(f"score_{anime['id']}")
+            )
 
     return list_get()
 
@@ -163,9 +128,6 @@ def anime_post(anime_id) -> str:
     if not anime:
         return anime_get(anime_id)
 
-    user_data = list_service.get_user_anime_data(session["user_id"], anime_id)
-    user_data = user_data if user_data else {"in_list": False, "score": None}
-
     # Anime is removed from list
     if request.form["submit"] == "Remove from list":
         list_service.remove_from_list(session["user_id"], anime_id)
@@ -174,56 +136,15 @@ def anime_post(anime_id) -> str:
     # Anime is added to list
     if request.form["submit"] == "Add to list":
         list_service.add_to_list(session["user_id"], anime_id)
-        user_data = list_service.get_user_anime_data(
-            session["user_id"], anime_id
-        )
 
-    # Times watched is changed
-    if "times_watched" in request.form:
-        new_watched = int(request.form.get("times_watched"))
-        if new_watched != user_data["times_watched"]:
-            list_service.set_times_watched(
-                session["user_id"], anime["id"], new_watched
-            )
-
-    # Episodes watched is changed
-    new_watched = request.form.get("watched")
-    if new_watched:
-        new_watched = int(new_watched)
-        if new_watched != user_data["episodes"]:
-            user_data["episodes"] = new_watched
-            list_service.set_episodes_watched(
-                session["user_id"], anime["id"], new_watched
-            )
-            if new_watched == anime["episodes"]:
-                list_service.set_status(
-                    session["user_id"], anime["id"], "Completed"
-                )
-                list_service.add_times_watched(
-                    session["user_id"], anime["id"], 1
-                )
-            else:
-                list_service.set_status(
-                    session["user_id"], anime["id"], "Watching"
-                )
-
-    # Status is changed
-    new_status = request.form.get("status")
-    if new_status != user_data["status"]:
-        list_service.set_status(session["user_id"], anime["id"], new_status)
-        if new_status == "Completed" and user_data["episodes"] != anime["episodes"]:
-            list_service.set_episodes_watched(
-                session["user_id"], anime["id"], anime["episodes"]
-            )
-            list_service.add_times_watched(
-                session["user_id"], anime["id"], 1
-            )
-
-    # Score is changed
-    new_score = request.form.get("score")
-    new_score = None if new_score == "None" else int(new_score)
-    if new_score != user_data["score"]:
-        list_service.set_score(session["user_id"], anime["id"], new_score)
+    # Handle anime user data change
+    list_service.handle_change(
+        anime["id"],
+        request.form.get("times_watched"),
+        request.form.get("episodes_watched"),
+        request.form.get("status"),
+        request.form.get("score")
+    )
 
     return anime_get(anime_id)
 
