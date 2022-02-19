@@ -1,24 +1,28 @@
 {% extends "layout.html" %}
-{% block title %}List{% endblock %}
+{% block title %}{{username}}'s List{% endblock %}
 {% block stylesheet %}
 <link rel="stylesheet" href="/static/list.css">
 {% endblock %}
 
 {% block content %}
 
-<h1>List</h1>
-<a {% if status=="All" %} class="selected" {% endif %} href="/list">All</a>
-<a {% if status=="Completed" %} class="selected" {% endif %} href="/list?status=Completed">Completed</a>
-<a {% if status=="Watching" %} class="selected" {% endif %} href="/list?status=Watching">Watching</a>
-<a {% if status=="On-Hold" %} class="selected" {% endif %} href="/list?status=On-Hold">On-Hold</a>
-<a {% if status=="Dropped" %} class="selected" {% endif %} href="/list?status=Dropped">Dropped</a>
-<a {% if status=="Plan to Watch" %} class="selected" {% endif %} href="/list?status=Plan%20to%20Watch">Plan to Watch</a>
+<h1>{{username}}'s List</h1>
+<a {% if status=="All" %} class="selected" {% endif %} href="{{base_url}}">All</a>
+<a {% if status=="Completed" %} class="selected" {% endif %} href="{{base_url}}?status=Completed">Completed</a>
+<a {% if status=="Watching" %} class="selected" {% endif %} href="{{base_url}}?status=Watching">Watching</a>
+<a {% if status=="On-Hold" %} class="selected" {% endif %} href="{{base_url}}?status=On-Hold">On-Hold</a>
+<a {% if status=="Dropped" %} class="selected" {% endif %} href="{{base_url}}?status=Dropped">Dropped</a>
+<a {% if status=="Plan to Watch" %} class="selected" {% endif %} href="{{base_url}}?status=Plan%20to%20Watch">
+    Plan to Watch
+</a>
 <br />
 <br />
 
 {% if list_data | length > 0 %}
+{% if own_profile %}
 <form method="POST">
     <input type="submit" value="Submit changes" />
+    {% endif %}
 
     <table>
         <thead>
@@ -28,7 +32,9 @@
                 <th class="c">Progress</th>
                 <th class="d">Status</th>
                 <th class="e">Score</th>
+                {% if own_profile %}
                 <th class="f">Remove</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -45,11 +51,18 @@
                     <a href="/anime/{{anime.id}}">{{anime.title}}</a>
                 </td>
                 <td class="c">
+                    {% if own_profile %}
                     <input style="width:35px" type="number" name="episodes_watched_{{anime.id}}"
                         value={{anime.episodes_watched}} min="0" max="{{anime.episodes}}">
                     / {{anime.episodes}}
+                    {% else %}
+                    <div style="text-align:center">
+                        {{anime.episodes_watched}} / {{anime.episodes}}
+                    </div>
+                    {% endif %}
                 </td>
                 <td class="d">
+                    {% if own_profile %}
                     <select name="status_{{anime.id}}">
                         <option value="Completed" {% if anime.status=="Completed" %} selected {% endif %}>
                             Completed
@@ -67,8 +80,12 @@
                             Plan to Watch
                         </option>
                     </select>
+                    {% else %}
+                    {{anime.status}}
+                    {% endif %}
                 </td>
                 <td class="e">
+                    {% if own_profile %}
                     <select name="score_{{anime.id}}">
                         <option value="None" {% if not anime.score %} selected {% endif %}></option>
                         <option value="10" {% if anime.score==10 %} selected {% endif %}>10</option>
@@ -82,21 +99,28 @@
                         <option value="2" {% if anime.score==2 %} selected {% endif %}>2</option>
                         <option value="1" {% if anime.score==1 %} selected {% endif %}>1</option>
                     </select>
+                    {% else %}
+                    {{anime.score}}
+                    {% endif %}
                 </td>
+                {% if own_profile %}
                 <td class="f">
                     <div style="text-align:center">
                         <input type="checkbox" name="remove_{{anime.id}}" style="width:30px; height:30px;">
                     </div>
                 </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <br />
 
+    {% if own_profile %}
+    <br />
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
     <input type="submit" value="Submit changes" />
 </form>
+{% endif %}
 {% elif status == 'All' %}
 <p><strong>No animes in list</strong></p>
 {% else %}

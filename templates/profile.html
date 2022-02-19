@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
-{% block title %}{{session.username}}'s Profile{% endblock %}
+{% block title %}{{username}}'s Profile{% endblock %}
 {% block stylesheet %}
 <link rel="stylesheet" href="/static/profile.css">
 {% endblock %}
 
 {% block content %}
 
-<h1>{{session.username}}'s Profile</h1>
+<h1>{{username}}'s Profile</h1>
 
 <div class="grid-container">
     <div class="counts">
@@ -19,23 +19,23 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><a href="/list?status=Completed">Completed</a></td>
+                    <td><a href="{{list_url}}?status=Completed">Completed</a></td>
                     <td>{{counts.completed}}</td>
                 </tr>
                 <tr>
-                    <td><a href="/list?status=Watching">Watching</a></td>
+                    <td><a href="{{list_url}}?status=Watching">Watching</a></td>
                     <td>{{counts.watching}}</td>
                 </tr>
                 <tr>
-                    <td><a href="/list?status=On-Hold">On-Hold</a></td>
+                    <td><a href="{{list_url}}?status=On-Hold">On-Hold</a></td>
                     <td>{{counts.on_hold}}</td>
                 </tr>
                 <tr>
-                    <td><a href="/list?status=Dropped">Dropped</a></td>
+                    <td><a href="{{list_url}}?status=Dropped">Dropped</a></td>
                     <td>{{counts.dropped}}</td>
                 </tr>
                 <tr>
-                    <td><a href="/list?status=Plan%20to%20Watch">Plan to Watch</a></td>
+                    <td><a href="{{list_url}}?status=Plan%20to%20Watch">Plan to Watch</a></td>
                     <td>{{counts.plan_to_watch}}</td>
                 </tr>
             </tbody>
@@ -55,7 +55,7 @@
                 <tbody>
                     {% for tag, count in tag_counts %}
                     <tr>
-                        <td><a href="/list?tag={{tag | urlencode}}">{{tag}}</a></td>
+                        <td><a href="{{list_url}}?tag={{tag | urlencode}}">{{tag}}</a></td>
                         <td>{{count}}</td>
                     </tr>
                     {% endfor %}
@@ -66,6 +66,7 @@
         <p>No animes in list</p>
         {% endif %}
     </div>
+    {% if own_profile %}
     <div class="settings">
         <h3>Settings</h3>
         <form method="POST">
@@ -88,6 +89,7 @@
             <input type="submit" value="Submit file" />
         </form>
     </div>
+    {% endif %}
 </div>
 
 {% endblock %}

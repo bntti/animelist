@@ -15,10 +15,10 @@
             <li><a href="/animes">Animes</a></li>
 
             {% if session.username %}
-            <li><a href="/list">List</a></li>
+            <li><a href="/list/{{session.username | urlencode}}">List</a></li>
             <li><a href="/related">Related anime</a></li>
             <li style="float:right"><a href="/logout">Logout</a></li>
-            <li style="float:right"><a href="/profile">{{session.username}}</a></li>
+            <li style="float:right"><a href="/profile/{{session.username | urlencode}}">{{session.username}}</a></li>
 
             {% else %}
             <li style="float:right"><a href="/login">Log in</a></li>

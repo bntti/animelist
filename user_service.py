@@ -1,4 +1,5 @@
 import string
+from typing import Optional
 from secrets import token_hex
 from flask import Response, session, abort
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -44,7 +45,7 @@ def username_exists(username: str) -> bool:
     return result.fetchone()[0] > 0
 
 
-def get_user_data(username: str) -> int:
+def get_user_data(username: str) -> Optional[tuple[int, bool]]:
     sql = "SELECT id, show_hidden FROM users WHERE username = :username"
     result = database.session.execute(sql, {"username": username})
     return result.fetchone()

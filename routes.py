@@ -27,30 +27,48 @@ def index() -> str:
 
 
 # /list
-@app.route("/list", methods=["GET"])
-def list_get() -> Union[str, Response]:
-    user_service.check_user()
+@app.route("/list/<path:username>", methods=["GET"])
+def list_get(username) -> Union[str, Response]:
+    data = user_service.get_user_data(username)
+    if not data:
+        return "<h1>No user found<h1>"
+    user_id, _ = user_service.get_user_data(username)
+    own_profile = "user_id" in session and session["user_id"] == user_id
 
     tag = request.args["tag"] if "tag" in request.args else ""
     status = request.args["status"] if "status" in request.args else "All"
-    list_data = list_service.get_list_data(session["user_id"], status, tag)
+    list_data = list_service.get_list_data(user_id, status, tag)
 
-    return render_template("list.html", list_data=list_data, status=status)
+    return render_template(
+        "list.html",
+        base_url=f"/list/{urlencode_filter(username)}",
+        username=username,
+        own_profile=own_profile,
+        list_data=list_data,
+        status=status
+    )
 
 
-@app.route("/list", methods=["POST"])
-def list_post() -> Union[str, Response]:
+@app.route("/list/<path:username>", methods=["POST"])
+def list_post(username) -> Union[str, Response]:
+    data = user_service.get_user_data(username)
+    if not data:
+        return list_get(username)
+    user_id, _ = user_service.get_user_data(username)
+
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])
+    if "user_id" not in session or session["user_id"] != user_id:
+        abort(403)
 
     tag = request.args["tag"] if "tag" in request.args else ""
     status = request.args["status"] if "status" in request.args else "All"
-    list_data = list_service.get_list_data(session["user_id"], status, tag)
+    list_data = list_service.get_list_data(user_id, status, tag)
 
     # Handle list data change
     for anime in list_data:
         if request.form.get(f"remove_{anime['id']}"):
-            list_service.remove_from_list(session["user_id"], anime["id"])
+            list_service.remove_from_list(user_id, anime["id"])
         else:
             list_service.handle_change(
                 anime["id"],
@@ -60,7 +78,7 @@ def list_post() -> Union[str, Response]:
                 request.form.get(f"score_{anime['id']}")
             )
 
-    return list_get()
+    return list_get(username)
 
 
 # /animes
@@ -178,24 +196,42 @@ def related_post() -> Union[str, Response]:
 
 
 # /profile
-@app.route("/profile", methods=["GET"])
-def profile_get() -> str:
-    user_service.check_user()
-    counts = list_service.get_counts(session["user_id"])
-    tag_counts = list_service.get_tag_counts(session["user_id"])
-    return render_template("profile.html", counts=counts, tag_counts=tag_counts)
+@app.route("/profile/<path:username>", methods=["GET"])
+def profile_get(username) -> str:
+    data = user_service.get_user_data(username)
+    if not data:
+        return "<h1>No user found<h1>"
+    user_id, _ = user_service.get_user_data(username)
+    own_profile = "user_id" in session and session["user_id"] == user_id
+    counts = list_service.get_counts(user_id)
+    tag_counts = list_service.get_tag_counts(user_id)
+    return render_template(
+        "profile.html",
+        own_profile=own_profile,
+        username=username,
+        list_url=f"/list/{urlencode_filter(username)}",
+        counts=counts,
+        tag_counts=tag_counts
+    )
 
 
-@app.route("/profile", methods=["POST"])
-def profile_post() -> str:
+@app.route("/profile/<path:username>", methods=["POST"])
+def profile_post(username) -> str:
+    data = user_service.get_user_data(username)
+    if not data:
+        return profile_get(username)
+    user_id, _ = user_service.get_user_data(username)
+
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])
+    if "user_id" not in session or session["user_id"] != user_id:
+        abort(403)
 
     # Import from myanimelist
     if "mal_import" in request.files:
         file = request.files["mal_import"]
         if list_service.import_from_myanimelist(file):
-            return profile_get()
+            return profile_get(username)
         abort(Response("Error parsing XML file", 415))
 
     # "Show hidden" setting change
@@ -203,7 +239,7 @@ def profile_post() -> str:
     if new_show_hidden != session["show_hidden"]:
         session["show_hidden"] = new_show_hidden
         user_service.set_show_hidden(new_show_hidden)
-    return profile_get()
+    return profile_get(username)
 
 
 # /login
