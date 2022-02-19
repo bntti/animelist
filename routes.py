@@ -12,12 +12,12 @@ from app import app
 
 # Url encoder
 @app.template_filter('urlencode')
-def urlencode_filter(s):
-    if isinstance(s, Markup):
-        s = s.unescape()
-    s = s.encode('utf8')
-    s = urllib.parse.quote_plus(s)
-    return Markup(s)
+def url_encode(string):
+    if isinstance(string, Markup):
+        string = string.unescape()
+    string = string.encode('utf8')
+    string = urllib.parse.quote_plus(string)
+    return Markup(string)
 
 
 # /
@@ -41,7 +41,7 @@ def list_get(username) -> Union[str, Response]:
 
     return render_template(
         "list.html",
-        base_url=f"/list/{urlencode_filter(username)}",
+        base_url=f"/list/{url_encode(username)}",
         username=username,
         own_profile=own_profile,
         list_data=list_data,
@@ -103,7 +103,7 @@ def animes_get() -> str:
     # Base url and current url
     base_url = "/animes?" if not query else f"/animes?query={query}&"
     if tag:
-        base_url += f"tag={urlencode_filter(tag)}&"
+        base_url += f"tag={url_encode(tag)}&"
     current_url = base_url if page == 0 else f"{base_url}page={page}"
 
     return render_template(
@@ -209,7 +209,7 @@ def profile_get(username) -> str:
         "profile.html",
         own_profile=own_profile,
         username=username,
-        list_url=f"/list/{urlencode_filter(username)}",
+        list_url=f"/list/{url_encode(username)}",
         counts=counts,
         tag_counts=tag_counts
     )
@@ -235,7 +235,7 @@ def profile_post(username) -> str:
         abort(Response("Error parsing XML file", 415))
 
     # "Show hidden" setting change
-    new_show_hidden = True if request.form.get("show hidden") else False
+    new_show_hidden = bool(request.form.get("show hidden"))
     if new_show_hidden != session["show_hidden"]:
         session["show_hidden"] = new_show_hidden
         user_service.set_show_hidden(new_show_hidden)
