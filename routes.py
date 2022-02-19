@@ -1,10 +1,22 @@
 from typing import Union
+import urllib.parse
+from markupsafe import Markup
 from flask import Response, render_template, request, session, redirect, abort
 import user_service
 import list_service
 import anime_service
 import relation_service
 from app import app
+
+
+# Url encoder
+@app.template_filter('urlencode')
+def urlencode_filter(s):
+    if isinstance(s, Markup):
+        s = s.unescape()
+    s = s.encode('utf8')
+    s = urllib.parse.quote_plus(s)
+    return Markup(s)
 
 
 # /
