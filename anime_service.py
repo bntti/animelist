@@ -3,13 +3,15 @@ from flask import session
 from database import database
 
 
-def anime_count(query: str) -> int:
-    sql = "SELECT COUNT(DISTINCT a.id) FROM animes a, synonyms s " \
-          "WHERE (NOT a.hidden OR :show_hidden) AND a.id = s.anime_id " \
-          "AND (:query = '%%' OR (a.title ILIKE :query OR s.synonym ILIKE :query))"
+def anime_count(query: str, tag: str) -> int:
+    sql = "SELECT COUNT(DISTINCT a.id) FROM animes a, synonyms s, tags t " \
+          "WHERE a.id = s.anime_id AND a.id = t.anime_id AND (NOT a.hidden OR :show_hidden)" \
+          "AND (:query = '%%' OR (a.title ILIKE :query OR s.synonym ILIKE :query)) " \
+          "AND (:tag = '' OR t.tag = :tag)"
     row = database.session.execute(
         sql, {
             "query": f"%{query}%",
+            "tag": tag,
             "show_hidden": session["show_hidden"] if "show_hidden" in session else False
         }
     ).fetchone()
@@ -42,17 +44,19 @@ def get_anime(anime_id: int) -> Optional[dict]:
     }
 
 
-def get_animes(page: int, query: str) -> list:
+def get_animes(page: int, query: str, tag: str) -> list:
     sql = "SELECT a.id, a.thumbnail, a.title, a.episodes, ROUND(AVG(l.score), 2) " \
-          "FROM synonyms s, animes a LEFT JOIN list l ON l.anime_id = a.id " \
-          "WHERE (NOT a.hidden OR :show_hidden) AND a.id = s.anime_id " \
+          "FROM synonyms s, tags t, animes a LEFT JOIN list l ON l.anime_id = a.id " \
+          "WHERE (NOT a.hidden OR :show_hidden) AND a.id = s.anime_id AND a.id = t.anime_id " \
           "AND (:query = '%%' OR (a.title ILIKE :query OR s.synonym ILIKE :query)) " \
-          "GROUP BY a.id ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.id) DESC, a.title " \
+          "AND (:tag = '' OR t.tag = :tag) GROUP BY a.id " \
+          "ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.id) DESC, a.title " \
           "LIMIT 50 OFFSET :offset"
     result = database.session.execute(
         sql, {
             "offset": page,
             "query": f"%{query}%",
+            "tag": tag,
             "show_hidden": session["show_hidden"] if "show_hidden" in session else False
         }
     )

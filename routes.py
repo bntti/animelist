@@ -6,6 +6,7 @@ import user_service
 import list_service
 import anime_service
 import relation_service
+import database
 from app import app
 
 
@@ -69,19 +70,22 @@ def animes_get() -> str:
     if "user_id" in session:
         list_ids = list_service.get_list_ids(session["user_id"])
 
+    tag = request.args["tag"] if "tag" in request.args else ""
     query = request.args["query"] if "query" in request.args else ""
     page = 0
     if "page" in request.args and request.args["page"].isdigit():
         page = int(request.args["page"])
 
-    anime_count = anime_service.anime_count(query)
+    anime_count = anime_service.anime_count(query, tag)
     page = max(0, min(anime_count - 50, page))
     prev_page = max(page - 50, 0)
     next_page = min(page + 50, max(0, anime_count - 50))
-    animes = anime_service.get_animes(page, query)
+    animes = anime_service.get_animes(page, query, tag)
 
     # Base url and current url
     base_url = "/animes?" if not query else f"/animes?query={query}&"
+    if tag:
+        base_url += f"tag={urlencode_filter(tag)}&"
     current_url = base_url if page == 0 else f"{base_url}page={page}"
 
     return render_template(
@@ -120,9 +124,10 @@ def anime_get(anime_id) -> str:
         user_data = new_data if new_data else user_data
 
     related_anime = relation_service.get_anime_related_anime(anime_id)
+    tags = database.get_tags(anime_id)
 
     return render_template(
-        "anime.html", anime=anime, user_data=user_data, related_anime=related_anime
+        "anime.html", anime=anime, user_data=user_data, related_anime=related_anime, tags=tags
     )
 
 

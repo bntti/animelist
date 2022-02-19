@@ -29,6 +29,12 @@ def add_tag(anime_id: int, tag: str) -> None:
     database.session.execute(sql, {"anime_id": anime_id, "tag": tag})
 
 
+def get_tags(anime_id: int) -> list:
+    sql = "SELECT t.tag FROM tags t, animes a WHERE a.id = t.anime_id AND a.id = :anime_id"
+    result = database.session.execute(sql, {"anime_id": anime_id})
+    return [row[0] for row in result.fetchall()]
+
+
 def add_relation(anime_id: int, related_id: int) -> None:
     sql = "INSERT INTO relations (anime_id, related_id) VALUES (:anime_id, :related_id)"
     database.session.execute(
