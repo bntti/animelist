@@ -14,10 +14,10 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
   - Viewing more detailed information about a specific anime
 - `/login` and `/register`
   - Accounts
-- `/list/<id>`
+- `/list/<username>`
   - Personal anime list
   - Seeing others' lists
-- `/profile/<id>`
+- `/profile/<username>`
   - Importing data from MyAnimeList
   - Setting to show hidden anime (There are no hidden anime in Heroku because of database table size restrictions)
   - Statistics of watched anime
@@ -26,7 +26,7 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
   - Seeing related animes that are not on your list
 
 ### Future features
-- Listing tags to search by in /animes
+- Listing tags to search by in `/animes`
 
 ### Features that I might add if I have enough time
 - Adding users as friends
