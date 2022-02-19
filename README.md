@@ -6,15 +6,29 @@ The project is a website where animes are listed and users can search animes, ad
 Anime data is taken from [here](https://github.com/manami-project/anime-offline-database) and the AGPL-3.0 license is used because of that.
 
 ## Features
-- Accounts
-- Listing all animes and sorting them by their average score
-- Searching animes
-- Personal anime list
-- Importing data from MyAnimeList
+- `/animes`
+  - Listing all animes and sorting them by their average score
+  - Searching animes
+  - Searching animes by tag (select a tag from `/anime/<id>` view)
+- `/anime/<id>`
+  - Viewing more detailed information about a specific anime
+- `/login` and `/register`
+  - Accounts
+- `/list/<id>`
+  - Personal anime list
+  - Seeing others' lists
+- `/profile/<id>`
+  - Importing data from MyAnimeList
+  - Setting to show hidden anime (There are no hidden anime in Heroku because of database table size restrictions)
+  - Statistics of watched anime
+  - Seeing others' profiles
+- `/related`
+  - Seeing related animes that are not on your list
+
+### Future features
+- Listing tags to search by in /animes
 
 ### Features that I might add if I have enough time
-- Seeing related animes that are not on your list
-- Statistics of watched anime
 - Adding users as friends
 - Watch history
 
@@ -39,8 +53,8 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
     ```
     $ pip3 install -r requirements-alt.txt
     ```
-4. Download 'anime-offline-database-minified.json' from [here](https://github.com/manami-project/anime-offline-database) and place the file at this projects root
-5. Initialize database
+4. Download 'anime-offline-database-minified.json' from [here](https://github.com/manami-project/anime-offline-database) and place the file at this project's root
+5. Initialize the database
    ```
    $ INIT=True flask run
    ```
