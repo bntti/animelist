@@ -10,6 +10,46 @@ body {
   padding: 20px;
 }
 
+.notifications {
+  margin-top: 30px;
+  margin-right: 12px;
+  float: right;
+  border-style: solid;
+  /* Firefox */
+  -moz-animation: cssAnimation 0s ease-in 3s forwards;
+  /* Safari and Chrome */
+  -webkit-animation: cssAnimation 0s ease-in 3s forwards;
+  /* Opera */
+  -o-animation: cssAnimation 0s ease-in 3s forwards;
+
+  animation: cssAnimation 0s ease-in 3s forwards;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+.notifications ul {
+  padding: 0px 15px;
+  list-style: none;
+}
+.notifications ul .error {
+  color: red;
+}
+@keyframes cssAnimation {
+  to {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    border-style: none;
+  }
+}
+@-webkit-keyframes cssAnimation {
+  to {
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    border-style: none;
+  }
+}
+
 .footer {
   background-color: #f1f1f1;
   text-align: center;

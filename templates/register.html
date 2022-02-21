@@ -8,16 +8,6 @@
 
 <h1>Register</h1>
 
-<!-- Error messages -->
-{% if errors %}
-<ul>
-    {% for error in errors %}
-    <li style="color: red;">{{error}}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-<!-- Register form -->
 <form action="/register" method="POST">
     <table>
         <tbody>

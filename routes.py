@@ -1,7 +1,7 @@
 from typing import Union
 import urllib.parse
 from markupsafe import Markup
-from flask import Response, render_template, request, session, redirect, abort
+from flask import Response, flash, render_template, request, session, redirect, abort
 import user_service
 import list_service
 import anime_service
@@ -78,6 +78,7 @@ def list_post(username) -> Union[str, Response]:
                 request.form.get(f"score_{anime['id']}")
             )
 
+    flash("List updated")
     return list_get(username)
 
 
@@ -124,6 +125,7 @@ def animes_post() -> str:
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])
     list_service.add_to_list(session["user_id"], int(request.form["anime_id"]))
+    flash("Anime added to list")
     return animes_get()
 
 
@@ -161,10 +163,12 @@ def anime_post(anime_id) -> str:
     # Anime is removed from list
     if request.form["submit"] == "Remove from list":
         list_service.remove_from_list(session["user_id"], anime_id)
+        flash("Anime removed from list")
         return anime_get(anime_id)
 
     # Anime is added to list
     if request.form["submit"] == "Add to list":
+        flash("Anime added to list")
         list_service.add_to_list(session["user_id"], anime_id)
 
     # Handle anime user data change
@@ -175,6 +179,9 @@ def anime_post(anime_id) -> str:
         request.form.get("status"),
         request.form.get("score")
     )
+
+    if request.form["submit"] != "Add to list":
+        flash("Updated anime data")
 
     return anime_get(anime_id)
 
@@ -192,6 +199,7 @@ def related_post() -> Union[str, Response]:
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])
     list_service.add_to_list(session["user_id"], int(request.form["anime_id"]))
+    flash("Anime added to list")
     return related_get()
 
 
@@ -231,6 +239,7 @@ def profile_post(username) -> str:
     if "mal_import" in request.files:
         file = request.files["mal_import"]
         if list_service.import_from_myanimelist(file):
+            flash("Data imported from MyAnimeList")
             return profile_get(username)
         abort(Response("Error parsing XML file", 415))
 
@@ -239,29 +248,32 @@ def profile_post(username) -> str:
     if new_show_hidden != session["show_hidden"]:
         session["show_hidden"] = new_show_hidden
         user_service.set_show_hidden(new_show_hidden)
+        flash("Settings updated")
+
     return profile_get(username)
 
 
 # /login
 @app.route("/login", methods=["GET", "POST"])
 def login() -> Union[str, Response]:
-    error = False
     username = ""
     password = ""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        error = not user_service.login(username, password)
-        if not error:
+        success = user_service.login(username, password)
+        if success:
+            flash("Logged in")
             return redirect("/")
+        else:
+            flash("Wrong username or password", "error")
 
-    return render_template("login.html", error=error, username=username, password=password)
+    return render_template("login.html", username=username, password=password)
 
 
 # /register
 @app.route("/register", methods=["GET", "POST"])
 def register() -> Union[str, Response]:
-    errors = []
     username = ""
     password1 = ""
     password2 = ""
@@ -271,11 +283,14 @@ def register() -> Union[str, Response]:
         password2 = request.form["password2"]
         errors = user_service.register(username, password1, password2)
         if not errors:
+            flash("Account created")
             return redirect("/")
+        else:
+            for error in errors:
+                flash(error, "error")
 
     return render_template(
         "register.html",
-        errors=errors,
         username=username,
         password1=password1,
         password2=password2
@@ -286,4 +301,5 @@ def register() -> Union[str, Response]:
 @app.route("/logout")
 def logout() -> Response:
     user_service.logout()
+    flash("Logged out")
     return redirect("/")

@@ -27,6 +27,19 @@
         </ul>
     </div>
 
+    <!-- Notifications-->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="notifications">
+        <ul>
+            {% for category, message in messages %}
+            <li class="{{category}}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    {% endwith %}
+
     <div class="content">
         {% block content %}{% endblock %}
     </div>
