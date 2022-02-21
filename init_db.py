@@ -1,7 +1,7 @@
 import json
 import sys
 import anime_service
-import database
+import database_service
 
 
 def add_anime_data(data):
@@ -32,11 +32,11 @@ def add_anime_data(data):
 
         # Add synonyms
         for synonym in anime_data["synonyms"]:
-            database.add_synonym(anime_id, synonym)
+            database_service.add_synonym(anime_id, synonym)
 
         # Add tags
         for tag in anime_data["tags"]:
-            database.add_tag(anime_id, tag)
+            database_service.add_tag(anime_id, tag)
 
 
 def add_relations(data):
@@ -60,7 +60,7 @@ def add_relations(data):
             if "myanimelist.net" in relation:
                 related_id = anime_service.get_anime_id(relation)
                 if related_id:
-                    database.add_relation(anime_id, related_id)
+                    database_service.add_relation(anime_id, related_id)
 
 
 def import_data():
@@ -75,7 +75,7 @@ def import_data():
         sys.exit(0)
 
     print("Initializing tables")
-    database.init_tables()
+    database_service.init_tables()
 
     print("Adding animes, tags, and synonyms to the database")
     add_anime_data(data)
@@ -84,7 +84,7 @@ def import_data():
     add_relations(data)
 
     print("Committing changes")
-    database.database.session.commit()
+    database_service.commit()
 
     print("Done!")
     sys.exit(0)

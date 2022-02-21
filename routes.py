@@ -6,7 +6,7 @@ import user_service
 import list_service
 import anime_service
 import relation_service
-import database
+import database_service
 from app import app
 
 
@@ -142,7 +142,7 @@ def anime_get(anime_id) -> str:
         user_data = new_data if new_data else user_data
 
     related_anime = relation_service.get_anime_related_anime(anime_id)
-    tags = database.get_tags(anime_id)
+    tags = database_service.get_tags(anime_id)
 
     return render_template(
         "anime.html", anime=anime, user_data=user_data, related_anime=related_anime, tags=tags
