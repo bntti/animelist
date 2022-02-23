@@ -57,6 +57,10 @@ def import_to_list(user_id, anime: dict):
     anime_id = result[0]
     data = {**anime, "user_id": user_id, "anime_id": anime_id}
 
+    # If score is 0, then score has not yet been set
+    if not str.isdigit(data["score"]) or 10 < int(data["score"]) or int(data["score"]) < 1:
+        data["score"] = None
+
     try:
         sql = "INSERT INTO list (user_id, anime_id, episodes, score, status, times_watched) " \
               "VALUES (:user_id, :anime_id, :episodes, :score, :status, :times_watched)"
