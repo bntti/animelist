@@ -274,8 +274,7 @@ def login() -> Union[str, Response]:
         if success:
             flash("Logged in")
             return redirect("/")
-        else:
-            flash("Wrong username or password", "error")
+        flash("Wrong username or password", "error")
 
     return render_template("login.html", username=username, password=password)
 
@@ -294,9 +293,8 @@ def register() -> Union[str, Response]:
         if not errors:
             flash("Account created")
             return redirect("/")
-        else:
-            for error in errors:
-                flash(error, "error")
+        for error in errors:
+            flash(error, "error")
 
     return render_template(
         "register.html",
