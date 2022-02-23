@@ -8,10 +8,6 @@ table.relations {
   width: 100%;
 }
 
-tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
 .a {
   width: 0px;
 }
@@ -19,4 +15,12 @@ tr:nth-child(even) {
 .c {
   text-align: center;
   width: 60px;
+}
+
+.padded-table td {
+  padding: 5px;
+}
+
+table.tags {
+  width: 225px;
 }

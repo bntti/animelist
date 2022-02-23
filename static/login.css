@@ -3,6 +3,10 @@ input[type="password"] {
   padding: 6px;
 }
 
+table {
+  border-style: none !important;
+}
+
 .a {
   width: 110px;
 }

@@ -1,7 +1,3 @@
-tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
 h3,
 p {
   margin-top: 5px;
@@ -35,19 +31,15 @@ p {
   overflow-y: auto;
   height: 500px;
   width: fit-content;
-  border: double;
+  border: solid;
+  border-color: #ccf;
 }
 
 .tableFixHead thead th {
   position: sticky;
-  top: 0;
   z-index: 1;
 }
 
-th {
-  background: #eee;
-}
-
-table {
-  border-collapse: collapse;
+.tableFixHead table {
+  border-style: none !important;
 }

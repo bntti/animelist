@@ -7,23 +7,26 @@
 {% block content %}
 
 <h1>{{username}}'s List</h1>
-<a {% if status=="All" %} class="selected" {% endif %} href="{{base_url}}">All</a>
-<a {% if status=="Completed" %} class="selected" {% endif %} href="{{base_url}}?status=Completed">Completed</a>
-<a {% if status=="Watching" %} class="selected" {% endif %} href="{{base_url}}?status=Watching">Watching</a>
-<a {% if status=="On-Hold" %} class="selected" {% endif %} href="{{base_url}}?status=On-Hold">On-Hold</a>
-<a {% if status=="Dropped" %} class="selected" {% endif %} href="{{base_url}}?status=Dropped">Dropped</a>
-<a {% if status=="Plan to Watch" %} class="selected" {% endif %} href="{{base_url}}?status=Plan%20to%20Watch">
-    Plan to Watch
-</a>
-<br />
-<br />
 
+<div class="grid-container">
+    <div>
+        {% if list_data | length > 0 and own_profile %}
+        <input form="listform" type="submit" value="Submit changes" />
+        {% endif %}
+    </div>
+    <div class="links">
+        <a {% if status=="All" %} class="selected" {% endif %} href="{{base_url}}">All</a>
+        <a {% if status=="Completed" %} class="selected" {% endif %} href="{{base_url}}?status=Completed">Completed</a>
+        <a {% if status=="Watching" %} class="selected" {% endif %} href="{{base_url}}?status=Watching">Watching</a>
+        <a {% if status=="On-Hold" %} class="selected" {% endif %} href="{{base_url}}?status=On-Hold">On-Hold</a>
+        <a {% if status=="Dropped" %} class="selected" {% endif %} href="{{base_url}}?status=Dropped">Dropped</a>
+        <a {% if status=="Plan to Watch" %} class="selected" {% endif %} href="{{base_url}}?status=Plan%20to%20Watch">
+            Plan to Watch
+        </a>
+    </div>
+</div>
 {% if list_data | length > 0 %}
-{% if own_profile %}
-<form method="POST">
-    <input type="submit" value="Submit changes" />
-    {% endif %}
-
+<form id="listform" method="POST">
     <table>
         <thead>
             <tr>
@@ -116,9 +119,8 @@
     </table>
 
     {% if own_profile %}
-    <br />
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
-    <input type="submit" value="Submit changes" />
+    <input style="margin-top: 5px" type="submit" value="Submit changes" />
 </form>
 {% endif %}
 {% elif status == 'All' %}

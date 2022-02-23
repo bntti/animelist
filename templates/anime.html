@@ -15,18 +15,27 @@
         {% else %}
         <img src="https://cdn.myanimelist.net/images/qm_50.gif">
         {% endif %}
-        <h3>Tags</h3>
-        <ul>
-            {% for tag in tags %}
-            <li><a href="/animes?tag={{tag | urlencode}}">{{tag}}</a></li>
-            {% endfor %}
-        </ul>
+        <table class="tags">
+            <thead>
+                <th>Tags</th>
+            </thead>
+            <tbody>
+                {% for tag in tags %}
+                <tr>
+                    <td><a href="/animes?tag={{tag | urlencode}}">{{tag}}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
     <div>
         <h1>{{anime.title}}</h1>
 
         <form method="POST">
-            <table>
+            {% if session.user_id %}
+            <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
+            {% endif %}
+            <table class="padded-table">
                 <tbody>
                     <tr>
                         <td>Episodes:</td>
@@ -50,7 +59,6 @@
 
                     <!-- List data-->
                     {% if session.user_id %}
-                    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
                     <tr>
                         <td>Your score:</td>
                         <td>

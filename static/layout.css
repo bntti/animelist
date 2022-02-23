@@ -11,10 +11,14 @@ body {
 }
 
 .notifications {
-  margin-top: 30px;
-  margin-right: 12px;
-  float: right;
+  position: fixed;
+  right: 20px;
+  top: 67px;
+  border-radius: 15px;
+  background-color: white;
   border-style: solid;
+
+  /* Hiding animation */
   /* Firefox */
   -moz-animation: cssAnimation 0s ease-in 3s forwards;
   /* Safari and Chrome */
@@ -58,6 +62,7 @@ body {
 }
 
 ul.navbar {
+  z-index: 10;
   background-color: #333;
   position: fixed;
   top: 0;
@@ -82,17 +87,4 @@ ul.navbar li a {
 
 ul.navbar li a:hover {
   background-color: #111;
-}
-
-/* Hide up and down buttons from number input */
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type="number"] {
-  -moz-appearance: textfield;
 }

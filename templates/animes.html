@@ -8,28 +8,28 @@
 
 <h1>Animes</h1>
 
-<!-- Search -->
-<form>
-    <input type="text" value="{{query}}" name="query" placeholder="Search" />
-    <input type="submit" value="Search" />
-</form>
+<div class="grid-container">
+    <!-- Previous and next page buttons -->
+    <div>
+        {% if show_prev %}
+        <a class="enabled" href="{{prev_url}}">Previous page</a>
+        {% else %}
+        <a class="disabled">Previous page</a>
+        {% endif %}
 
-<!-- Previous and next page buttons -->
-{% if animes %}
-<div class="pages">
-    {% if show_prev %}
-    <a class="enabled" href="{{prev_url}}">Previous page</a>
-    {% else %}
-    <a class="disabled">Previous page</a>
-    {% endif %}
+        {% if show_next %}
+        <a class="enabled" href="{{next_url}}">Next page</a>
+        {% else %}
+        <a class="disabled">Next page</a>
+        {% endif %}
+    </div>
 
-    {% if show_next %}
-    <a class="enabled" href="{{next_url}}">Next page</a>
-    {% else %}
-    <a class="disabled">Next page</a>
-    {% endif %}
+    <!-- Search -->
+    <form class="search">
+        <input type="text" value="{{query}}" name="query" placeholder="Search" />
+        <input type="submit" value="Search" />
+    </form>
 </div>
-{% endif %}
 
 <!-- Animes -->
 {% if animes %}
@@ -86,7 +86,7 @@
 
 <!-- Previous and next page buttons -->
 {% if animes %}
-<div class="pages">
+<div style="margin-top: 5px">
     {% if show_prev %}
     <a class="enabled" href="{{prev_url}}">Previous page</a>
     {% else %}
