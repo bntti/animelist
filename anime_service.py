@@ -4,10 +4,17 @@ from database import database
 
 
 def anime_count(query: str, tag: str) -> int:
-    sql = "SELECT COUNT(DISTINCT a.id) FROM animes a, synonyms s, tags t " \
-          "WHERE a.id = s.anime_id AND a.id = t.anime_id AND (NOT a.hidden OR :show_hidden)" \
-          "AND (:query = '%%' OR (a.title ILIKE :query OR s.synonym ILIKE :query)) " \
-          "AND (:tag = '' OR t.tag = :tag)"
+    if not tag:
+        sql = "SELECT COUNT(DISTINCT a.id) FROM animes a " \
+              "LEFT JOIN synonyms s ON s.anime_id = a.id " \
+              "WHERE (NOT a.hidden OR :show_hidden) AND (:query = '%%' OR (a.title ILIKE :query " \
+              "OR (s.synonym IS NOT NULL AND s.synonym ILIKE :query)))"
+    else:
+        sql = "SELECT COUNT(DISTINCT a.id) FROM tags t, animes a " \
+              "LEFT JOIN synonyms s ON s.anime_id = a.id " \
+              "WHERE a.id = t.anime_id AND t.tag = :tag AND (NOT a.hidden OR :show_hidden)" \
+              "AND (:query = '%%' OR (a.title ILIKE :query " \
+              "OR (s.synonym IS NOT NULL AND s.synonym ILIKE :query)))"
     row = database.session.execute(
         sql, {
             "query": f"%{query}%",
@@ -47,18 +54,21 @@ def get_anime(anime_id: int) -> Optional[dict]:
 def get_animes(page: int, query: str, tag: str) -> list:
     if not tag:
         sql = "SELECT a.id, a.thumbnail, a.title, a.episodes, ROUND(AVG(l.score), 2) " \
-              "FROM synonyms s, animes a LEFT JOIN list l ON l.anime_id = a.id " \
-              "WHERE (NOT a.hidden OR :show_hidden) AND a.id = s.anime_id " \
-              "AND (:query = '%%' OR (a.title ILIKE :query OR s.synonym ILIKE :query)) " \
+              "FROM animes a LEFT JOIN list l ON l.anime_id = a.id " \
+              "LEFT JOIN synonyms s ON s.anime_id = a.id " \
+              "WHERE (NOT a.hidden OR :show_hidden) " \
+              "AND (:query = '%%' OR (a.title ILIKE :query " \
+              "OR (s.synonym IS NOT NULL AND s.synonym ILIKE :query))) " \
               "GROUP BY a.id ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.id) DESC, a.title " \
               "LIMIT 50 OFFSET :offset"
     else:
         sql = "SELECT a.id, a.thumbnail, a.title, a.episodes, ROUND(AVG(l.score), 2) " \
-              "FROM synonyms s, tags t, animes a LEFT JOIN list l ON l.anime_id = a.id " \
-              "WHERE (NOT a.hidden OR :show_hidden) AND a.id = s.anime_id AND a.id = t.anime_id " \
-              "AND (:query = '%%' OR (a.title ILIKE :query OR s.synonym ILIKE :query)) " \
-              "AND (:tag = '' OR t.tag = :tag) GROUP BY a.id " \
-              "ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.id) DESC, a.title " \
+              "FROM tags t, animes a LEFT JOIN list l ON l.anime_id = a.id " \
+              "LEFT JOIN synonyms s ON s.anime_id = a.id " \
+              "WHERE (NOT a.hidden OR :show_hidden) AND a.id = t.anime_id AND t.tag = :tag " \
+              "AND (:query = '%%' OR (a.title ILIKE :query " \
+              "OR (s.synonym IS NOT NULL AND s.synonym ILIKE :query))) " \
+              "GROUP BY a.id ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.id) DESC, a.title " \
               "LIMIT 50 OFFSET :offset"
     result = database.session.execute(
         sql, {
