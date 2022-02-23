@@ -22,7 +22,8 @@ def add_tag(anime_id: int, tag: str) -> None:
 
 
 def get_tags(anime_id: int) -> list:
-    sql = "SELECT t.tag FROM tags t, animes a WHERE a.id = t.anime_id AND a.id = :anime_id"
+    sql = "SELECT t.tag FROM tags t, animes a " \
+          "WHERE a.id = t.anime_id AND a.id = :anime_id ORDER BY t.tag"
     result = database.session.execute(sql, {"anime_id": anime_id})
     return [row[0] for row in result.fetchall()]
 
