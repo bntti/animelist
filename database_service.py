@@ -28,6 +28,19 @@ def get_tags(anime_id: int) -> list:
     return [row[0] for row in result.fetchall()]
 
 
+def get_tag_counts() -> list:
+    sql = "SELECT t.tag, COUNT(a.id) FROM tags t LEFT JOIN animes a ON a.id = t.anime_id " \
+          "GROUP BY t.tag ORDER BY COUNT(a.id) DESC, t.tag"
+    return database.session.execute(sql).fetchall()
+
+
+def get_popular_tags() -> list:
+    sql = "SELECT t.tag, ROUND(AVG(l.score), 2) FROM tags t " \
+          "LEFT JOIN list l ON l.anime_id = t.anime_id GROUP BY t.tag " \
+          "ORDER BY COALESCE(AVG(l.score), 0) DESC, COUNT(l.user_id) DESC, t.tag"
+    return database.session.execute(sql).fetchall()
+
+
 def add_relation(anime_id: int, related_id: int) -> None:
     sql = "INSERT INTO relations (anime_id, related_id) VALUES (:anime_id, :related_id)"
     database.session.execute(

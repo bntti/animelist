@@ -36,6 +36,7 @@ a.disabled {
   display: grid;
   grid-template-columns: auto auto;
   margin: 5px 0px;
+  row-gap: 5px;
 }
 
 .search {

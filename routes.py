@@ -82,6 +82,14 @@ def list_post(username) -> Union[str, Response]:
     return list_get(username)
 
 
+# /tags
+@app.route("/tags")
+def tags() -> str:
+    popular_tags = database_service.get_popular_tags()
+    tag_counts = database_service.get_tag_counts()
+    return render_template("tags.html", popular_tags=popular_tags, tag_counts=tag_counts)
+
+
 # /animes
 @app.route("/animes", methods=["GET"])
 def animes_get() -> str:
@@ -111,6 +119,7 @@ def animes_get() -> str:
         "animes.html",
         animes=animes,
         query=query,
+        tag=tag,
         list_ids=list_ids,
         current_url=current_url,
         prev_url=f"{base_url}page={prev_page}",
@@ -144,10 +153,10 @@ def anime_get(anime_id) -> str:
         user_data = new_data if new_data else user_data
 
     related_anime = relation_service.get_anime_related_anime(anime_id)
-    tags = database_service.get_tags(anime_id)
+    anime_tags = database_service.get_tags(anime_id)
 
     return render_template(
-        "anime.html", anime=anime, user_data=user_data, related_anime=related_anime, tags=tags
+        "anime.html", anime=anime, user_data=user_data, related_anime=related_anime, tags=anime_tags
     )
 
 

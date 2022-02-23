@@ -11,6 +11,16 @@
 <div class="grid-container">
     <!-- Previous and next page buttons -->
     <div>
+        <a href="/animes">Clear search and tags</a>
+    </div>
+    <div style="text-align:right">
+        {% if tag %}
+        Tag: {{tag}}
+        {% else %}
+        <a href="/tags">List of tags</a>
+        {% endif %}
+    </div>
+    <div>
         {% if show_prev %}
         <a class="enabled" href="{{prev_url}}">Previous page</a>
         {% else %}

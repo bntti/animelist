@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block title %}Tags{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/tags.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="grid-container">
+    <div>
+        <h3>Most common tags</h3>
+        <table>
+            <thead>
+                <th>Tag</th>
+                <th>Count</th>
+            </thead>
+            <tbody>
+                {% for tag, count in tag_counts %}
+                <tr>
+                    <td><a href="/animes?tag={{tag | urlencode}}">{{tag}}</a></td>
+                    <td>{{count}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <h3>Top rated tags</h3>
+        <table>
+            <thead>
+                <th>Tag</th>
+                <th>Score</th>
+            </thead>
+            <tbody>
+                {% for tag, score in popular_tags %}
+                <tr>
+                    <td><a href="/animes?tag={{tag | urlencode}}">{{tag}}</a></td>
+                    <td>
+                        {% if score %}
+                        {{score}}
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+{% endblock %}
