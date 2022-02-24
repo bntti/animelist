@@ -97,9 +97,10 @@ def topanime_get() -> str:
     if "user_id" in session:
         list_ids = list_service.get_list_ids(session["user_id"])
 
+    related = request.args["related"] if "related" in request.args else ""
     tag = request.args["tag"].lower() if "tag" in request.args else ""
-    related = request.args["related"] if "related" in request.args else False
     query = request.args["query"] if "query" in request.args else ""
+    show = request.args["show"] if "show" in request.args else False
     page = 0
     if "page" in request.args and request.args["page"].isdigit():
         page = int(request.args["page"])
@@ -114,6 +115,8 @@ def topanime_get() -> str:
         top_anime = relation_service.get_related_anime(
             page, session["user_id"]
         )
+        tag = ""
+        query = ""
     page = max(0, min(anime_count - 50, page))
     prev_page = max(page - 50, 0)
     next_page = min(page + 50, max(0, anime_count - 50))
@@ -131,6 +134,7 @@ def topanime_get() -> str:
         top_anime=top_anime,
         query=query,
         tag=tag,
+        show=show,
         related=related,
         list_ids=list_ids,
         current_url=current_url,

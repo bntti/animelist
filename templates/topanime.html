@@ -8,26 +8,10 @@
 
 <h1>Top Anime</h1>
 
-<form>
-    <div class="grid-container">
-        <div></div>
-        <div>
-            {% if not related %}
-            <label for="tag">Tag:</label>
-            <input id="tag" type="text" value="{{tag}}" name="tag" placeholder="Tag" />
-            <a href="/tags">List of tags</a>
-            {% endif %}
-        </div>
-        <div style="text-align:right">
-            {% if session.user_id %}
-            <label for="related">Related:</label>
-            <input id="related" type="checkbox" {% if related %} checked {% endif %} name="related"
-                style="width:17px; height:17px;" />
-            {% endif %}
-        </div>
-
-        <div>
-            <!-- Previous and next page buttons -->
+<div class="grid-container">
+    <!-- Previous and next page buttons -->
+    <div style="display: flex">
+        <div style="align-self: flex-end">
             {% if show_prev %}
             <a class="enabled" href="{{prev_url}}">Previous page</a>
             {% else %}
@@ -40,24 +24,90 @@
             <a class="disabled">Next page</a>
             {% endif %}
         </div>
-        <div>
-            {% if not related %}
-            <span style="width: 50px">
-                <label for="query">Search:</label>
-            </span>
-            <input id="query" type="text" value="{{query}}" name="query" placeholder="Search" />
-            {% endif %}
-        </div>
-        <div style="text-align:right">
-            {% if tag or related or query %}
-            <a class="enabled" href="/topanime">Clear</a>
-            {% else %}
-            <a class="disabled">Clear</a>
-            {% endif %}
-            <input type="submit" value="Submit" />
-        </div>
     </div>
-</form>
+
+    <!-- Search options -->
+    <div>
+        <form>
+            <input type="hidden" value="{{'' if show else 'True'}}" name="show" />
+
+            <!-- Search options hidden -->
+            {% if not show %}
+            <input type="hidden" value="{{tag}}" name="tag" />
+            <input type="hidden" value="{{query}}" name="query" />
+            <input type="hidden" value="{{related}}" name="related" />
+            <div style="float: right">
+                {% if tag or related or query %}
+                <button type="reset">
+                    <a class="enabled" href="/topanime">Clear</a>
+                </button>
+                {% else %}
+                <button type="reset" disabled>
+                    <a class="disabled">Clear</a>
+                </button>
+                {% endif %}
+                <input type="submit" value="Show search options" />
+            </div>
+
+            <!-- Search options visible -->
+            {% else %}
+            <table>
+                <tbody>
+                    {% if show %}
+                    <tr>
+                        <td></td>
+                        <td><a href="/tags">List of tags</a></td>
+                    </tr>
+                    <tr>
+                        <td>Tag:</td>
+                        <td>
+                            <input {% if related %} disabled {% endif %} type="text" value="{{tag}}" name="tag"
+                                placeholder="Tag" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Search:</td>
+                        <td>
+                            <input {% if related %} disabled {% endif %} type="text" value="{{query}}" name="query"
+                                placeholder="Search" />
+                        </td>
+                    </tr>
+                    {% if session.user_id %}
+                    <tr>
+                        <td>Related:</td>
+                        <td>
+                            <input {% if tag or query %} disabled {% endif %} type="checkbox" name="related" {% if
+                                related %} checked {% endif %} />
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endif %}
+                    <tr>
+                        <td width="30%">
+                            {% if tag or related or query %}
+                            <button type="reset">
+                                <a class="enabled" href="/topanime?show=True">Clear</a>
+                            </button>
+                            {% else %}
+                            <button type="reset" disabled>
+                                <a class="disabled">Clear</a>
+                            </button>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if show %}
+                            <input type="submit" value="Submit" />
+                            {% else %}
+                            <input type="submit" value="Show search options" />
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            {% endif %}
+        </form>
+    </div>
+</div>
 
 <!-- Anime -->
 {% if top_anime %}

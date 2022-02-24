@@ -34,22 +34,29 @@ a.disabled {
 
 .grid-container {
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: auto auto;
   margin: 5px 0px;
   row-gap: 5px;
 }
 
-.search {
+.grid-container .search {
   text-align: right;
   padding-right: 2px;
 }
 
-.clear {
-  text-decoration: none;
-  color: #000;
+.grid-container table {
+  width: fit-content;
+  float: right;
 }
 
-form label {
-  display: inline-block;
-  width: 65px;
+.grid-container td {
+  padding: 5px;
+}
+
+.grid-container input[type="text"] {
+  width: 150px;
+}
+.grid-container input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
 }
