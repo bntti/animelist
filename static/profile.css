@@ -20,7 +20,6 @@ p {
 }
 .tag_counts {
   grid-area: tag_counts;
-  height: 550px;
 }
 .settings {
   grid-area: settings;

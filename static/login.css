@@ -7,6 +7,10 @@ table {
   border-style: none !important;
 }
 
+tr:nth-child(even) {
+  background-color: white !important;
+}
+
 .a {
   width: 110px;
 }

@@ -42,7 +42,7 @@
             </tbody>
         </table>
     </div>
-    <div class="tag_counts">
+    <div class="tag_counts" {% if own_profile %} style="height: 550px" {% endif %}>
         <h3>Anime watched by tag</h3>
         {% if tag_counts %}
         <div class="tableFixHead">

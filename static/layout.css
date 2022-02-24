@@ -2,11 +2,27 @@ body {
   margin: 0;
 }
 
+@media only screen and (min-width: 64em) {
+  body {
+    background-color: #ddf;
+  }
+  .content-container {
+    padding-top: 70px !important;
+    padding-bottom: 23px;
+    min-height: calc(100vh - 173px) !important;
+  }
+  .content {
+    background-color: white;
+    border-radius: 15px;
+  }
+}
+.content-container {
+  padding-top: 30px;
+  min-height: calc(100vh - 110px);
+}
 .content {
-  margin: auto;
   max-width: 60em;
-  min-height: calc(100vh - 150px);
-  margin-top: 30px;
+  margin: auto;
   padding: 20px;
 }
 
@@ -17,6 +33,7 @@ body {
   border-radius: 15px;
   background-color: white;
   border-style: solid;
+  border-color: #000;
 
   /* Hiding animation */
   /* Firefox */
