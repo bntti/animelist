@@ -12,6 +12,7 @@ p {
     "counts tag_counts"
     "settings tag_counts"
     "import tag_counts";
+  grid-template-columns: 50% 50%;
 }
 
 .counts {
@@ -19,6 +20,7 @@ p {
 }
 .tag_counts {
   grid-area: tag_counts;
+  height: 550px;
 }
 .settings {
   grid-area: settings;
@@ -29,7 +31,7 @@ p {
 
 .tableFixHead {
   overflow-y: auto;
-  height: 500px;
+  max-height: 500px;
   width: fit-content;
   border: solid;
   border-color: #ccf;
