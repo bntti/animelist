@@ -90,9 +90,9 @@ def tags() -> str:
     return render_template("tags.html", popular_tags=popular_tags, tag_counts=tag_counts)
 
 
-# /animes
-@app.route("/animes", methods=["GET"])
-def animes_get() -> str:
+# /topanime
+@app.route("/topanime", methods=["GET"])
+def topanime_get() -> str:
     list_ids = []
     if "user_id" in session:
         list_ids = list_service.get_list_ids(session["user_id"])
@@ -107,17 +107,17 @@ def animes_get() -> str:
     page = max(0, min(anime_count - 50, page))
     prev_page = max(page - 50, 0)
     next_page = min(page + 50, max(0, anime_count - 50))
-    animes = anime_service.get_animes(page, query, tag)
+    top_anime = anime_service.get_top_anime(page, query, tag)
 
     # Base url and current url
-    base_url = "/animes?" if not query else f"/animes?query={query}&"
+    base_url = "/topanime?" if not query else f"/topanime?query={query}&"
     if tag:
         base_url += f"tag={url_encode(tag)}&"
     current_url = base_url if page == 0 else f"{base_url}page={page}"
 
     return render_template(
-        "animes.html",
-        animes=animes,
+        "topanime.html",
+        top_anime=top_anime,
         query=query,
         tag=tag,
         list_ids=list_ids,
@@ -129,13 +129,13 @@ def animes_get() -> str:
     )
 
 
-@app.route("/animes", methods=["POST"])
-def animes_post() -> str:
+@app.route("/topanime", methods=["POST"])
+def topanime_post() -> str:
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])
     list_service.add_to_list(session["user_id"], int(request.form["anime_id"]))
     flash("Anime added to list")
-    return animes_get()
+    return topanime_get()
 
 
 # /anime/id

@@ -63,14 +63,14 @@
             </table>
         </div>
         {% else %}
-        <p>No animes in list</p>
+        <p>No anime in list</p>
         {% endif %}
     </div>
     {% if own_profile %}
     <div class="settings">
         <h3>Settings</h3>
         <form method="POST">
-            <label for="show hidden">Show hidden animes:</label>
+            <label for="show hidden">Show hidden anime:</label>
             <input id="show hidden" type="checkbox" name="show hidden" {% if session.show_hidden %} checked {% endif %}>
             <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
             <br />

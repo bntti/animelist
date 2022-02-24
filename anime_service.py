@@ -5,12 +5,12 @@ from database import database
 
 def anime_count(query: str, tag: str) -> int:
     if not tag:
-        sql = "SELECT COUNT(DISTINCT a.id) FROM animes a " \
+        sql = "SELECT COUNT(DISTINCT a.id) FROM anime a " \
               "LEFT JOIN synonyms s ON s.anime_id = a.id " \
               "WHERE (NOT a.hidden OR :show_hidden) AND (:query = '%%' OR (a.title ILIKE :query " \
               "OR (s.synonym IS NOT NULL AND s.synonym ILIKE :query)))"
     else:
-        sql = "SELECT COUNT(DISTINCT a.id) FROM tags t, animes a " \
+        sql = "SELECT COUNT(DISTINCT a.id) FROM tags t, anime a " \
               "LEFT JOIN synonyms s ON s.anime_id = a.id " \
               "WHERE a.id = t.anime_id AND t.tag = :tag AND (NOT a.hidden OR :show_hidden)" \
               "AND (:query = '%%' OR (a.title ILIKE :query " \
@@ -26,21 +26,21 @@ def anime_count(query: str, tag: str) -> int:
 
 
 def add_anime(anime: dict) -> int:
-    sql = "INSERT INTO animes (title, episodes, link, picture, thumbnail, hidden) " \
+    sql = "INSERT INTO anime (title, episodes, link, picture, thumbnail, hidden) " \
           "VALUES (:title, :episodes, :link, :picture, :thumbnail, :hidden) " \
           "Returning id"
     return database.session.execute(sql, anime).fetchone()[0]
 
 
 def get_anime_id(mal_link: str) -> Optional[int]:
-    sql = "SELECT id FROM animes WHERE link = :link"
+    sql = "SELECT id FROM anime WHERE link = :link"
     row = database.session.execute(sql, {"link": mal_link}).fetchone()
     return None if not row else row[0]
 
 
 def get_anime(anime_id: int) -> Optional[dict]:
     sql = "SELECT a.id, a.title, a.episodes, ROUND(AVG(l.score), 2), a.picture " \
-          "FROM animes a LEFT JOIN list l ON l.anime_id = a.id WHERE a.id = :id GROUP BY a.id"
+          "FROM anime a LEFT JOIN list l ON l.anime_id = a.id WHERE a.id = :id GROUP BY a.id"
     row = database.session.execute(sql, {"id": anime_id}).fetchone()
     return None if not row else {
         "id": row[0],
@@ -51,10 +51,10 @@ def get_anime(anime_id: int) -> Optional[dict]:
     }
 
 
-def get_animes(page: int, query: str, tag: str) -> list:
+def get_top_anime(page: int, query: str, tag: str) -> list:
     if not tag:
         sql = "SELECT a.id, a.thumbnail, a.title, a.episodes, ROUND(AVG(l.score), 2) " \
-              "FROM animes a LEFT JOIN list l ON l.anime_id = a.id " \
+              "FROM anime a LEFT JOIN list l ON l.anime_id = a.id " \
               "LEFT JOIN synonyms s ON s.anime_id = a.id " \
               "WHERE (NOT a.hidden OR :show_hidden) " \
               "AND (:query = '%%' OR (a.title ILIKE :query " \
@@ -63,7 +63,7 @@ def get_animes(page: int, query: str, tag: str) -> list:
               "LIMIT 50 OFFSET :offset"
     else:
         sql = "SELECT a.id, a.thumbnail, a.title, a.episodes, ROUND(AVG(l.score), 2) " \
-              "FROM tags t, animes a LEFT JOIN list l ON l.anime_id = a.id " \
+              "FROM tags t, anime a LEFT JOIN list l ON l.anime_id = a.id " \
               "LEFT JOIN synonyms s ON s.anime_id = a.id " \
               "WHERE (NOT a.hidden OR :show_hidden) AND a.id = t.anime_id AND t.tag = :tag " \
               "AND (:query = '%%' OR (a.title ILIKE :query " \

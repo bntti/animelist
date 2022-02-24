@@ -17,7 +17,7 @@
             <tbody>
                 {% for tag, count in tag_counts %}
                 <tr>
-                    <td><a href="/animes?tag={{tag | urlencode}}">{{tag}}</a></td>
+                    <td><a href="/topanime?tag={{tag | urlencode}}">{{tag}}</a></td>
                     <td>{{count}}</td>
                 </tr>
                 {% endfor %}
@@ -34,7 +34,7 @@
             <tbody>
                 {% for tag, score in popular_tags %}
                 <tr>
-                    <td><a href="/animes?tag={{tag | urlencode}}">{{tag}}</a></td>
+                    <td><a href="/topanime?tag={{tag | urlencode}}">{{tag}}</a></td>
                     <td>
                         {% if score %}
                         {{score}}

@@ -4,7 +4,7 @@ CREATE TABLE users (
     password TEXT NOT NULL,
     show_hidden BOOLEAN NOT NULL DEFAULT false
 );
-CREATE TABLE animes (
+CREATE TABLE anime (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     episodes INT NOT NULL,
@@ -15,23 +15,23 @@ CREATE TABLE animes (
 );
 CREATE TABLE synonyms (
     id SERIAL PRIMARY KEY,
-    anime_id INT REFERENCES animes NOT NULL,
+    anime_id INT REFERENCES anime NOT NULL,
     synonym TEXT NOT NULL
 );
 CREATE TABLE tags (
     id SERIAL PRIMARY KEY,
-    anime_id INT REFERENCES animes NOT NULL,
+    anime_id INT REFERENCES anime NOT NULL,
     tag TEXT NOT NULL
 );
 CREATE TABLE relations (
     id SERIAL PRIMARY KEY,
-    anime_id INT REFERENCES animes NOT NULL,
-    related_id INT REFERENCES animes NOT NULL
+    anime_id INT REFERENCES anime NOT NULL,
+    related_id INT REFERENCES anime NOT NULL
 );
 CREATE TABLE list (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users NOT NULL,
-    anime_id INT REFERENCES animes NOT NULL,
+    anime_id INT REFERENCES anime NOT NULL,
     episodes INT NOT NULL DEFAULT 0,
     score INT DEFAULT NULL,
     status TEXT NOT NULL DEFAULT 'Watching',

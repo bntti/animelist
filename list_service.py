@@ -46,7 +46,7 @@ def add_to_list(user_id: int, anime_id: int) -> None:
 
 
 def import_to_list(user_id, anime: dict):
-    sql = "SELECT id FROM animes WHERE link = :link"
+    sql = "SELECT id FROM anime WHERE link = :link"
     result = database.session.execute(
         sql, {"link": f"https://myanimelist.net/anime/{anime['id']}"}
     ).fetchone()
@@ -223,7 +223,7 @@ def get_list_ids(user_id) -> list:
 
 def get_list_data(user_id: int, status: str, tag: str) -> list:
     sql = "SELECT a.id, a.thumbnail, a.title, l.episodes, a.episodes, l.status, l.score " \
-          "FROM list l, animes a, tags t WHERE l.anime_id = a.id AND t.anime_id = a.id " \
+          "FROM list l, anime a, tags t WHERE l.anime_id = a.id AND t.anime_id = a.id " \
           "AND l.user_id = :user_id AND (:tag = '' OR t.tag = :tag) " \
           "AND (l.status = :status OR :status = 'All') GROUP BY a.id, l.id ORDER BY a.title"
 

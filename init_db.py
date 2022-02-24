@@ -16,7 +16,7 @@ def add_anime_data(data):
             if "myanimelist.net" in source:
                 myanimelist_link = source
 
-        # Ignore some animes
+        # Ignore some anime
         if myanimelist_link == "":
             continue
 
@@ -51,7 +51,7 @@ def add_relations(data):
             if "myanimelist.net" in source:
                 myanimelist_link = source
 
-        # Ignore some animes
+        # Ignore some anime
         if myanimelist_link == "":
             continue
 
@@ -77,7 +77,7 @@ def import_data():
     print("Initializing tables")
     database_service.init_tables()
 
-    print("Adding animes, tags, and synonyms to the database")
+    print("Adding anime, tags, and synonyms to the database")
     add_anime_data(data)
 
     print("Adding anime relations data to the database")

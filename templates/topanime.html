@@ -1,17 +1,17 @@
 {% extends "layout.html" %}
-{% block title %}Animes{% endblock %}
+{% block title %}Anime{% endblock %}
 {% block stylesheet %}
-<link rel="stylesheet" href="/static/animes.css">
+<link rel="stylesheet" href="/static/topanime.css">
 {% endblock %}
 
 {% block content %}
 
-<h1>Animes</h1>
+<h1>Top Anime</h1>
 
 <div class="grid-container">
     <!-- Previous and next page buttons -->
     <div>
-        <a href="/animes">Clear search and tags</a>
+        <a href="/topanime">Clear search and tags</a>
     </div>
     <div style="text-align:right">
         {% if tag %}
@@ -41,8 +41,8 @@
     </form>
 </div>
 
-<!-- Animes -->
-{% if animes %}
+<!-- Anime -->
+{% if top_anime %}
 <table>
     <thead>
         <tr>
@@ -53,7 +53,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for anime in animes %}
+        {% for anime in top_anime %}
         <tr>
             <td class="a">
                 {% if anime.thumbnail %}
@@ -91,11 +91,11 @@
     </tbody>
 </table>
 {% else %}
-<p><strong>No animes found</strong></p>
+<p><strong>No anime found</strong></p>
 {% endif %}
 
 <!-- Previous and next page buttons -->
-{% if animes %}
+{% if top_anime %}
 <div style="margin-top: 5px">
     {% if show_prev %}
     <a class="enabled" href="{{prev_url}}">Previous page</a>
