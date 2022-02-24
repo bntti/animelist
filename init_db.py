@@ -1,66 +1,47 @@
 import json
 import sys
+from typing import Callable
+from tqdm import tqdm
 import anime_service
 import database_service
 
 
-def add_anime_data(data):
-    anime_count = len(data["data"])
-    for i, anime_data in enumerate(data["data"]):
-        if i % (anime_count // 10) == 0:
-            print(f"{100 * i / anime_count:.0f}% done")
-
+def iterate_data(data: dict, add_data_to_db: Callable[[dict, str], None]) -> None:
+    for anime_data in tqdm(data["data"]):
         # Get MyAnimeList link from anime sources
-        myanimelist_link = ""
         for source in anime_data["sources"]:
             if "myanimelist.net" in source:
-                myanimelist_link = source
-
-        # Ignore some anime
-        if myanimelist_link == "":
-            continue
-
-        anime = {
-            "title": anime_data["title"],
-            "episodes": anime_data["episodes"],
-            "link": myanimelist_link,
-            "picture": anime_data["picture"],
-            "thumbnail": anime_data["thumbnail"],
-            "hidden": "hentai" in anime_data["tags"]
-        }
-        anime_id = anime_service.add_anime(anime)
-
-        # Add synonyms
-        for synonym in anime_data["synonyms"]:
-            database_service.add_synonym(anime_id, synonym)
-
-        # Add tags
-        for tag in anime_data["tags"]:
-            database_service.add_tag(anime_id, tag)
+                add_data_to_db(anime_data, source)
+                break
 
 
-def add_relations(data):
-    anime_count = len(data["data"])
-    for i, anime_data in enumerate(data["data"]):
-        if i % (anime_count // 10) == 0:
-            print(f"{100 * i / anime_count:.0f}% done")
+def add_anime_data(anime_data: dict, myanimelist_link: str) -> None:
+    anime = {
+        "title": anime_data["title"],
+        "episodes": anime_data["episodes"],
+        "link": myanimelist_link,
+        "picture": anime_data["picture"],
+        "thumbnail": anime_data["thumbnail"],
+        "hidden": "hentai" in anime_data["tags"]
+    }
+    anime_id = anime_service.add_anime(anime)
 
-        # Get MyAnimeList link from anime sources
-        myanimelist_link = ""
-        for source in anime_data["sources"]:
-            if "myanimelist.net" in source:
-                myanimelist_link = source
+    # Add synonyms
+    for synonym in anime_data["synonyms"]:
+        database_service.add_synonym(anime_id, synonym)
 
-        # Ignore some anime
-        if myanimelist_link == "":
-            continue
+    # Add tags
+    for tag in anime_data["tags"]:
+        database_service.add_tag(anime_id, tag)
 
-        anime_id = anime_service.get_anime_id(myanimelist_link)
-        for relation in anime_data["relations"]:
-            if "myanimelist.net" in relation:
-                related_id = anime_service.get_anime_id(relation)
-                if related_id:
-                    database_service.add_relation(anime_id, related_id)
+
+def add_relations(anime_data: dict, myanimelist_link: str) -> None:
+    anime_id = anime_service.get_anime_id(myanimelist_link)
+    for relation in anime_data["relations"]:
+        if "myanimelist.net" in relation:
+            related_id = anime_service.get_anime_id(relation)
+            if related_id:
+                database_service.add_relation(anime_id, related_id)
 
 
 def import_data():
@@ -78,10 +59,10 @@ def import_data():
     database_service.init_tables()
 
     print("Adding anime, tags, and synonyms to the database")
-    add_anime_data(data)
+    iterate_data(data, add_anime_data)
 
     print("Adding anime relations data to the database")
-    add_relations(data)
+    iterate_data(data, add_relations)
 
     print("Committing changes")
     database_service.commit()
