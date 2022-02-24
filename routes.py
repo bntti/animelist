@@ -97,22 +97,33 @@ def topanime_get() -> str:
     if "user_id" in session:
         list_ids = list_service.get_list_ids(session["user_id"])
 
-    tag = request.args["tag"] if "tag" in request.args else ""
+    tag = request.args["tag"].lower() if "tag" in request.args else ""
+    related = request.args["related"] if "related" in request.args else False
     query = request.args["query"] if "query" in request.args else ""
     page = 0
     if "page" in request.args and request.args["page"].isdigit():
         page = int(request.args["page"])
+    if related:
+        user_service.check_user()
 
-    anime_count = anime_service.anime_count(query, tag)
+    if not related:
+        anime_count = anime_service.anime_count(query, tag)
+        top_anime = anime_service.get_top_anime(page, query, tag)
+    else:
+        anime_count = relation_service.related_anime_count(session["user_id"])
+        top_anime = relation_service.get_related_anime(
+            page, session["user_id"]
+        )
     page = max(0, min(anime_count - 50, page))
     prev_page = max(page - 50, 0)
     next_page = min(page + 50, max(0, anime_count - 50))
-    top_anime = anime_service.get_top_anime(page, query, tag)
 
     # Base url and current url
     base_url = "/topanime?" if not query else f"/topanime?query={query}&"
     if tag:
         base_url += f"tag={url_encode(tag)}&"
+    if related:
+        base_url += "related=on&"
     current_url = base_url if page == 0 else f"{base_url}page={page}"
 
     return render_template(
@@ -120,6 +131,7 @@ def topanime_get() -> str:
         top_anime=top_anime,
         query=query,
         tag=tag,
+        related=related,
         list_ids=list_ids,
         current_url=current_url,
         prev_url=f"{base_url}page={prev_page}",
@@ -193,23 +205,6 @@ def anime_post(anime_id) -> str:
         flash("Updated anime data")
 
     return anime_get(anime_id)
-
-
-# /related
-@app.route("/related", methods=["GET"])
-def related_get() -> Union[str, Response]:
-    user_service.check_user()
-    related_anime = relation_service.get_user_related_anime(session["user_id"])
-    return render_template("relations.html", related_anime=related_anime)
-
-
-@app.route("/related", methods=["POST"])
-def related_post() -> Union[str, Response]:
-    user_service.check_user()
-    user_service.check_csrf(request.form["csrf_token"])
-    list_service.add_to_list(session["user_id"], int(request.form["anime_id"]))
-    flash("Anime added to list")
-    return related_get()
 
 
 # /profile

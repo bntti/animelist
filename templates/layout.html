@@ -17,7 +17,6 @@
 
             {% if session.username %}
             <li><a href="/list/{{session.username | urlencode}}">List</a></li>
-            <li><a href="/related">Related anime</a></li>
             <li style="float:right"><a href="/logout">Logout</a></li>
             <li style="float:right"><a href="/profile/{{session.username | urlencode}}">{{session.username}}</a></li>
 
