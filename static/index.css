@@ -3,17 +3,17 @@ h1 {
 }
 
 tr:nth-child(even) {
-  background-color: #eef;
+  background-color: #ccddff;
 }
 
 th {
   z-index: 0;
-  background: #ccf;
+  background: #99bbff;
 }
 
 table {
   border-style: solid;
-  border-color: #ccf;
+  border-color: #99bbff;
   border-collapse: collapse;
 }
 

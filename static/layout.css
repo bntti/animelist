@@ -4,7 +4,12 @@ body {
 
 @media only screen and (min-width: 64em) {
   body {
-    background-color: #ddf;
+    background: linear-gradient(
+      20deg,
+      rgba(2, 0, 36, 1) 0%,
+      rgba(9, 9, 121, 1) 35%,
+      rgba(50, 170, 255, 1) 100%
+    );
   }
   .content-container {
     padding-top: 70px !important;
@@ -72,15 +77,18 @@ body {
 }
 
 .footer {
-  background-color: #f1f1f1;
+  background-color: #f1f1f115;
   text-align: center;
   padding: 30px;
   height: 20px;
 }
+.footer a {
+  color: #bbb;
+}
 
 ul.navbar {
   z-index: 10;
-  background-color: #333;
+  background-color: #282f33;
   position: fixed;
   top: 0;
   width: 100%;
