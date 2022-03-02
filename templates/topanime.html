@@ -6,105 +6,55 @@
 
 {% block content %}
 
-<h1>Top Anime</h1>
-
 <div class="grid-container">
     <!-- Previous and next page buttons -->
-    <div style="display: flex">
-        <div style="align-self: flex-end">
-            {% if show_prev %}
-            <a class="enabled" href="{{prev_url}}">Previous page</a>
-            {% else %}
-            <a class="disabled">Previous page</a>
-            {% endif %}
+    <div class="h1">
+        <h1>Top Anime</h1>
+    </div>
+    <div class="pages">
+        {% if show_prev %}
+        <a class="enabled" href="{{prev_url}}">Previous page</a>
+        {% else %}
+        <a class="disabled">Previous page</a>
+        {% endif %}
 
-            {% if show_next %}
-            <a class="enabled" href="{{next_url}}">Next page</a>
-            {% else %}
-            <a class="disabled">Next page</a>
-            {% endif %}
-        </div>
+        {% if show_next %}
+        <a class="enabled" href="{{next_url}}">Next page</a>
+        {% else %}
+        <a class="disabled">Next page</a>
+        {% endif %}
     </div>
 
-    <!-- Search options -->
-    <div>
+    <div class="query">
+        <!-- Search options -->
         <form>
-            <input type="hidden" value="{{'' if show else 'True'}}" name="show" />
-
-            <!-- Search options hidden -->
-            {% if not show %}
-            <input type="hidden" value="{{tag}}" name="tag" />
-            <input type="hidden" value="{{query}}" name="query" />
-            <input type="hidden" value="{{related}}" name="related" />
-            <div style="float: right">
-                {% if tag or related or query %}
-                <button type="reset">
-                    <a class="enabled" href="/topanime">Clear</a>
-                </button>
-                {% else %}
-                <button type="reset" disabled>
-                    <a class="disabled">Clear</a>
-                </button>
-                {% endif %}
-                <input type="submit" value="Show search options" />
-            </div>
-
-            <!-- Search options visible -->
-            {% else %}
             <table>
                 <tbody>
-                    {% if show %}
                     <tr>
-                        <td></td>
-                        <td><a href="/tags">List of tags</a></td>
+                        <th>Search</th>
+                        <th><a href="/tags" title="List of tags">Tag</a></th>
+                        {% if session.user_id %}<th>Related</th>{% endif %}
+                        <th></th>
                     </tr>
                     <tr>
-                        <td>Tag:</td>
-                        <td>
-                            <input {% if related %} disabled {% endif %} type="text" value="{{tag}}" name="tag"
-                                placeholder="Tag" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Search:</td>
                         <td>
                             <input {% if related %} disabled {% endif %} type="text" value="{{query}}" name="query"
                                 placeholder="Search" />
                         </td>
-                    </tr>
-                    {% if session.user_id %}
-                    <tr>
-                        <td>Related:</td>
+                        <td>
+                            <input {% if related %} disabled {% endif %} type="text" value="{{tag}}" name="tag"
+                                placeholder="Tag" />
+                        </td>
+                        {% if session.user_id %}
                         <td>
                             <input {% if tag or query %} disabled {% endif %} type="checkbox" name="related" {% if
                                 related %} checked {% endif %} />
                         </td>
-                    </tr>
-                    {% endif %}
-                    {% endif %}
-                    <tr>
-                        <td width="30%">
-                            {% if tag or related or query %}
-                            <button type="reset">
-                                <a class="enabled" href="/topanime?show=True">Clear</a>
-                            </button>
-                            {% else %}
-                            <button type="reset" disabled>
-                                <a class="disabled">Clear</a>
-                            </button>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if show %}
-                            <input type="submit" value="Submit" />
-                            {% else %}
-                            <input type="submit" value="Show search options" />
-                            {% endif %}
-                        </td>
+                        {% endif %}
+                        <td><input type="submit" value="Submit" /></td>
                     </tr>
                 </tbody>
             </table>
-            {% endif %}
         </form>
     </div>
 </div>

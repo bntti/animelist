@@ -34,29 +34,41 @@ a.disabled {
 
 .grid-container {
   display: grid;
+  grid-template-areas:
+    "h1    query"
+    "pages query";
   grid-template-columns: auto auto;
-  margin: 5px 0px;
+  margin-bottom: 5px;
   row-gap: 5px;
+  align-items: end;
 }
 
-.grid-container .search {
+.h1 {
+  grid-area: h1;
+}
+.pages {
+  grid-area: pages;
+}
+
+.query {
+  grid-area: query;
   text-align: right;
   padding-right: 2px;
 }
-
-.grid-container table {
+.query table {
   width: fit-content;
   float: right;
 }
-
-.grid-container td {
+.query td {
   padding: 5px;
 }
-
-.grid-container input[type="text"] {
+.query th {
+  text-align: center;
+}
+.query input[type="text"] {
   width: 150px;
 }
-.grid-container input[type="checkbox"] {
+.query input[type="checkbox"] {
   width: 17px;
   height: 17px;
 }

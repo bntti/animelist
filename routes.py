@@ -105,17 +105,15 @@ def topanime_get() -> str:
     related = request.args["related"] if "related" in request.args else ""
     tag = request.args["tag"].lower() if "tag" in request.args else ""
     query = request.args["query"] if "query" in request.args else ""
-    show = request.args["show"] if "show" in request.args else False
     page = 0
     if "page" in request.args and request.args["page"].isdigit():
         page = int(request.args["page"])
-    if related:
-        user_service.check_user()
 
     if not related:
         anime_count = anime_service.anime_count(query, tag)
         top_anime = anime_service.get_top_anime(page, query, tag)
     else:
+        user_service.check_user()
         anime_count = relation_service.related_anime_count(session["user_id"])
         top_anime = relation_service.get_related_anime(
             page, session["user_id"]
@@ -139,7 +137,6 @@ def topanime_get() -> str:
         top_anime=top_anime,
         query=query,
         tag=tag,
-        show=show,
         related=related,
         list_ids=list_ids,
         current_url=current_url,
