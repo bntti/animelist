@@ -84,7 +84,7 @@ def list_post(username) -> Union[str, Response]:
 
 # /tags
 @app.route("/tags")
-def tags() -> str:
+def tags_get() -> str:
     popular_tags = database_service.get_popular_tags()
     tag_counts = database_service.get_tag_counts()
     return render_template("tags.html", popular_tags=popular_tags, tag_counts=tag_counts)
@@ -220,14 +220,19 @@ def profile_get(username) -> str:
     user_id, _ = user_service.get_user_data(username)
     own_profile = "user_id" in session and session["user_id"] == user_id
     counts = list_service.get_counts(user_id)
-    tag_counts = list_service.get_tag_counts(user_id)
+    tags = request.args["tags"] if "tags" in request.args else ""
+    if tags != "top":
+        sorted_tags = list_service.get_watched_tags(user_id)
+    else:
+        sorted_tags = list_service.get_popular_tags(user_id)
     return render_template(
         "profile.html",
+        tags=tags,
         own_profile=own_profile,
         username=username,
         list_url=f"/list/{url_encode(username)}",
         counts=counts,
-        tag_counts=tag_counts
+        sorted_tags=sorted_tags
     )
 
 

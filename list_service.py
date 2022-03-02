@@ -207,10 +207,18 @@ def get_counts(user_id) -> dict:
     }
 
 
-def get_tag_counts(user_id) -> list:
+def get_watched_tags(user_id) -> list:
     sql = "SELECT t.tag, COUNT(l.id) FROM list l, tags t " \
           "WHERE user_id = :user_id AND t.anime_id = l.anime_id " \
           "GROUP BY t.tag ORDER BY COUNT(l.id) DESC, t.tag"
+    result = database.session.execute(sql, {"user_id": user_id}).fetchall()
+    return result
+
+
+def get_popular_tags(user_id) -> list:
+    sql = "SELECT t.tag, ROUND(AVG(l.score), 2) FROM list l, tags t " \
+          "WHERE user_id = :user_id AND t.anime_id = l.anime_id " \
+          "GROUP BY t.tag ORDER BY COALESCE(AVG(l.score), 0) DESC, t.tag"
     result = database.session.execute(sql, {"user_id": user_id}).fetchall()
     return result
 

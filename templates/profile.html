@@ -42,22 +42,34 @@
             </tbody>
         </table>
     </div>
-    <div class="tag_counts" {% if own_profile %} style="height: 550px" {% endif %}>
-        <h3>Anime watched by tag</h3>
-        {% if tag_counts %}
+    <div class="sorted_tags" {% if own_profile %} style="height: 570px" {% endif %}>
+        <h3>Tags</h3>
+        {% if sorted_tags %}
+        <p>
+            <a {% if tags!="top" %} class="selected" {% endif %} href="/profile/{{username | urlencode}}">
+                Most watched tags
+            </a>
+            <a {% if tags=="top" %} class="selected" {% endif %} href="/profile/{{username | urlencode}}?tags=top">
+                Top scored tags
+            </a>
+        </p>
         <div class="tableFixHead">
             <table>
                 <thead>
                     <tr>
                         <th>Tag</th>
+                        {% if tags != "top" %}
                         <th>Count</th>
+                        {% else %}
+                        <th>Score</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for tag, count in tag_counts %}
+                    {% for tag, tag_data in sorted_tags %}
                     <tr>
                         <td><a href="{{list_url}}?tag={{tag | urlencode}}">{{tag}}</a></td>
-                        <td>{{count}}</td>
+                        <td>{{tag_data}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
