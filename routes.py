@@ -251,10 +251,8 @@ def profile_post(username) -> str:
     # Import from myanimelist
     if "mal_import" in request.files:
         file = request.files["mal_import"]
-        if list_service.import_from_myanimelist(file):
-            flash("Data imported from MyAnimeList")
-            return profile_get(username)
-        abort(Response("Error parsing XML file", 415))
+        list_service.import_from_myanimelist(file)
+        return profile_get(username)
 
     # "Show hidden" setting change
     new_show_hidden = bool(request.form.get("show hidden"))
