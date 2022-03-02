@@ -12,7 +12,7 @@ from app import app
 
 # Url encoder
 @app.template_filter('urlencode')
-def url_encode(string):
+def url_encode(string: str) -> Markup:
     if isinstance(string, Markup):
         string = string.unescape()
     string = string.encode('utf8')
@@ -28,7 +28,7 @@ def index() -> str:
 
 # /list
 @app.route("/list/<path:username>", methods=["GET"])
-def list_get(username) -> Union[str, Response]:
+def list_get(username: str) -> Union[str, Response]:
     data = user_service.get_user_data(username)
     if not data:
         return "<h1>No user found<h1>"
@@ -55,7 +55,7 @@ def list_get(username) -> Union[str, Response]:
 
 
 @app.route("/list/<path:username>", methods=["POST"])
-def list_post(username) -> Union[str, Response]:
+def list_post(username: str) -> Union[str, Response]:
     data = user_service.get_user_data(username)
     if not data:
         return list_get(username)
@@ -161,7 +161,7 @@ def topanime_post() -> str:
 
 # /anime/id
 @app.route("/anime/<int:anime_id>", methods=["GET"])
-def anime_get(anime_id) -> str:
+def anime_get(anime_id: int) -> str:
     anime = anime_service.get_anime(anime_id)
     if not anime:
         return render_template("anime.html", anime=anime)
@@ -182,7 +182,7 @@ def anime_get(anime_id) -> str:
 
 
 @app.route("/anime/<int:anime_id>", methods=["POST"])
-def anime_post(anime_id) -> str:
+def anime_post(anime_id: int) -> str:
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])
 
@@ -218,7 +218,7 @@ def anime_post(anime_id) -> str:
 
 # /profile
 @app.route("/profile/<path:username>", methods=["GET"])
-def profile_get(username) -> str:
+def profile_get(username: str) -> str:
     data = user_service.get_user_data(username)
     if not data:
         return "<h1>No user found<h1>"
@@ -242,7 +242,7 @@ def profile_get(username) -> str:
 
 
 @app.route("/profile/<path:username>", methods=["POST"])
-def profile_post(username) -> str:
+def profile_post(username: str) -> str:
     data = user_service.get_user_data(username)
     if not data:
         return profile_get(username)

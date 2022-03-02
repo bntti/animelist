@@ -209,7 +209,7 @@ def handle_change(
             set_score(user_id, anime_id, new_score)
 
 
-def get_counts(user_id) -> dict:
+def get_counts(user_id: int) -> dict:
     sql = "SELECT COUNT(*), COUNT(CASE WHEN status LIKE 'Completed' THEN 1 END), " \
           "COUNT(CASE WHEN status LIKE 'Watching' THEN 1 END), " \
           "COUNT(CASE WHEN status LIKE 'On-Hold' THEN 1 END), " \
@@ -227,7 +227,7 @@ def get_counts(user_id) -> dict:
     }
 
 
-def get_watched_tags(user_id) -> list:
+def get_watched_tags(user_id: int) -> list:
     sql = "SELECT t.tag, COUNT(l.id) FROM list l, tags t " \
           "WHERE user_id = :user_id AND t.anime_id = l.anime_id " \
           "GROUP BY t.tag ORDER BY COUNT(l.id) DESC, t.tag"
@@ -235,7 +235,7 @@ def get_watched_tags(user_id) -> list:
     return result
 
 
-def get_popular_tags(user_id) -> list:
+def get_popular_tags(user_id: int) -> list:
     sql = "SELECT t.tag, ROUND(AVG(l.score), 2) FROM list l, tags t " \
           "WHERE user_id = :user_id AND t.anime_id = l.anime_id " \
           "GROUP BY t.tag ORDER BY COALESCE(AVG(l.score), 0) DESC, t.tag"
@@ -243,7 +243,7 @@ def get_popular_tags(user_id) -> list:
     return result
 
 
-def get_list_ids(user_id) -> list:
+def get_list_ids(user_id: int) -> list:
     sql = "SELECT anime_id FROM list WHERE user_id = :user_id"
     result = database.session.execute(sql, {"user_id": user_id})
     return [row[0] for row in result.fetchall()]

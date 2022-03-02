@@ -6,14 +6,13 @@
 
 {% block content %}
 
-
 <div class="grid-container">
     <div class="h1">
         <h1>{{username}}'s List</h1>
     </div>
     <div class="submit">
         {% if list_data | length > 0 and own_profile %}
-        <input style="align-self: flex-end" form="listform" type="submit" value="Submit changes" />
+        <input form="listform" type="submit" value="Submit changes" />
         {% endif %}
     </div>
     <div class="links">

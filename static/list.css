@@ -13,7 +13,6 @@
 
 .submit {
   grid-area: submit;
-  display: flex;
 }
 
 .links {

@@ -44,7 +44,7 @@ def add_relations(anime_data: dict, myanimelist_link: str) -> None:
                 database_service.add_relation(anime_id, related_id)
 
 
-def import_data():
+def import_data() -> None:
     print("Opening file 'anime-offline-database-minified.json'")
     try:
         with open("anime-offline-database-minified.json", "r", encoding="utf-8") as file:

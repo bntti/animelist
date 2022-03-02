@@ -8,10 +8,10 @@ p {
   display: grid;
   gap: 20px;
   grid-template-areas:
-    "counts sorted_tags"
-    "counts sorted_tags"
+    "counts   sorted_tags"
+    "counts   sorted_tags"
     "settings sorted_tags"
-    "import sorted_tags";
+    "import   sorted_tags";
   grid-template-columns: 50% 50%;
 }
 
