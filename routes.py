@@ -38,10 +38,15 @@ def list_get(username) -> Union[str, Response]:
     tag = request.args["tag"] if "tag" in request.args else ""
     status = request.args["status"] if "status" in request.args else "All"
     list_data = list_service.get_list_data(user_id, status, tag)
+    base_url = f"/list/{url_encode(username)}?"
+    status_url = f"{base_url}status={status}"
+    base_url = base_url if not tag else f"{base_url}tag={tag}&"
 
     return render_template(
         "list.html",
-        base_url=f"/list/{url_encode(username)}",
+        base_url=base_url,
+        status_url=status_url,
+        tag=tag,
         username=username,
         own_profile=own_profile,
         list_data=list_data,

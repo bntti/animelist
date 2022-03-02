@@ -6,21 +6,30 @@
 
 {% block content %}
 
-<h1>{{username}}'s List</h1>
 
 <div class="grid-container">
-    <div>
+    <div class="h1">
+        <h1>{{username}}'s List</h1>
+    </div>
+    <div class="submit">
         {% if list_data | length > 0 and own_profile %}
-        <input form="listform" type="submit" value="Submit changes" />
+        <input style="align-self: flex-end" form="listform" type="submit" value="Submit changes" />
         {% endif %}
     </div>
     <div class="links">
-        <a {% if status=="All" %} class="selected" {% endif %} href="{{base_url}}">All</a>
-        <a {% if status=="Completed" %} class="selected" {% endif %} href="{{base_url}}?status=Completed">Completed</a>
-        <a {% if status=="Watching" %} class="selected" {% endif %} href="{{base_url}}?status=Watching">Watching</a>
-        <a {% if status=="On-Hold" %} class="selected" {% endif %} href="{{base_url}}?status=On-Hold">On-Hold</a>
-        <a {% if status=="Dropped" %} class="selected" {% endif %} href="{{base_url}}?status=Dropped">Dropped</a>
-        <a {% if status=="Plan to Watch" %} class="selected" {% endif %} href="{{base_url}}?status=Plan%20to%20Watch">
+        <p>
+            Showing {{list_data | length}} anime
+            {% if tag %}
+            with tag <strong>{{tag}}</strong>
+            <a href="{{status_url}}">Clear tag</a>
+            {% endif %}
+        </p>
+        <a class="status {{'selected' if status=='All'}}" href="{{base_url}}">All</a>
+        <a class="status {{'selected' if status=='Completed'}}" href="{{base_url}}status=Completed">Completed</a>
+        <a class="status {{'selected' if status=='Watching'}}" href="{{base_url}}status=Watching">Watching</a>
+        <a class="status {{'selected' if status=='On-Hold'}}" href="{{base_url}}status=On-Hold">On-Hold</a>
+        <a class="status {{'selected' if status=='Dropped'}}" href="{{base_url}}status=Dropped">Dropped</a>
+        <a class="status {{'selected' if status=='Plan to Watch'}}" href="{{base_url}}status=Plan%20to%20Watch">
             Plan to Watch
         </a>
     </div>
@@ -123,10 +132,8 @@
     <input style="margin-top: 5px" type="submit" value="Submit changes" />
 </form>
 {% endif %}
-{% elif status == 'All' %}
-<p><strong>No anime in list</strong></p>
 {% else %}
-<p><strong>No anime in list with status {{status}}</strong></p>
+<p><strong>No anime Found</strong></p>
 {% endif %}
 
 {% endblock %}

@@ -1,3 +1,48 @@
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    "h1     links"
+    "submit links";
+  margin-bottom: 5px;
+  align-items: end;
+}
+
+.h1 {
+  grid-area: h1;
+}
+
+.submit {
+  grid-area: submit;
+  display: flex;
+}
+
+.links {
+  grid-area: links;
+  text-align: right;
+  margin-bottom: 3px;
+}
+.links p {
+  margin-top: 0px;
+  margin-bottom: 8px;
+}
+.links p strong {
+  color: blue;
+}
+.links a.status {
+  align-items: center;
+  text-decoration: none;
+  border-style: solid;
+  border-color: #aaa;
+  border-radius: 5px;
+  border-width: 2px;
+  padding: 1px 3px;
+  color: #000;
+}
+.links a.selected {
+  color: #00f !important;
+  border-color: #00f !important;
+}
+
 table {
   width: 100%;
 }
@@ -26,23 +71,4 @@ tr {
 
 .f {
   width: 75px;
-}
-
-.links {
-  text-align: right;
-}
-.links a {
-  align-items: center;
-  text-decoration: none;
-  color: #000;
-}
-
-.links .selected {
-  color: #00f;
-}
-
-.grid-container {
-  display: grid;
-  grid-template-columns: auto auto;
-  margin: 5px 0px;
 }
