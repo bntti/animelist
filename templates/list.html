@@ -9,7 +9,7 @@
 <!-- Title, submit buttons, and filter options -->
 <div class="grid-container">
     <div class="h1">
-        <h1>{{username}}'s List</h1>
+        <h1><a href="/profile/{{username | urlencode}}" title="View {{username}}'s profile">{{username}}</a>'s List</h1>
     </div>
     <div class="submit">
         {% if list_data | length > 0 and own_profile %}
@@ -20,8 +20,11 @@
         <p>
             Showing {{list_data | length}} anime
             {% if tag %}
-            with tag <strong>{{tag}}</strong>
-            <a href="{{status_url}}">Clear tag</a>
+            with tag
+            <mark>
+                <strong>{{tag}}</strong>
+                <a href="{{status_url}}">Clear tag</a>
+            </mark>
             {% endif %}
         </p>
         <a class="status {{'selected' if status=='All'}}" href="{{base_url}}">All</a>

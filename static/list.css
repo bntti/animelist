@@ -3,6 +3,7 @@
   grid-template-areas:
     "h1     links"
     "submit links";
+  grid-template-columns: auto 530px;
   margin-bottom: 5px;
   align-items: end;
 }
@@ -24,6 +25,10 @@
 .links p {
   margin-top: 0px;
   margin-bottom: 8px;
+}
+.links p mark {
+  background-color: #fff;
+  white-space: nowrap;
 }
 .links p strong {
   color: blue;
