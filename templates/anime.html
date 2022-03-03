@@ -10,11 +10,10 @@
 {% if anime %}
 <div class="grid-container">
     <div>
-        {% if anime.picture %}
-        <img src="{{anime.picture}}">
-        {% else %}
-        <img src="https://cdn.myanimelist.net/images/qm_50.gif">
+        {% if anime.picture %}<img src="{{anime.picture}}">
+        {% else %}<img src="https://cdn.myanimelist.net/images/qm_50.gif">
         {% endif %}
+
         <table class="tags">
             <thead>
                 <th>Tags</th>
@@ -35,7 +34,7 @@
             {% if session.user_id %}
             <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
             {% endif %}
-            <table class="padded-table">
+            <table class="anime-data">
                 <tbody>
                     <tr>
                         <td>Episodes:</td>
@@ -49,15 +48,12 @@
                         <td>{{anime.episodes}}</td>
                         {% endif %}
                     </tr>
-
                     <tr>
                         <td>Score:</td>
                         {% if anime.score %}<td>{{anime.score}}</td>
                         {% else %}<td>N/A</td>
                         {% endif %}
                     </tr>
-
-                    <!-- List data-->
                     {% if session.user_id %}
                     <tr>
                         <td>Your score:</td>
@@ -78,7 +74,6 @@
                             </select>
                         </td>
                     </tr>
-
                     <tr>
                         <td>Status:</td>
                         <td>
@@ -127,27 +122,26 @@
             </table>
         </form>
 
-
         {% if related_anime %}
         <h2>Related anime</h2>
         <table class="relations">
             <thead>
                 <tr>
-                    <th class="a"></th>
-                    <th class="b">Title</th>
-                    <th class="c">Score</th>
+                    <th></th>
+                    <th>Title</th>
+                    <th>Score</th>
                 </tr>
             </thead>
             <tbody>
                 {% for anime in related_anime %}
                 <tr>
-                    <td class="a">
+                    <td>
                         <img alt="Anime thumbnail" src="{{anime.thumbnail}}" width=50 height=70>
                     </td>
-                    <td class="b">
+                    <td>
                         <a href="/anime/{{anime.id}}">{{anime.title}}</a>
                     </td>
-                    <td class="c">
+                    <td>
                         {% if anime.score %}{{anime.score}}{% endif %}
                     </td>
                 </tr>

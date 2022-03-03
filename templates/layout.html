@@ -9,24 +9,23 @@
 </head>
 
 <body>
-    <div>
-        <ul class="navbar">
-            <li><a href="/">Home</a></li>
-            <li><a href="/topanime">Top anime</a></li>
+    <!-- Navbar -->
+    <ul class="navbar">
+        <li><a href="/">Home</a></li>
+        <li><a href="/topanime">Top anime</a></li>
 
-            {% if session.username %}
-            <li><a href="/list/{{session.username | urlencode}}">List</a></li>
-            <li style="float:right"><a href="/logout">Logout</a></li>
-            <li style="float:right"><a href="/profile/{{session.username | urlencode}}">{{session.username}}</a></li>
+        {% if session.username %}
+        <li><a href="/list/{{session.username | urlencode}}">List</a></li>
+        <li style="float:right"><a href="/logout">Logout</a></li>
+        <li style="float:right"><a href="/profile/{{session.username | urlencode}}">{{session.username}}</a></li>
 
-            {% else %}
-            <li style="float:right"><a href="/login">Log in</a></li>
-            <li style="float:right"><a href="/register">Register</a></li>
-            {% endif %}
-        </ul>
-    </div>
+        {% else %}
+        <li style="float:right"><a href="/login">Log in</a></li>
+        <li style="float:right"><a href="/register">Register</a></li>
+        {% endif %}
+    </ul>
 
-    <!-- Notifications-->
+    <!-- Notifications -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <div class="notifications">
@@ -39,12 +38,14 @@
     {% endif %}
     {% endwith %}
 
+    <!-- Content -->
     <div class="content-container">
         <div class="content">
             {% block content %}{% endblock %}
         </div>
     </div>
 
+    <!-- Footer -->
     <div class="footer">
         <a href="https://github.com/bntti/AnimeList" target="_blank">Source code</a>
     </div>

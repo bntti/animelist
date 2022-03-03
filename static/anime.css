@@ -4,23 +4,24 @@
   grid-template-columns: 25% 73%;
 }
 
+/* Anime data */
+table.anime-data td {
+  padding: 5px;
+}
+
+/* Related anime */
 table.relations {
   width: 100%;
 }
-
-.a {
+table.relations tr > :nth-child(1) {
   width: 0px;
 }
-
-.c {
+table.relations tr > :nth-child(3) {
   text-align: center;
   width: 60px;
 }
 
-.padded-table td {
-  padding: 5px;
-}
-
+/* Tags */
 table.tags {
   width: 225px;
 }

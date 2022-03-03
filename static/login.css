@@ -1,8 +1,3 @@
-input[type="text"],
-input[type="password"] {
-  padding: 6px;
-}
-
 table {
   border-style: none !important;
 }
@@ -11,6 +6,11 @@ tr:nth-child(even) {
   background-color: white !important;
 }
 
-.a {
+tr > :nth-child(1) {
   width: 110px;
+}
+
+input[type="text"],
+input[type="password"] {
+  padding: 6px;
 }

@@ -15,6 +15,7 @@
   grid-area: submit;
 }
 
+/* All, Completed, Watching etc. buttons */
 .links {
   grid-area: links;
   text-align: right;
@@ -42,32 +43,27 @@
   border-color: #00f !important;
 }
 
+/* List */
 table {
   width: 100%;
 }
-
 tr {
   vertical-align: middle;
 }
-
-.a {
+tr > :nth-child(1) {
   width: 0px;
 }
-
-.c {
+tr > :nth-child(3) {
   width: 100px;
 }
-
-.d {
+tr > :nth-child(4) {
   text-align: center;
   width: 133px;
 }
-
-.e {
+tr > :nth-child(5) {
   text-align: center;
   width: 75px;
 }
-
-.f {
+tr > :nth-child(6) {
   width: 75px;
 }

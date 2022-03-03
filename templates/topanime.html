@@ -12,16 +12,12 @@
         <h1>Top Anime</h1>
     </div>
     <div class="pages">
-        {% if show_prev %}
-        <a class="enabled" href="{{prev_url}}">Previous page</a>
-        {% else %}
-        <a class="disabled">Previous page</a>
+        {% if show_prev %}<a class="enabled" href="{{prev_url}}">Previous page</a>
+        {% else %}<a class="disabled">Previous page</a>
         {% endif %}
 
-        {% if show_next %}
-        <a class="enabled" href="{{next_url}}">Next page</a>
-        {% else %}
-        <a class="disabled">Next page</a>
+        {% if show_next %}<a class="enabled" href="{{next_url}}">Next page</a>
+        {% else %}<a class="disabled">Next page</a>
         {% endif %}
     </div>
 
@@ -61,36 +57,36 @@
 
 <!-- Anime -->
 {% if top_anime %}
-<table>
+<table class="anime">
     <thead>
         <tr>
-            <th class="a"></th>
-            <th class="b">Title</th>
-            <th class="c">Score</th>
-            <th class="d">Status</th>
+            <th></th>
+            <th>Title</th>
+            <th>Score</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
         {% for anime in top_anime %}
         <tr>
-            <td class="a">
+            <td>
                 {% if anime.thumbnail %}
                 <img src="{{anime.thumbnail}}" width=50 height=70>
                 {% else %}
                 <img src="https://cdn.myanimelist.net/images/qm_50.gif" width=50 height=70>
                 {% endif %}
             </td>
-            <td class="b">
+            <td>
                 <div>
                     <a href="/anime/{{anime.id}}">{{anime.title}}</a>
                     <br>
                     Episodes: {{anime.episodes}}
                 </div>
             </td>
-            <td class="c">
+            <td>
                 {% if anime.score %}{{anime.score}}{% endif %}
             </td>
-            <td class="d">
+            <td>
                 <!-- List status -->
                 {% if session.user_id %}
                 {% if anime.id not in list_ids %}
@@ -115,16 +111,12 @@
 <!-- Previous and next page buttons -->
 {% if top_anime %}
 <div style="margin-top: 5px">
-    {% if show_prev %}
-    <a class="enabled" href="{{prev_url}}">Previous page</a>
-    {% else %}
-    <a class="disabled">Previous page</a>
+    {% if show_prev %}<a class="enabled" href="{{prev_url}}">Previous page</a>
+    {% else %}<a class="disabled">Previous page</a>
     {% endif %}
 
-    {% if show_next %}
-    <a class="enabled" href="{{next_url}}">Next page</a>
-    {% else %}
-    <a class="disabled">Next page</a>
+    {% if show_next %}<a class="enabled" href="{{next_url}}">Next page</a>
+    {% else %}<a class="disabled">Next page</a>
     {% endif %}
 </div>
 {% endif %}

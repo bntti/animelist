@@ -28,11 +28,11 @@ p {
   grid-area: import;
 }
 
+/* Tags */
 .sorted_tags p a {
   text-decoration: none;
   color: black;
 }
-
 .sorted_tags p a.selected {
   text-decoration: none;
   color: #00f;
@@ -45,13 +45,11 @@ p {
   border: solid;
   border-color: #99bbff;
 }
-
 .tableFixHead thead th {
   position: sticky;
   top: 0;
   z-index: 1;
 }
-
 .tableFixHead table {
   border-style: none !important;
 }

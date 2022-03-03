@@ -1,37 +1,3 @@
-table {
-  width: 100%;
-}
-
-tr {
-  vertical-align: middle;
-}
-
-.a {
-  width: 0px;
-}
-
-.c {
-  text-align: center;
-  width: 70px;
-}
-
-.d {
-  text-align: center;
-  width: 100px;
-}
-
-a.enabled {
-  color: #000;
-  text-decoration: none;
-  padding-right: 5px;
-}
-
-a.disabled {
-  color: #aaa;
-  text-decoration: none;
-  padding-right: 5px;
-}
-
 .grid-container {
   display: grid;
   grid-template-areas:
@@ -42,7 +8,6 @@ a.disabled {
   row-gap: 5px;
   align-items: end;
 }
-
 .h1 {
   grid-area: h1;
 }
@@ -50,6 +15,7 @@ a.disabled {
   grid-area: pages;
 }
 
+/* Query */
 .query {
   grid-area: query;
   text-align: right;
@@ -71,4 +37,31 @@ a.disabled {
 .query input[type="checkbox"] {
   width: 17px;
   height: 17px;
+}
+
+/* Anime */
+table.anime {
+  width: 100%;
+}
+.anime tr > :nth-child(1) {
+  width: 0px;
+}
+.anime tr > :nth-child(3) {
+  text-align: center;
+  width: 70px;
+}
+.anime tr > :nth-child(4) {
+  text-align: center;
+  width: 100px;
+}
+
+a.enabled {
+  color: #000;
+  text-decoration: none;
+  padding-right: 5px;
+}
+a.disabled {
+  color: #aaa;
+  text-decoration: none;
+  padding-right: 5px;
 }

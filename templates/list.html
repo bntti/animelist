@@ -6,6 +6,7 @@
 
 {% block content %}
 
+<!-- Title, submit buttons, and filter options -->
 <div class="grid-container">
     <div class="h1">
         <h1>{{username}}'s List</h1>
@@ -33,35 +34,35 @@
         </a>
     </div>
 </div>
+
+<!-- List -->
 {% if list_data | length > 0 %}
 <form id="listform" method="POST">
     <table>
         <thead>
             <tr>
-                <th class="a"></th>
-                <th class="b">Title</th>
-                <th class="c">Progress</th>
-                <th class="d">Status</th>
-                <th class="e">Score</th>
-                {% if own_profile %}
-                <th class="f">Remove</th>
-                {% endif %}
+                <th></th>
+                <th>Title</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Score</th>
+                {% if own_profile %}<th>Remove</th>{% endif %}
             </tr>
         </thead>
         <tbody>
             {% for anime in list_data %}
             <tr>
-                <td class="a">
+                <td>
                     {% if anime.thumbnail %}
                     <img src="{{anime.thumbnail}}" width=50 height=70>
                     {% else %}
                     <img src="https://cdn.myanimelist.net/images/qm_50.gif" width=50 height=70>
                     {% endif %}
                 </td>
-                <td class="b">
+                <td>
                     <a href="/anime/{{anime.id}}">{{anime.title}}</a>
                 </td>
-                <td class="c">
+                <td>
                     {% if own_profile %}
                     <input style="width:35px" type="number" name="episodes_watched_{{anime.id}}"
                         value={{anime.episodes_watched}} min="0" max="{{anime.episodes}}">
@@ -72,7 +73,7 @@
                     </div>
                     {% endif %}
                 </td>
-                <td class="d">
+                <td>
                     {% if own_profile %}
                     <select name="status_{{anime.id}}">
                         <option value="Completed" {% if anime.status=="Completed" %} selected {% endif %}>
@@ -95,7 +96,7 @@
                     {{anime.status}}
                     {% endif %}
                 </td>
-                <td class="e">
+                <td>
                     {% if own_profile %}
                     <select name="score_{{anime.id}}">
                         <option value="None" {% if not anime.score %} selected {% endif %}></option>
@@ -115,7 +116,7 @@
                     {% endif %}
                 </td>
                 {% if own_profile %}
-                <td class="f">
+                <td>
                     <div style="text-align:center">
                         <input type="checkbox" name="remove_{{anime.id}}" style="width:30px; height:30px;">
                     </div>
