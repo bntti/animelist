@@ -39,15 +39,16 @@ def get_anime_id(mal_link: str) -> Optional[int]:
 
 
 def get_anime(anime_id: int) -> Optional[dict]:
-    sql = "SELECT a.id, a.title, a.episodes, ROUND(AVG(l.score), 2), a.picture " \
+    sql = "SELECT a.id, a.title, a.link, a.episodes, ROUND(AVG(l.score), 2), a.picture " \
           "FROM anime a LEFT JOIN list l ON l.anime_id = a.id WHERE a.id = :id GROUP BY a.id"
     row = database.session.execute(sql, {"id": anime_id}).fetchone()
     return None if not row else {
         "id": row[0],
         "title": row[1],
-        "episodes": row[2],
-        "score": row[3],
-        "picture": row[4]
+        "link": row[2],
+        "episodes": row[3],
+        "score": row[4],
+        "picture": row[5]
     }
 
 
