@@ -1,7 +1,38 @@
 {% extends "layout.html" %}
 {% block title %}Home{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/index.css">
+{% endblock %}
+
 {% block content %}
 
 <h1>AnimeList</h1>
+
+<div class="grid-container">
+    <div class="grid-content">
+        <h4>Browse</h4>
+        <div class="grid-container">
+            <a href="/topanime">Browse anime</a>
+            <a href="/tags">Browse tags</a>
+        </div>
+    </div>
+    {% if session.username %}
+    <div class="grid-content">
+        <h4>Logged in as {{session.username}}</h4>
+        <div class="grid-container">
+            <a href="/list/{{session.username | urlencode}}">View list</a>
+            <a href="/profile/{{session.username | urlencode}}">View profile</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="grid-content">
+        <h4>Log in</h4>
+        <div class="grid-container">
+            <a href="/login">Log in</a>
+            <a href="/register">Register</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
 
 {% endblock %}

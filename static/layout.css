@@ -1,3 +1,36 @@
+/* global styles */
+h1 {
+  margin-top: 7px;
+}
+
+tr:nth-child(even) {
+  background-color: #ccddff;
+}
+
+th {
+  z-index: 0;
+  background: #99bbff;
+}
+
+table {
+  border-style: solid;
+  border-color: #99bbff;
+  border-collapse: collapse;
+}
+
+/* Hide up and down buttons from number input */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Styles for layout.html */
 body {
   margin: 0;
 }
@@ -19,6 +52,12 @@ body {
   .content {
     background-color: white;
     border-radius: 15px;
+  }
+  .footer {
+    background-color: #fff1 !important;
+  }
+  .footer a {
+    color: #bbb;
   }
 }
 .content-container {
@@ -77,13 +116,13 @@ body {
 }
 
 .footer {
-  background-color: #f1f1f115;
+  background-color: #eee;
   text-align: center;
   padding: 30px;
   height: 20px;
 }
 .footer a {
-  color: #bbb;
+  text-decoration: none;
 }
 
 ul.navbar {
