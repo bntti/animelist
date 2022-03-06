@@ -12,5 +12,5 @@ tr > :nth-child(1) {
 
 input[type="text"],
 input[type="password"] {
-  padding: 6px;
+  padding: 6px !important;
 }

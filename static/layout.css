@@ -23,6 +23,28 @@ a {
   text-decoration: none;
 }
 
+button,
+input[type="submit"],
+input[type="number"],
+input[type="text"],
+input[type="password"],
+input[type="file"]::file-selector-button,
+select {
+  background-color: white;
+  border-style: solid;
+  border-color: #00f;
+  color: #00f;
+  border-radius: 5px;
+  border-width: 2px;
+  padding: 3px 5px;
+}
+button:hover,
+input[type="submit"]:hover,
+input[type="file"]::file-selector-button:hover,
+select:hover {
+  background-color: #eef;
+}
+
 /* Hide up and down buttons from number input */
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
