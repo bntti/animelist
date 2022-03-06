@@ -7,6 +7,14 @@
 table {
   width: 100%;
 }
+tr > td:nth-child(1) {
+  padding-left: 3px;
+}
+tr > :nth-child(2) {
+  width: 60px;
+  text-align: right;
+  padding-right: 3px;
+}
 
 h3 {
   text-align: center;
