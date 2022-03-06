@@ -3,18 +3,21 @@
 ## Project Description
 The website is available in [Heroku](https://tsoha-animelist.herokuapp.com/).  
 The project is a website where anime are listed and users can search anime, add them to their lists to keep track of what they are watching and what they have watched. This project takes inspiration from [MyAnimeList](https://myanimelist.net).  
-Anime data is taken from [here](https://github.com/manami-project/anime-offline-database) and the AGPL-3.0 license is used because of that.
+Anime data is taken from [here](https://github.com/manami-project/anime-offline-database) and the AGPL-3.0 license is used because of that
 
 ## Features
+- `/`
+  - Links to various parts of the website
 - `/topanime`
   - Listing all anime and sorting them by their average score
-  - Searching anime
-  - Searching anime by tag (select a tag from `/anime/<id>` view)
+  - Searching anime by name or/and by tag
+  - Seeing related anime that are not on your list
 - `/tags`
-  - Listing tags to search by
+  - Listing tags by popularity and by count that can be used to search with in `/topanime`
 - `/anime/<id>`
   - Viewing more detailed information about a specific anime
-- `/login` and `/register`
+  - Editing more specific user data about anime
+- `/login`, `/register`, and `/logout`
   - Accounts
 - `/list/<username>`
   - Personal anime list
@@ -24,12 +27,6 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
   - Setting to show hidden anime (There are no hidden anime in Heroku because of database table size restrictions)
   - Statistics of watched anime
   - Seeing others' profiles
-- `/related`
-  - Seeing related anime that are not on your list
-
-### Features that I might add if I have enough time
-- Adding users as friends
-- Watch history
 
 ## Running project
 ### Initializing
