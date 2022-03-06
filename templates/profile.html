@@ -8,7 +8,7 @@
 
 <h1>{{username}}'s Profile</h1>
 
-<div class="grid-container">
+<div {% if own_profile %} class="grid-container-own-profile" {% else %} class="grid-container" {% endif %}>
     <div class="counts">
         <h3>Anime watched</h3>
         <p>Total anime watched: {{counts.total}}</p>
@@ -42,7 +42,7 @@
             </tbody>
         </table>
     </div>
-    <div class="sorted_tags" {% if own_profile %} style="height: 570px" {% endif %}>
+    <div class="sorted_tags">
         <h3>Tags</h3>
         {% if sorted_tags %}
         <p>

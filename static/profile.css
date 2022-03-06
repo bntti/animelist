@@ -7,12 +7,19 @@ p {
 .grid-container {
   display: grid;
   gap: 20px;
+  grid-template-areas: "counts sorted_tags";
+  grid-template-columns: 50% auto;
+}
+
+.grid-container-own-profile {
+  display: grid;
+  gap: 20px;
   grid-template-areas:
     "counts   sorted_tags"
     "counts   sorted_tags"
     "settings sorted_tags"
     "import   sorted_tags";
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 50% auto;
 }
 
 .counts {
@@ -39,9 +46,9 @@ p {
 }
 
 .tableFixHead {
+  width: 100%;
   overflow-y: auto;
   max-height: 500px;
-  width: fit-content;
   border: solid;
   border-color: #99bbff;
 }
@@ -51,5 +58,6 @@ p {
   z-index: 1;
 }
 .tableFixHead table {
+  width: 100%;
   border-style: none !important;
 }

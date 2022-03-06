@@ -1,4 +1,9 @@
 .grid-container {
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: calc(50% - 10px) calc(50% - 10px);
+  gap: 20px;
+}
+
+table {
+  width: 100%;
 }
