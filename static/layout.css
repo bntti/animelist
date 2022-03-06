@@ -33,16 +33,66 @@ select {
   background-color: white;
   border-style: solid;
   border-color: #00f;
-  color: #00f;
   border-radius: 5px;
   border-width: 2px;
   padding: 3px 5px;
 }
+button,
+input[type="submit"],
+input[type="file"]::file-selector-button,
+select {
+  color: #00f;
+}
+
 button:hover,
 input[type="submit"]:hover,
 input[type="file"]::file-selector-button:hover,
 select:hover {
   background-color: #eef;
+}
+input:disabled {
+  color: #aaf;
+  border-color: #aaf;
+  background-color: #eef;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  background-color: #fff;
+  color: #00f;
+  border: 2px solid #00f;
+  border-radius: 5px;
+  display: grid;
+  place-content: center;
+  margin: auto !important;
+  width: 27px;
+  height: 27px;
+}
+input[type="checkbox"]:disabled {
+  color: #aaf;
+  border-color: #aaf;
+  background-color: #eef;
+}
+input[type="checkbox"]:hover {
+  background-color: #eef;
+}
+input[type="checkbox"]::before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  border-radius: 5px;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 100px 100px #00f;
+}
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+input[type="checkbox"]:checked {
+  background-color: #bbf;
+}
+input[type="checkbox"]:checked:hover {
+  background-color: #aaf;
 }
 
 /* Hide up and down buttons from number input */

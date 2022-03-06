@@ -35,6 +35,14 @@ p {
   grid-area: import;
 }
 
+.settings table {
+  border-style: none;
+}
+.settings td {
+  padding-right: 10px;
+  background-color: white;
+}
+
 /* Tags */
 .sorted_tags p a {
   text-decoration: none;

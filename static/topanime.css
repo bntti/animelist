@@ -34,10 +34,6 @@
 .query input[type="text"] {
   width: 150px;
 }
-.query input[type="checkbox"] {
-  width: 17px;
-  height: 17px;
-}
 
 /* Anime */
 table.anime {

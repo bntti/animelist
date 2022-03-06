@@ -2,7 +2,7 @@ table {
   border-style: none !important;
 }
 
-tr:nth-child(even) {
+td {
   background-color: white !important;
 }
 

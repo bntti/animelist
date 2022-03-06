@@ -43,6 +43,9 @@
   padding: 1px 3px;
   color: #000;
 }
+.links a.status:hover {
+  background-color: #eef;
+}
 .links a.selected {
   color: #00f !important;
   border-color: #00f !important;

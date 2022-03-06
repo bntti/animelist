@@ -83,13 +83,23 @@
     <div class="settings">
         <h3>Settings</h3>
         <form method="POST">
-            <p>
-                <label for="show hidden">Show hidden anime:</label>
-                <input id="show hidden" type="checkbox" name="show hidden" {% if session.show_hidden %} checked {% endif
-                    %}>
-            </p>
             <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
-            <input type="submit" value="Save settings">
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <label for="show hidden">Show hidden anime:</label>
+                        </td>
+                        <td>
+                            <input id="show hidden" style="margin: 0px !important" type="checkbox" name="show hidden" {%
+                                if session.show_hidden %} checked {% endif %}>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" value="Save settings"></td>
+                    </tr>
+                </tbody>
+            </table>
         </form>
     </div>
     <div class="import">
