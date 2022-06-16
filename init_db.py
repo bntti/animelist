@@ -4,8 +4,7 @@ from typing import Callable
 
 from tqdm import tqdm
 
-import anime_service
-import database_service
+from repositories import anime_repository, initialization_repository
 
 
 def iterate_data(data: dict, add_data_to_db: Callable[[dict, str], None]) -> None:
@@ -26,24 +25,24 @@ def add_anime_data(anime_data: dict, myanimelist_link: str) -> None:
         "thumbnail": anime_data["thumbnail"],
         "hidden": "hentai" in anime_data["tags"],
     }
-    anime_id = anime_service.add_anime(anime)
+    anime_id = initialization_repository.add_anime(anime)
 
     # Add synonyms
     for synonym in anime_data["synonyms"]:
-        database_service.add_synonym(anime_id, synonym)
+        initialization_repository.add_synonym(anime_id, synonym)
 
     # Add tags
     for tag in anime_data["tags"]:
-        database_service.add_tag(anime_id, tag)
+        initialization_repository.add_tag(anime_id, tag)
 
 
 def add_relations(anime_data: dict, myanimelist_link: str) -> None:
-    anime_id = anime_service.get_anime_id(myanimelist_link)
+    anime_id = anime_repository.get_anime_id(myanimelist_link)
     for relation in anime_data["relations"]:
         if "myanimelist.net" in relation:
-            related_id = anime_service.get_anime_id(relation)
+            related_id = anime_repository.get_anime_id(relation)
             if related_id:
-                database_service.add_relation(anime_id, related_id)
+                initialization_repository.add_relation(anime_id, related_id)
 
 
 def import_data() -> None:
@@ -60,7 +59,7 @@ def import_data() -> None:
         sys.exit(0)
 
     print("Initializing tables")
-    database_service.init_tables()
+    initialization_repository.init_tables()
 
     print("Adding anime, tags, and synonyms to the database")
     iterate_data(data, add_anime_data)
@@ -69,7 +68,7 @@ def import_data() -> None:
     iterate_data(data, add_relations)
 
     print("Committing changes")
-    database_service.commit()
+    initialization_repository.commit()
 
     print("Done!")
     sys.exit(0)

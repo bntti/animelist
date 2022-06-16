@@ -40,19 +40,16 @@ def anime_count(query: str, tag: str) -> int:
     return row[0] if row else 0
 
 
-def add_anime(anime: dict) -> int:
-    sql = """
-        INSERT INTO anime (title, episodes, link, picture, thumbnail, hidden)
-        VALUES (:title, :episodes, :link, :picture, :thumbnail, :hidden)
-        Returning id
-    """
-    return database.session.execute(sql, anime).fetchone()[0]
-
-
 def get_anime_id(mal_link: str) -> Optional[int]:
     sql = "SELECT id FROM anime WHERE link = :link"
     row = database.session.execute(sql, {"link": mal_link}).fetchone()
     return None if not row else row[0]
+
+
+def get_anime_id_and_episodes(mal_link: str) -> Optional[tuple]:
+    sql = "SELECT id, episodes FROM anime WHERE link = :link"
+    row = database.session.execute(sql, {"link": mal_link}).fetchone()
+    return None if not row else (row[0], row[1])
 
 
 def get_anime(anime_id: int) -> Optional[dict]:

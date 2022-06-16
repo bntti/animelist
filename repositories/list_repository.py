@@ -1,48 +1,9 @@
 from typing import Optional
 
-from defusedxml.ElementTree import ParseError, fromstring
-from flask import Response, abort, flash, session
 from psycopg2.errors import UniqueViolation
 from sqlalchemy.exc import IntegrityError
-from werkzeug.datastructures import FileStorage
 
-import anime_service
 from database import database
-
-
-# Helper functions
-def import_from_myanimelist(file: FileStorage) -> None:
-    try:
-        root = fromstring(file.read())
-    except ParseError:
-        abort(Response("Error parsing XML file", 415))
-
-    error = False
-    for node in root:
-        if node.tag == "anime":
-            title = ""
-            try:
-                title = node.find("./series_title").text
-                title = title.replace("\t", "").replace("\n", "")
-                anime = {
-                    "id": node.find("./series_animedb_id").text,
-                    "episodes": int(node.find("./my_watched_episodes").text),
-                    "score": int(node.find("./my_score").text),
-                    "status": node.find("./my_status").text,
-                    "times_watched": int(node.find("./my_times_watched").text),
-                }
-                if anime["status"] == "Completed":
-                    anime["times_watched"] += 1
-                assert import_to_list(session["user_id"], anime)
-            except (AttributeError, ValueError, AssertionError):
-                error = True
-                if title:
-                    flash(f"Failed to import anime '{title}'", "error")
-                else:
-                    flash("Failed to import an anime that is missing a title", "error")
-
-    if not error:
-        flash("Data imported from MyAnimeList")
 
 
 # Database functions
@@ -57,37 +18,13 @@ def add_to_list(user_id: int, anime_id: int) -> None:
         database.session.rollback()
 
 
-def import_to_list(user_id: int, anime: dict) -> bool:
-    sql = "SELECT id, episodes FROM anime WHERE link = :link"
-    result = database.session.execute(
-        sql, {"link": f"https://myanimelist.net/anime/{anime['id']}"}
-    ).fetchone()
-
-    if not result:
-        return False
-
-    anime_id, episodes = result
-    data = {**anime, "user_id": user_id, "anime_id": anime_id}
-
-    # Check data
-    if (
-        not 0 <= anime["episodes"] <= episodes
-        or not 0 <= anime["score"] <= 10
-        or anime["status"]
-        not in ["Completed", "Watching", "On-Hold", "Dropped", "Plan to Watch"]
-        or not 0 <= anime["times_watched"] <= 1000
-    ):
-        return False
-
-    # If score is 0, then score has not yet been set
-    data["score"] = None if int(data["score"]) == 0 else data["score"]
-
+def import_to_list(user_id: int, anime_data: dict) -> bool:
     try:
         sql = """
             INSERT INTO list (user_id, anime_id, episodes, score, status, times_watched)
             VALUES (:user_id, :anime_id, :episodes, :score, :status, :times_watched)
         """
-        database.session.execute(sql, data)
+        database.session.execute(sql, {**anime_data, "user_id": user_id})
         database.session.commit()
     except IntegrityError as error:
         # UNIQUE constraint fail
@@ -178,54 +115,6 @@ def get_user_anime_data(user_id: int, anime_id: int) -> Optional[dict]:
             "in_list": True,
         }
     )
-
-
-def handle_change(
-    anime_id: int,
-    new_times_watched: Optional[str],
-    new_episodes_watched: str,
-    new_status: str,
-    new_score: str,
-) -> None:
-    user_id = session["user_id"]
-    user_data = get_user_anime_data(user_id, anime_id)
-    anime = anime_service.get_anime(anime_id)
-
-    if (
-        new_times_watched
-        and str.isdigit(new_times_watched)
-        and 0 <= int(new_times_watched) <= 1000
-    ):
-        new_times_watched = int(new_times_watched)
-        if new_times_watched != user_data["times_watched"]:
-            set_times_watched(user_id, anime_id, new_times_watched)
-
-    if (
-        new_episodes_watched
-        and str.isdigit(new_episodes_watched)
-        and 0 <= int(new_episodes_watched) <= anime["episodes"]
-    ):
-        new_episodes_watched = int(new_episodes_watched)
-        if new_episodes_watched != user_data["episodes"]:
-            user_data["episodes"] = new_episodes_watched
-            set_episodes_watched(user_id, anime_id, new_episodes_watched)
-            if new_episodes_watched == anime["episodes"]:
-                set_status(user_id, anime_id, "Completed")
-                add_times_watched(user_id, anime_id, 1)
-            else:
-                set_status(user_id, anime_id, "Watching")
-
-    if new_status in ["Completed", "Watching", "On-Hold", "Dropped", "Plan to Watch"]:
-        if new_status != user_data["status"]:
-            set_status(user_id, anime_id, new_status)
-            if new_status == "Completed" and user_data["episodes"] != anime["episodes"]:
-                set_episodes_watched(user_id, anime_id, anime["episodes"])
-                add_times_watched(user_id, anime_id, 1)
-
-    if new_score == "None" or (str.isdigit(new_score) and 1 <= int(new_score) <= 10):
-        new_score = None if new_score == "None" else int(new_score)
-        if new_score != user_data["score"]:
-            set_score(user_id, anime_id, new_score)
 
 
 def get_counts(user_id: int) -> dict:

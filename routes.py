@@ -4,12 +4,15 @@ from typing import Union
 from flask import Response, abort, flash, redirect, render_template, request, session
 from markupsafe import Markup
 
-import anime_service
-import database_service
-import list_service
-import relation_service
-import user_service
 from app import app
+from repositories import (
+    anime_repository,
+    list_repository,
+    relation_repository,
+    tag_repository,
+    user_repository,
+)
+from services import list_service, user_service
 
 
 # Url encoder
@@ -31,15 +34,15 @@ def index() -> str:
 # /list
 @app.route("/list/<path:username>", methods=["GET"])
 def list_get(username: str) -> Union[str, Response]:
-    data = user_service.get_user_data(username)
+    data = user_repository.get_user_data(username)
     if not data:
         return "<h1>No user found<h1>"
-    user_id, _ = user_service.get_user_data(username)
+    user_id, _ = user_repository.get_user_data(username)
     own_profile = "user_id" in session and session["user_id"] == user_id
 
     tag = request.args["tag"] if "tag" in request.args else ""
     status = request.args["status"] if "status" in request.args else "All"
-    list_data = list_service.get_list_data(user_id, status, tag)
+    list_data = list_repository.get_list_data(user_id, status, tag)
     base_url = f"/list/{url_encode(username)}?"
     status_url = f"{base_url}status={status}"
     base_url = base_url if not tag else f"{base_url}tag={tag}&"
@@ -58,10 +61,10 @@ def list_get(username: str) -> Union[str, Response]:
 
 @app.route("/list/<path:username>", methods=["POST"])
 def list_post(username: str) -> Union[str, Response]:
-    data = user_service.get_user_data(username)
+    data = user_repository.get_user_data(username)
     if not data:
         return list_get(username)
-    user_id, _ = user_service.get_user_data(username)
+    user_id, _ = user_repository.get_user_data(username)
 
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])
@@ -70,12 +73,12 @@ def list_post(username: str) -> Union[str, Response]:
 
     tag = request.args["tag"] if "tag" in request.args else ""
     status = request.args["status"] if "status" in request.args else "All"
-    list_data = list_service.get_list_data(user_id, status, tag)
+    list_data = list_repository.get_list_data(user_id, status, tag)
 
     # Handle list data change
     for anime in list_data:
         if request.form.get(f"remove_{anime['id']}"):
-            list_service.remove_from_list(user_id, anime["id"])
+            list_repository.remove_from_list(user_id, anime["id"])
         else:
             list_service.handle_change(
                 anime["id"],
@@ -92,8 +95,8 @@ def list_post(username: str) -> Union[str, Response]:
 # /tags
 @app.route("/tags")
 def tags_get() -> str:
-    popular_tags = database_service.get_popular_tags()
-    tag_counts = database_service.get_tag_counts()
+    popular_tags = tag_repository.get_popular_tags()
+    tag_counts = tag_repository.get_tag_counts()
     return render_template(
         "tags.html", popular_tags=popular_tags, tag_counts=tag_counts
     )
@@ -104,7 +107,7 @@ def tags_get() -> str:
 def topanime_get() -> str:
     list_ids = []
     if "user_id" in session:
-        list_ids = list_service.get_list_ids(session["user_id"])
+        list_ids = list_repository.get_list_ids(session["user_id"])
 
     related = request.args["related"] if "related" in request.args else ""
     tag = request.args["tag"].lower() if "tag" in request.args else ""
@@ -114,12 +117,12 @@ def topanime_get() -> str:
         page = int(request.args["page"])
 
     if not related:
-        anime_count = anime_service.anime_count(query, tag)
-        top_anime = anime_service.get_top_anime(page, query, tag)
+        anime_count = anime_repository.anime_count(query, tag)
+        top_anime = anime_repository.get_top_anime(page, query, tag)
     else:
         user_service.check_user()
-        anime_count = relation_service.related_anime_count(session["user_id"])
-        top_anime = relation_service.get_related_anime(page, session["user_id"])
+        anime_count = relation_repository.related_anime_count(session["user_id"])
+        top_anime = relation_repository.get_related_anime(page, session["user_id"])
         tag = ""
         query = ""
     page = max(0, min(anime_count - 50, page))
@@ -153,7 +156,7 @@ def topanime_get() -> str:
 def topanime_post() -> str:
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])
-    list_service.add_to_list(session["user_id"], int(request.form["anime_id"]))
+    list_repository.add_to_list(session["user_id"], int(request.form["anime_id"]))
     flash("Anime added to list")
     return topanime_get()
 
@@ -161,17 +164,17 @@ def topanime_post() -> str:
 # /anime/id
 @app.route("/anime/<int:anime_id>", methods=["GET"])
 def anime_get(anime_id: int) -> str:
-    anime = anime_service.get_anime(anime_id)
+    anime = anime_repository.get_anime(anime_id)
     if not anime:
         return render_template("anime.html", anime=anime)
 
     user_data = {"in_list": False, "score": None}
     if "user_id" in session:
-        new_data = list_service.get_user_anime_data(session["user_id"], anime_id)
+        new_data = list_repository.get_user_anime_data(session["user_id"], anime_id)
         user_data = new_data if new_data else user_data
 
-    related_anime = relation_service.get_anime_related_anime(anime_id)
-    anime_tags = database_service.get_tags(anime_id)
+    related_anime = relation_repository.get_anime_related_anime(anime_id)
+    anime_tags = tag_repository.get_tags(anime_id)
 
     return render_template(
         "anime.html",
@@ -187,20 +190,20 @@ def anime_post(anime_id: int) -> str:
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])
 
-    anime = anime_service.get_anime(anime_id)
+    anime = anime_repository.get_anime(anime_id)
     if not anime:
         return anime_get(anime_id)
 
     # Anime is removed from list
     if request.form["submit"] == "Remove from list":
-        list_service.remove_from_list(session["user_id"], anime_id)
+        list_repository.remove_from_list(session["user_id"], anime_id)
         flash("Anime removed from list")
         return anime_get(anime_id)
 
     # Anime is added to list
     if request.form["submit"] == "Add to list":
         flash("Anime added to list")
-        list_service.add_to_list(session["user_id"], anime_id)
+        list_repository.add_to_list(session["user_id"], anime_id)
 
     # Handle anime user data change
     list_service.handle_change(
@@ -220,17 +223,17 @@ def anime_post(anime_id: int) -> str:
 # /profile
 @app.route("/profile/<path:username>", methods=["GET"])
 def profile_get(username: str) -> str:
-    data = user_service.get_user_data(username)
+    data = user_repository.get_user_data(username)
     if not data:
         return "<h1>No user found<h1>"
-    user_id, _ = user_service.get_user_data(username)
+    user_id, _ = data
     own_profile = "user_id" in session and session["user_id"] == user_id
-    counts = list_service.get_counts(user_id)
+    counts = list_repository.get_counts(user_id)
     tags = request.args["tags"] if "tags" in request.args else ""
     if tags != "top":
-        sorted_tags = list_service.get_watched_tags(user_id)
+        sorted_tags = list_repository.get_watched_tags(user_id)
     else:
-        sorted_tags = list_service.get_popular_tags(user_id)
+        sorted_tags = list_repository.get_popular_tags(user_id)
     return render_template(
         "profile.html",
         tags=tags,
@@ -244,10 +247,10 @@ def profile_get(username: str) -> str:
 
 @app.route("/profile/<path:username>", methods=["POST"])
 def profile_post(username: str) -> str:
-    data = user_service.get_user_data(username)
+    data = user_repository.get_user_data(username)
     if not data:
         return profile_get(username)
-    user_id, _ = user_service.get_user_data(username)
+    user_id, _ = data
 
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])
@@ -264,7 +267,7 @@ def profile_post(username: str) -> str:
     new_show_hidden = bool(request.form.get("show hidden"))
     if new_show_hidden != session["show_hidden"]:
         session["show_hidden"] = new_show_hidden
-        user_service.set_show_hidden(new_show_hidden)
+        user_repository.set_show_hidden(new_show_hidden)
         flash("Settings updated")
 
     return profile_get(username)
