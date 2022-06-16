@@ -46,9 +46,9 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
 3. Download 'anime-offline-database-minified.json' from [here](https://github.com/manami-project/anime-offline-database) and place the file at this project's root
 4. Initialize the database
    ```
-   INIT=True poetry run flask run
+   poetry run invoke initialize-database
    ```
 ### Running project
 ```
-poetry run flask run
+poetry run invoke start
 ```

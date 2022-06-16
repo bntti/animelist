@@ -49,13 +49,15 @@ def import_data() -> None:
     print("Opening file 'anime-offline-database-minified.json'")
     try:
         with open(
-            "anime-offline-database-minified.json", "r", encoding="utf-8"
+            "../anime-offline-database-minified.json", "r", encoding="utf-8"
         ) as file:
             print("Loading data form file")
             data = json.load(file)
     except FileNotFoundError:
+        print("Missing file anime-offline-database-minified.json")
         print("Download 'anime-offline-database-minified.json' from here:")
         print("https://github.com/manami-project/anime-offline-database/")
+        print("And place at this project's root")
         sys.exit(0)
 
     print("Initializing tables")

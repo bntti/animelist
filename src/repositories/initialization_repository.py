@@ -4,7 +4,7 @@ from database import database
 def init_tables() -> None:
     sql = "DROP TABLE IF EXISTS users, anime, relations, synonyms, list, tags"
     database.session.execute(sql)
-    with open("schema.sql", "r", encoding="utf-8") as file:
+    with open("../schema.sql", "r", encoding="utf-8") as file:
         sql = "".join(file.readlines())
     database.session.execute(sql)
 
