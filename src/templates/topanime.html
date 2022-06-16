@@ -24,86 +24,90 @@
     <div class="query">
         <!-- Search options -->
         <form>
-            <table>
-                <tbody>
-                    <tr>
-                        <th>Search</th>
-                        <th><a href="/tags" title="List of tags">Tag</a></th>
-                        {% if session.user_id %}<th>Related</th>{% endif %}
-                        <th></th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <input {% if related %} disabled {% endif %} type="text" value="{{query}}" name="query"
-                                placeholder="Search" />
-                        </td>
-                        <td>
-                            <input {% if related %} disabled {% endif %} type="text" value="{{tag}}" name="tag"
-                                placeholder="Tag" />
-                        </td>
-                        {% if session.user_id %}
-                        <td>
-                            <input {% if tag or query %} disabled {% endif %} type="checkbox" name="related" {% if
-                                related %} checked {% endif %} />
-                        </td>
-                        {% endif %}
-                        <td><input type="submit" value="Search" /></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-container" style="float: right;">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Search</th>
+                            <th><a href="/tags" title="List of tags">Tag</a></th>
+                            {% if session.user_id %}<th>Related</th>{% endif %}
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input {% if related %} disabled {% endif %} type="text" value="{{query}}" name="query"
+                                    placeholder="Search" />
+                            </td>
+                            <td>
+                                <input {% if related %} disabled {% endif %} type="text" value="{{tag}}" name="tag"
+                                    placeholder="Tag" />
+                            </td>
+                            {% if session.user_id %}
+                            <td>
+                                <input {% if tag or query %} disabled {% endif %} type="checkbox" name="related" {% if
+                                    related %} checked {% endif %} />
+                            </td>
+                            {% endif %}
+                            <td><input type="submit" value="Search" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </form>
     </div>
 </div>
 
 <!-- Anime -->
 {% if top_anime %}
-<table class="anime">
-    <thead>
-        <tr>
-            <th></th>
-            <th>Title</th>
-            <th>Score</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for anime in top_anime %}
-        <tr>
-            <td>
-                {% if anime.thumbnail %}
-                <img src="{{anime.thumbnail}}" width=50 height=70>
-                {% else %}
-                <img src="https://cdn.myanimelist.net/images/qm_50.gif" width=50 height=70>
-                {% endif %}
-            </td>
-            <td>
-                <div>
-                    <a href="/anime/{{anime.id}}">{{anime.title}}</a>
-                    <br>
-                    Episodes: {{anime.episodes}}
-                </div>
-            </td>
-            <td>
-                {% if anime.score %}{{anime.score}}{% endif %}
-            </td>
-            <td>
-                <!-- List status -->
-                {% if session.user_id %}
-                {% if anime.id not in list_ids %}
-                <form action="{{current_url}}" method="POST">
-                    <input type="hidden" value="{{anime.id}}" name="anime_id" />
-                    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
-                    <input type="submit" value="Add to list">
-                </form>
-                {% else %}
-                In list
-                {% endif %}
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-container" style="width:100%">
+    <table class="anime">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Score</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for anime in top_anime %}
+            <tr>
+                <td>
+                    {% if anime.thumbnail %}
+                    <img src="{{anime.thumbnail}}" width=50 height=70>
+                    {% else %}
+                    <img src="https://cdn.myanimelist.net/images/qm_50.gif" width=50 height=70>
+                    {% endif %}
+                </td>
+                <td>
+                    <div>
+                        <a href="/anime/{{anime.id}}">{{anime.title}}</a>
+                        <br>
+                        Episodes: {{anime.episodes}}
+                    </div>
+                </td>
+                <td>
+                    {% if anime.score %}{{anime.score}}{% endif %}
+                </td>
+                <td>
+                    <!-- List status -->
+                    {% if session.user_id %}
+                    {% if anime.id not in list_ids %}
+                    <form action="{{current_url}}" method="POST">
+                        <input type="hidden" value="{{anime.id}}" name="anime_id" />
+                        <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
+                        <input type="submit" value="Add to list">
+                    </form>
+                    {% else %}
+                    In list
+                    {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
 <p><strong>No anime found</strong></p>
 {% endif %}

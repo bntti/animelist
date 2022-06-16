@@ -13,47 +13,49 @@
         <h3>Anime watched</h3>
         <p>Total anime watched: {{counts.total}}</p>
         <p><a href="{{list_url}}">View list</a></p>
-        <table>
-            <thead>
-                <th>Status</th>
-                <th>Count</th>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><a href="{{list_url}}?status=Completed">Completed</a></td>
-                    <td>{{counts.completed}}</td>
-                </tr>
-                <tr>
-                    <td><a href="{{list_url}}?status=Watching">Watching</a></td>
-                    <td>{{counts.watching}}</td>
-                </tr>
-                <tr>
-                    <td><a href="{{list_url}}?status=On-Hold">On-Hold</a></td>
-                    <td>{{counts.on_hold}}</td>
-                </tr>
-                <tr>
-                    <td><a href="{{list_url}}?status=Dropped">Dropped</a></td>
-                    <td>{{counts.dropped}}</td>
-                </tr>
-                <tr>
-                    <td><a href="{{list_url}}?status=Plan%20to%20Watch">Plan to Watch</a></td>
-                    <td>{{counts.plan_to_watch}}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-container">
+            <table class="profile-table">
+                <thead>
+                    <th>Status</th>
+                    <th>Count</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="{{list_url}}?status=Completed">Completed</a></td>
+                        <td>{{counts.completed}}</td>
+                    </tr>
+                    <tr>
+                        <td><a href="{{list_url}}?status=Watching">Watching</a></td>
+                        <td>{{counts.watching}}</td>
+                    </tr>
+                    <tr>
+                        <td><a href="{{list_url}}?status=On-Hold">On-Hold</a></td>
+                        <td>{{counts.on_hold}}</td>
+                    </tr>
+                    <tr>
+                        <td><a href="{{list_url}}?status=Dropped">Dropped</a></td>
+                        <td>{{counts.dropped}}</td>
+                    </tr>
+                    <tr>
+                        <td><a href="{{list_url}}?status=Plan%20to%20Watch">Plan to Watch</a></td>
+                        <td>{{counts.plan_to_watch}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <div class="sorted_tags">
         <h3>Tags</h3>
         {% if sorted_tags %}
         <p>
-            <a {% if tags!="top" %} class="selected" {% endif %} href="/profile/{{username | urlencode}}">
+            <a class="status {{'selected' if tags!='top'}}" href="/profile/{{username | urlencode}}">
                 Most watched tags
             </a>
-            <a {% if tags=="top" %} class="selected" {% endif %} href="/profile/{{username | urlencode}}?tags=top">
+            <a class="status {{'selected' if tags=='top'}}" href="/profile/{{username | urlencode}}?tags=top">
                 Top scored tags
             </a>
         </p>
-        <div class="tableFixHead">
+        <div class="table-fix-head">
             <table>
                 <thead>
                     <tr>
@@ -69,7 +71,13 @@
                     {% for tag, tag_data in sorted_tags %}
                     <tr>
                         <td><a href="{{list_url}}?tag={{tag | urlencode}}">{{tag}}</a></td>
-                        <td>{{tag_data}}</td>
+                        <td>
+                            {% if tag_data %}
+                            {{tag_data}}
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -84,7 +92,7 @@
         <h3>Settings</h3>
         <form method="POST">
             <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
-            <table>
+            <table style="width:fit-content">
                 <tbody>
                     <tr>
                         <td>

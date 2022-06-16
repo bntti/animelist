@@ -3,24 +3,33 @@ h1 {
   margin-top: 7px;
 }
 
+.table-container {
+  border-style: solid;
+  border-radius: 5px;
+  border-width: 2px;
+  margin-bottom: 5px;
+  overflow: hidden;
+  width: fit-content;
+  border-color: #99bbff;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
 tr:nth-child(even) {
   background-color: #ccddff;
 }
-
 th {
   z-index: 0;
   background: #99bbff;
 }
 
-table {
-  border-style: solid;
-  border-color: #99bbff;
-  border-collapse: collapse;
-}
-
 a {
   color: #00d;
   text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
 }
 
 button,

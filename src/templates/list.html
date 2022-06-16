@@ -41,92 +41,94 @@
 <!-- List -->
 {% if list_data | length > 0 %}
 <form id="listform" method="POST">
-    <table>
-        <thead>
-            <tr>
-                <th></th>
-                <th>Title</th>
-                <th>Progress</th>
-                <th>Status</th>
-                <th>Score</th>
-                {% if own_profile %}<th>Remove</th>{% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for anime in list_data %}
-            <tr>
-                <td>
-                    {% if anime.thumbnail %}
-                    <img src="{{anime.thumbnail}}" width=50 height=70>
-                    {% else %}
-                    <img src="https://cdn.myanimelist.net/images/qm_50.gif" width=50 height=70>
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="/anime/{{anime.id}}">{{anime.title}}</a>
-                </td>
-                <td>
+    <div class="table-container" style="width:100%">
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Title</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                    <th>Score</th>
+                    {% if own_profile %}<th>Remove</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for anime in list_data %}
+                <tr>
+                    <td>
+                        {% if anime.thumbnail %}
+                        <img src="{{anime.thumbnail}}" width=50 height=70>
+                        {% else %}
+                        <img src="https://cdn.myanimelist.net/images/qm_50.gif" width=50 height=70>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/anime/{{anime.id}}">{{anime.title}}</a>
+                    </td>
+                    <td>
+                        {% if own_profile %}
+                        <input style="width:35px" type="number" name="episodes_watched_{{anime.id}}"
+                            value={{anime.episodes_watched}} min="0" max="{{anime.episodes}}">
+                        / {{anime.episodes}}
+                        {% else %}
+                        <div style="text-align:center">
+                            {{anime.episodes_watched}} / {{anime.episodes}}
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if own_profile %}
+                        <select name="status_{{anime.id}}">
+                            <option value="Completed" {% if anime.status=="Completed" %} selected {% endif %}>
+                                Completed
+                            </option>
+                            <option value="Watching" {% if anime.status=="Watching" %} selected {% endif %}>
+                                Watching
+                            </option>
+                            <option value="On-Hold" {% if anime.status=="On-Hold" %} selected {% endif %}>
+                                On-Hold
+                            </option>
+                            <option value="Dropped" {% if anime.status=="Dropped" %} selected {% endif %}>
+                                Dropped
+                            </option>
+                            <option value="Plan to Watch" {% if anime.status=="Plan to Watch" %} selected {% endif %}>
+                                Plan to Watch
+                            </option>
+                        </select>
+                        {% else %}
+                        {{anime.status}}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if own_profile %}
+                        <select name="score_{{anime.id}}">
+                            <option value="None" {% if not anime.score %} selected {% endif %}></option>
+                            <option value="10" {% if anime.score==10 %} selected {% endif %}>10</option>
+                            <option value="9" {% if anime.score==9 %} selected {% endif %}>9</option>
+                            <option value="8" {% if anime.score==8 %} selected {% endif %}>8</option>
+                            <option value="7" {% if anime.score==7 %} selected {% endif %}>7</option>
+                            <option value="6" {% if anime.score==6 %} selected {% endif %}>6</option>
+                            <option value="5" {% if anime.score==5 %} selected {% endif %}>5</option>
+                            <option value="4" {% if anime.score==4 %} selected {% endif %}>4</option>
+                            <option value="3" {% if anime.score==3 %} selected {% endif %}>3</option>
+                            <option value="2" {% if anime.score==2 %} selected {% endif %}>2</option>
+                            <option value="1" {% if anime.score==1 %} selected {% endif %}>1</option>
+                        </select>
+                        {% else %}
+                        {{anime.score}}
+                        {% endif %}
+                    </td>
                     {% if own_profile %}
-                    <input style="width:35px" type="number" name="episodes_watched_{{anime.id}}"
-                        value={{anime.episodes_watched}} min="0" max="{{anime.episodes}}">
-                    / {{anime.episodes}}
-                    {% else %}
-                    <div style="text-align:center">
-                        {{anime.episodes_watched}} / {{anime.episodes}}
-                    </div>
+                    <td>
+                        <input type="checkbox" name="remove_{{anime.id}}" style="width:27px; height:27px;">
+                    </td>
                     {% endif %}
-                </td>
-                <td>
-                    {% if own_profile %}
-                    <select name="status_{{anime.id}}">
-                        <option value="Completed" {% if anime.status=="Completed" %} selected {% endif %}>
-                            Completed
-                        </option>
-                        <option value="Watching" {% if anime.status=="Watching" %} selected {% endif %}>
-                            Watching
-                        </option>
-                        <option value="On-Hold" {% if anime.status=="On-Hold" %} selected {% endif %}>
-                            On-Hold
-                        </option>
-                        <option value="Dropped" {% if anime.status=="Dropped" %} selected {% endif %}>
-                            Dropped
-                        </option>
-                        <option value="Plan to Watch" {% if anime.status=="Plan to Watch" %} selected {% endif %}>
-                            Plan to Watch
-                        </option>
-                    </select>
-                    {% else %}
-                    {{anime.status}}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if own_profile %}
-                    <select name="score_{{anime.id}}">
-                        <option value="None" {% if not anime.score %} selected {% endif %}></option>
-                        <option value="10" {% if anime.score==10 %} selected {% endif %}>10</option>
-                        <option value="9" {% if anime.score==9 %} selected {% endif %}>9</option>
-                        <option value="8" {% if anime.score==8 %} selected {% endif %}>8</option>
-                        <option value="7" {% if anime.score==7 %} selected {% endif %}>7</option>
-                        <option value="6" {% if anime.score==6 %} selected {% endif %}>6</option>
-                        <option value="5" {% if anime.score==5 %} selected {% endif %}>5</option>
-                        <option value="4" {% if anime.score==4 %} selected {% endif %}>4</option>
-                        <option value="3" {% if anime.score==3 %} selected {% endif %}>3</option>
-                        <option value="2" {% if anime.score==2 %} selected {% endif %}>2</option>
-                        <option value="1" {% if anime.score==1 %} selected {% endif %}>1</option>
-                    </select>
-                    {% else %}
-                    {{anime.score}}
-                    {% endif %}
-                </td>
-                {% if own_profile %}
-                <td>
-                    <input type="checkbox" name="remove_{{anime.id}}" style="width:27px; height:27px;">
-                </td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     {% if own_profile %}
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />

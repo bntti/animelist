@@ -4,6 +4,18 @@ p {
   margin-bottom: 5px;
 }
 
+table.profile-table td {
+  padding: 4px;
+}
+
+table.profile-table th {
+  padding-right: 10px;
+}
+
+table.profile-table td:first-child {
+  padding-right: 10px;
+}
+
 .grid-container {
   display: grid;
   gap: 20px;
@@ -44,28 +56,47 @@ p {
 }
 
 /* Tags */
-.sorted_tags p a {
+.sorted_tags p {
+  margin-top: 10px;
+  margin-bottom: 7px;
+}
+.sorted_tags p a.status {
+  align-items: center;
   text-decoration: none;
-  color: black;
+  border-style: solid;
+  border-color: #aaa;
+  border-radius: 5px;
+  border-width: 2px;
+  padding: 1px 3px;
+  margin-right: 5px;
+  color: #000;
+}
+.sorted_tags p a.status:hover {
+  background-color: #eef;
 }
 .sorted_tags p a.selected {
-  text-decoration: none;
-  color: #00f;
+  color: #00f !important;
+  border-color: #00f !important;
 }
 
-.tableFixHead {
+.table-fix-head {
+  border-style: solid;
+  border-radius: 5px;
+  border-width: 2px;
+  margin-bottom: 5px;
+  overflow-x: hidden;
+  border-color: #99bbff;
+
   width: 100%;
   overflow-y: auto;
   max-height: 500px;
-  border: solid;
-  border-color: #99bbff;
 }
-.tableFixHead thead th {
+.table-fix-head thead th {
   position: sticky;
   top: 0;
   z-index: 1;
 }
-.tableFixHead table {
+.table-fix-head table {
   width: 100%;
   border-style: none !important;
 }
