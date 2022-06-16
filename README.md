@@ -1,9 +1,10 @@
 # Tietokantasovellus - AnimeList
 
 ## Project Description
+The project is a website where anime are listed and users can search anime, add them to their lists to keep track of what they are watching and what they have watched. This project takes inspiration from [MyAnimeList](https://myanimelist.net). The website doesn't use any javascript and all styling is made by me.  
+
 The website is available in [Heroku](https://tsoha-animelist.herokuapp.com/).  
-The project is a website where anime are listed and users can search anime, add them to their lists to keep track of what they are watching and what they have watched. This project takes inspiration from [MyAnimeList](https://myanimelist.net).  
-Anime data is taken from [here](https://github.com/manami-project/anime-offline-database) and the AGPL-3.0 license is used because of that
+Anime data is taken from [here](https://github.com/manami-project/anime-offline-database) and the AGPL-3.0 license is used because of that  
 
 ## Features
 - `/`
