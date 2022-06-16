@@ -29,6 +29,9 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
   - Seeing others' profiles
 
 ## Running project
+### Dependencies
+- poetry
+
 ### Initializing
 1. Create a `.env` file at project root and add the following lines to it:
     ```
@@ -36,26 +39,16 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
     DATABASE_URL=<postgresql:///user>
     ```
     and replace with corresponding values. SECRET_KEY should be a long random string
-2. Create and start virtual environment
+2. Install dependencies
+    ```
+    poetry install
+    ```
+3. Download 'anime-offline-database-minified.json' from [here](https://github.com/manami-project/anime-offline-database) and place the file at this project's root
+4. Initialize the database
    ```
-    $ python3 -m venv venv
-    $ source venv/bin/activate
-    ```
-3. Install dependencies
-    ```
-    $ pip3 install -r requirements.txt
-    ```
-    If installing requirements fails, try installing alternative requirements
-    ```
-    $ pip3 install -r requirements-alt.txt
-    ```
-4. Download 'anime-offline-database-minified.json' from [here](https://github.com/manami-project/anime-offline-database) and place the file at this project's root
-5. Initialize the database
-   ```
-   $ INIT=True flask run
+   INIT=True poetry run flask run
    ```
 ### Running project
 ```
-$ source venv/bin/activate
-$ flask run
+poetry run flask run
 ```

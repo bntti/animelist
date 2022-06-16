@@ -1,21 +1,23 @@
-from typing import Union
 import urllib.parse
+from typing import Union
+
+from flask import Response, abort, flash, redirect, render_template, request, session
 from markupsafe import Markup
-from flask import Response, flash, render_template, request, session, redirect, abort
-import user_service
-import list_service
+
 import anime_service
-import relation_service
 import database_service
+import list_service
+import relation_service
+import user_service
 from app import app
 
 
 # Url encoder
-@app.template_filter('urlencode')
+@app.template_filter("urlencode")
 def url_encode(string: str) -> Markup:
     if isinstance(string, Markup):
         string = string.unescape()
-    string = string.encode('utf8')
+    string = string.encode("utf8")
     string = urllib.parse.quote_plus(string)
     return Markup(string)
 
@@ -50,7 +52,7 @@ def list_get(username: str) -> Union[str, Response]:
         username=username,
         own_profile=own_profile,
         list_data=list_data,
-        status=status
+        status=status,
     )
 
 
@@ -80,7 +82,7 @@ def list_post(username: str) -> Union[str, Response]:
                 None,
                 request.form.get(f"episodes_watched_{anime['id']}"),
                 request.form.get(f"status_{anime['id']}"),
-                request.form.get(f"score_{anime['id']}")
+                request.form.get(f"score_{anime['id']}"),
             )
 
     flash("List updated")
@@ -92,7 +94,9 @@ def list_post(username: str) -> Union[str, Response]:
 def tags_get() -> str:
     popular_tags = database_service.get_popular_tags()
     tag_counts = database_service.get_tag_counts()
-    return render_template("tags.html", popular_tags=popular_tags, tag_counts=tag_counts)
+    return render_template(
+        "tags.html", popular_tags=popular_tags, tag_counts=tag_counts
+    )
 
 
 # /topanime
@@ -115,9 +119,7 @@ def topanime_get() -> str:
     else:
         user_service.check_user()
         anime_count = relation_service.related_anime_count(session["user_id"])
-        top_anime = relation_service.get_related_anime(
-            page, session["user_id"]
-        )
+        top_anime = relation_service.get_related_anime(page, session["user_id"])
         tag = ""
         query = ""
     page = max(0, min(anime_count - 50, page))
@@ -143,7 +145,7 @@ def topanime_get() -> str:
         prev_url=f"{base_url}page={prev_page}",
         next_url=f"{base_url}page={next_page}",
         show_prev=prev_page != page,
-        show_next=next_page != page
+        show_next=next_page != page,
     )
 
 
@@ -165,16 +167,18 @@ def anime_get(anime_id: int) -> str:
 
     user_data = {"in_list": False, "score": None}
     if "user_id" in session:
-        new_data = list_service.get_user_anime_data(
-            session["user_id"], anime_id
-        )
+        new_data = list_service.get_user_anime_data(session["user_id"], anime_id)
         user_data = new_data if new_data else user_data
 
     related_anime = relation_service.get_anime_related_anime(anime_id)
     anime_tags = database_service.get_tags(anime_id)
 
     return render_template(
-        "anime.html", anime=anime, user_data=user_data, related_anime=related_anime, tags=anime_tags
+        "anime.html",
+        anime=anime,
+        user_data=user_data,
+        related_anime=related_anime,
+        tags=anime_tags,
     )
 
 
@@ -204,7 +208,7 @@ def anime_post(anime_id: int) -> str:
         request.form.get("times_watched"),
         request.form.get("episodes_watched"),
         request.form.get("status"),
-        request.form.get("score")
+        request.form.get("score"),
     )
 
     if request.form["submit"] != "Add to list":
@@ -234,7 +238,7 @@ def profile_get(username: str) -> str:
         username=username,
         list_url=f"/list/{url_encode(username)}",
         counts=counts,
-        sorted_tags=sorted_tags
+        sorted_tags=sorted_tags,
     )
 
 
@@ -282,10 +286,7 @@ def login() -> Union[str, Response]:
         flash("Wrong username or password", "error")
 
     return render_template(
-        "login.html",
-        username=username,
-        password=password,
-        previous_url=previous_url
+        "login.html", username=username, password=password, previous_url=previous_url
     )
 
 
@@ -307,10 +308,7 @@ def register() -> Union[str, Response]:
             flash(error, "error")
 
     return render_template(
-        "register.html",
-        username=username,
-        password1=password1,
-        password2=password2
+        "register.html", username=username, password1=password1, password2=password2
     )
 
 

@@ -1,8 +1,10 @@
 import string
-from typing import Optional
 from secrets import token_hex
-from flask import Response, session, abort
+from typing import Optional
+
+from flask import Response, abort, session
 from werkzeug.security import check_password_hash, generate_password_hash
+
 from database import database
 
 
@@ -14,10 +16,12 @@ def logout() -> None:
 
 
 def check_user() -> None:
-    if ("username" not in session
-            or "user_id" not in session
-            or "show_hidden" not in session
-            or "csrf_token" not in session):
+    if (
+        "username" not in session
+        or "user_id" not in session
+        or "show_hidden" not in session
+        or "csrf_token" not in session
+    ):
         abort(Response("You need to be logged in to perform this action", 403))
 
 
@@ -81,9 +85,7 @@ def check_register(username: str, password1: str, password2: str) -> list:
 
     allowed_characters = string.ascii_letters + string.digits + string.punctuation
     if not all(character in allowed_characters for character in username):
-        errors.append(
-            "Username may not contain whitespaces or non-ascii characters"
-        )
+        errors.append("Username may not contain whitespaces or non-ascii characters")
 
     if len(password1) == 0:
         errors.append("Password can't be empty")

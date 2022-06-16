@@ -1,7 +1,9 @@
 import json
 import sys
 from typing import Callable
+
 from tqdm import tqdm
+
 import anime_service
 import database_service
 
@@ -22,7 +24,7 @@ def add_anime_data(anime_data: dict, myanimelist_link: str) -> None:
         "link": myanimelist_link,
         "picture": anime_data["picture"],
         "thumbnail": anime_data["thumbnail"],
-        "hidden": "hentai" in anime_data["tags"]
+        "hidden": "hentai" in anime_data["tags"],
     }
     anime_id = anime_service.add_anime(anime)
 
@@ -47,7 +49,9 @@ def add_relations(anime_data: dict, myanimelist_link: str) -> None:
 def import_data() -> None:
     print("Opening file 'anime-offline-database-minified.json'")
     try:
-        with open("anime-offline-database-minified.json", "r", encoding="utf-8") as file:
+        with open(
+            "anime-offline-database-minified.json", "r", encoding="utf-8"
+        ) as file:
             print("Loading data form file")
             data = json.load(file)
     except FileNotFoundError:
