@@ -13,4 +13,4 @@ def lint(ctx):
 
 @task
 def initialize_database(ctx):
-    ctx.run("cd src && INIT=True flask run", pty=True)
+    ctx.run("cd src && python3 init_db.py", pty=True)

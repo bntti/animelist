@@ -4,7 +4,11 @@ from typing import Callable
 
 from tqdm import tqdm
 
+from app import create_app
 from repositories import anime_repository, initialization_repository
+
+app = create_app()
+app.app_context().push()
 
 
 def iterate_data(data: dict, add_data_to_db: Callable[[dict, str], None]) -> None:
@@ -76,4 +80,5 @@ def import_data() -> None:
     sys.exit(0)
 
 
-import_data()
+if __name__ == "__main__":
+    import_data()
