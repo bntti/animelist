@@ -1,6 +1,4 @@
-from typing import Union
-
-from flask import Blueprint, Response, abort, flash, render_template, request, session
+from flask import Blueprint, abort, flash, render_template, request, session
 
 from repositories import list_repository, user_repository
 from routes.template_filter import url_encode
@@ -10,11 +8,11 @@ list_bp = Blueprint("list", __name__)
 
 
 @list_bp.route("/list/<path:username>", methods=["GET"])
-def list_get(username: str) -> Union[str, Response]:
-    data = user_repository.get_user_data(username)
-    if not data:
+def list_get(username: str) -> str:
+    user_data = user_repository.get_user_data(username)
+    if not user_data:
         return "<h1>No user found<h1>"
-    user_id, _ = user_repository.get_user_data(username)
+    user_id, _ = user_data
     own_profile = "user_id" in session and session["user_id"] == user_id
 
     tag = request.args["tag"] if "tag" in request.args else ""
@@ -37,11 +35,11 @@ def list_get(username: str) -> Union[str, Response]:
 
 
 @list_bp.route("/list/<path:username>", methods=["POST"])
-def list_post(username: str) -> Union[str, Response]:
-    data = user_repository.get_user_data(username)
-    if not data:
+def list_post(username: str) -> str:
+    user_data = user_repository.get_user_data(username)
+    if not user_data:
         return list_get(username)
-    user_id, _ = user_repository.get_user_data(username)
+    user_id, _ = user_data
 
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])
@@ -60,9 +58,9 @@ def list_post(username: str) -> Union[str, Response]:
             list_service.handle_change(
                 anime["id"],
                 None,
-                request.form.get(f"episodes_watched_{anime['id']}"),
-                request.form.get(f"status_{anime['id']}"),
-                request.form.get(f"score_{anime['id']}"),
+                request.form[f"episodes_watched_{anime['id']}"],
+                request.form[f"status_{anime['id']}"],
+                request.form[f"score_{anime['id']}"],
             )
 
     flash("List updated")

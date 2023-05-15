@@ -57,10 +57,10 @@ def anime_post(anime_id: int) -> str:
     # Handle anime user data change
     list_service.handle_change(
         anime["id"],
-        request.form.get("times_watched"),
-        request.form.get("episodes_watched"),
-        request.form.get("status"),
-        request.form.get("score"),
+        request.form["times_watched"],
+        request.form["episodes_watched"],
+        request.form["status"],
+        request.form["score"],
     )
 
     if request.form["submit"] != "Add to list":

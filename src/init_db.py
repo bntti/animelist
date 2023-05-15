@@ -42,10 +42,10 @@ def add_anime_data(anime_data: dict, myanimelist_link: str) -> None:
 
 def add_relations(anime_data: dict, myanimelist_link: str) -> None:
     anime_id = anime_repository.get_anime_id(myanimelist_link)
-    for relation in anime_data["relations"]:
-        if "myanimelist.net" in relation:
-            related_id = anime_repository.get_anime_id(relation)
-            if related_id:
+    for relation_url in anime_data["relations"]:
+        if "myanimelist.net" in relation_url:
+            if anime_repository.myanimelist_link_exists(relation_url):
+                related_id = anime_repository.get_anime_id(relation_url)
                 initialization_repository.add_relation(anime_id, related_id)
 
 

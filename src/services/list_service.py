@@ -1,8 +1,9 @@
 from typing import Optional
 
 from defusedxml.ElementTree import ParseError, fromstring
-from flask import Response, abort, flash, session
+from flask import abort, flash, session
 from werkzeug.datastructures import FileStorage
+from werkzeug.wrappers.response import Response
 
 from repositories import anime_repository, list_repository
 
@@ -86,22 +87,20 @@ def handle_change(
         and str.isdigit(new_times_watched)
         and 0 <= int(new_times_watched) <= 1000
     ):
-        new_times_watched = int(new_times_watched)
-        if new_times_watched != user_data["times_watched"]:
-            list_repository.set_times_watched(user_id, anime_id, new_times_watched)
+        times_watched = int(new_times_watched)
+        if times_watched != user_data["times_watched"]:
+            list_repository.set_times_watched(user_id, anime_id, times_watched)
 
     if (
         new_episodes_watched
         and str.isdigit(new_episodes_watched)
         and 0 <= int(new_episodes_watched) <= anime["episodes"]
     ):
-        new_episodes_watched = int(new_episodes_watched)
-        if new_episodes_watched != user_data["episodes"]:
-            user_data["episodes"] = new_episodes_watched
-            list_repository.set_episodes_watched(
-                user_id, anime_id, new_episodes_watched
-            )
-            if new_episodes_watched == anime["episodes"]:
+        episodes_watched = int(new_episodes_watched)
+        if episodes_watched != user_data["episodes"]:
+            user_data["episodes"] = episodes_watched
+            list_repository.set_episodes_watched(user_id, anime_id, episodes_watched)
+            if episodes_watched == anime["episodes"]:
                 list_repository.set_status(user_id, anime_id, "Completed")
                 list_repository.add_times_watched(user_id, anime_id, 1)
             else:
@@ -117,6 +116,6 @@ def handle_change(
                 list_repository.add_times_watched(user_id, anime_id, 1)
 
     if new_score == "None" or (str.isdigit(new_score) and 1 <= int(new_score) <= 10):
-        new_score = None if new_score == "None" else int(new_score)
-        if new_score != user_data["score"]:
-            list_repository.set_score(user_id, anime_id, new_score)
+        score = None if new_score == "None" else int(new_score)
+        if score != user_data["score"]:
+            list_repository.set_score(user_id, anime_id, score)

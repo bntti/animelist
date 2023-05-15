@@ -1,7 +1,8 @@
 import string
 from secrets import token_hex
 
-from flask import Response, abort, session
+from flask import abort, session
+from werkzeug.wrappers.response import Response
 
 from repositories import user_repository
 

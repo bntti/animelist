@@ -9,10 +9,10 @@ profile_bp = Blueprint("profile", __name__)
 
 @profile_bp.route("/profile/<path:username>", methods=["GET"])
 def profile_get(username: str) -> str:
-    data = user_repository.get_user_data(username)
-    if not data:
+    user_data = user_repository.get_user_data(username)
+    if not user_data:
         return "<h1>No user found<h1>"
-    user_id, _ = data
+    user_id, _ = user_data
     own_profile = "user_id" in session and session["user_id"] == user_id
     counts = list_repository.get_counts(user_id)
     tags = request.args["tags"] if "tags" in request.args else ""
@@ -33,10 +33,10 @@ def profile_get(username: str) -> str:
 
 @profile_bp.route("/profile/<path:username>", methods=["POST"])
 def profile_post(username: str) -> str:
-    data = user_repository.get_user_data(username)
-    if not data:
+    user_data = user_repository.get_user_data(username)
+    if not user_data:
         return profile_get(username)
-    user_id, _ = data
+    user_id, _ = user_data
 
     user_service.check_user()
     user_service.check_csrf(request.form["csrf_token"])

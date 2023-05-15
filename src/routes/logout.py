@@ -1,4 +1,5 @@
-from flask import Blueprint, Response, flash, redirect, request
+from flask import Blueprint, flash, redirect, request
+from werkzeug.wrappers.response import Response
 
 from services import user_service
 

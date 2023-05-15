@@ -1,4 +1,5 @@
 import os
+import sys
 
 from dotenv import load_dotenv
 
@@ -9,6 +10,9 @@ except FileNotFoundError:
     pass
 
 URL = os.getenv("DATABASE_URL")
+if not URL:
+    sys.exit("No database url in env")
+
 if URL.startswith("postgres://"):
     URL = URL.replace("postgres://", "postgresql://", 1)
 

@@ -1,6 +1,7 @@
 from typing import Union
 
-from flask import Blueprint, Response, flash, redirect, render_template, request
+from flask import Blueprint, flash, redirect, render_template, request
+from werkzeug.wrappers.response import Response
 
 from services import user_service
 
