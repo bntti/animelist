@@ -1,3 +1,5 @@
+from sqlalchemy.sql import text
+
 from database import database
 
 
@@ -9,7 +11,7 @@ def related_anime_count(user_id: int) -> int:
         WHERE l2.id IS NULL AND a.id = r.related_id
             AND l1.user_id = :user_id AND l1.anime_id = r.anime_id
     """
-    row = database.session.execute(sql, {"user_id": user_id}).fetchone()
+    row = database.session.execute(text(sql), {"user_id": user_id}).fetchone()
     return row[0] if row else 0
 
 
@@ -25,7 +27,9 @@ def get_related_anime(page: int, user_id: int) -> list:
         LIMIT 50 OFFSET :page
     """
 
-    data = database.session.execute(sql, {"page": page, "user_id": user_id}).fetchall()
+    data = database.session.execute(
+        text(sql), {"page": page, "user_id": user_id}
+    ).fetchall()
     return [
         {
             "id": row[0],
@@ -47,7 +51,7 @@ def get_anime_related_anime(anime_id: int) -> list:
         GROUP BY a.id
     """
 
-    data = database.session.execute(sql, {"anime_id": anime_id}).fetchall()
+    data = database.session.execute(text(sql), {"anime_id": anime_id}).fetchall()
     return [
         {
             "id": row[0],

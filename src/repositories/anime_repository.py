@@ -1,6 +1,7 @@
 from typing import Optional
 
 from flask import session
+from sqlalchemy.sql import text
 
 from database import database
 
@@ -28,7 +29,7 @@ def anime_count(query: str, tag: str) -> int:
         """
 
     row = database.session.execute(
-        sql,
+        text(sql),
         {
             "query": f"%{query}%",
             "tag": tag,
@@ -42,13 +43,13 @@ def anime_count(query: str, tag: str) -> int:
 
 def myanimelist_link_exists(mal_link: str) -> bool:
     sql = "SELECT 1 FROM anime WHERE link = :link"
-    row = database.session.execute(sql, {"link": mal_link}).fetchone()
+    row = database.session.execute(text(sql), {"link": mal_link}).fetchone()
     return bool(row)
 
 
 def get_anime_id(mal_link: str) -> int:
     sql = "SELECT id FROM anime WHERE link = :link"
-    row = database.session.execute(sql, {"link": mal_link}).fetchone()
+    row = database.session.execute(text(sql), {"link": mal_link}).fetchone()
     if not row:
         raise Exception("Tried to get id for an anime that doesn't exist")
     return row[0]
@@ -56,7 +57,7 @@ def get_anime_id(mal_link: str) -> int:
 
 def get_anime_id_and_episodes(mal_link: str) -> Optional[tuple]:
     sql = "SELECT id, episodes FROM anime WHERE link = :link"
-    row = database.session.execute(sql, {"link": mal_link}).fetchone()
+    row = database.session.execute(text(sql), {"link": mal_link}).fetchone()
     return None if not row else (row[0], row[1])
 
 
@@ -68,7 +69,7 @@ def get_anime(anime_id: int) -> Optional[dict]:
         WHERE a.id = :id
         GROUP BY a.id
     """
-    row = database.session.execute(sql, {"id": anime_id}).fetchone()
+    row = database.session.execute(text(sql), {"id": anime_id}).fetchone()
     return (
         None
         if not row
@@ -115,7 +116,7 @@ def get_top_anime(page: int, query: str, tag: str) -> list:
             OFFSET :offset
             """
     result = database.session.execute(
-        sql,
+        text(sql),
         {
             "offset": page,
             "query": f"%{query}%",

@@ -2,6 +2,7 @@ from typing import Optional
 
 from psycopg2.errors import UniqueViolation
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.sql import text
 
 from database import database
 
@@ -10,7 +11,7 @@ from database import database
 def add_to_list(user_id: int, anime_id: int) -> None:
     try:
         sql = "INSERT INTO list (user_id, anime_id) VALUES (:user_id, :anime_id)"
-        database.session.execute(sql, {"user_id": user_id, "anime_id": anime_id})
+        database.session.execute(text(sql), {"user_id": user_id, "anime_id": anime_id})
         database.session.commit()
     except IntegrityError as error:
         # UNIQUE constraint fail
@@ -24,7 +25,7 @@ def import_to_list(user_id: int, anime_data: dict) -> bool:
             INSERT INTO list (user_id, anime_id, episodes, score, status, times_watched)
             VALUES (:user_id, :anime_id, :episodes, :score, :status, :times_watched)
         """
-        database.session.execute(sql, {**anime_data, "user_id": user_id})
+        database.session.execute(text(sql), {**anime_data, "user_id": user_id})
         database.session.commit()
     except IntegrityError as error:
         # UNIQUE constraint fail
@@ -35,14 +36,14 @@ def import_to_list(user_id: int, anime_data: dict) -> bool:
 
 def remove_from_list(user_id: int, anime_id: int) -> None:
     sql = "DELETE FROM list WHERE user_id = :user_id AND anime_id = :anime_id"
-    database.session.execute(sql, {"user_id": user_id, "anime_id": anime_id})
+    database.session.execute(text(sql), {"user_id": user_id, "anime_id": anime_id})
     database.session.commit()
 
 
 def set_score(user_id: int, anime_id: int, score: Optional[int]) -> None:
     sql = "UPDATE list SET score = :score WHERE user_id = :user_id AND anime_id = :anime_id"
     database.session.execute(
-        sql, {"user_id": user_id, "anime_id": anime_id, "score": score}
+        text(sql), {"user_id": user_id, "anime_id": anime_id, "score": score}
     )
     database.session.commit()
 
@@ -53,7 +54,8 @@ def set_times_watched(user_id: int, anime_id: int, times_watched: int) -> None:
         WHERE user_id = :user_id AND anime_id = :anime_id
     """
     database.session.execute(
-        sql, {"user_id": user_id, "anime_id": anime_id, "times_watched": times_watched}
+        text(sql),
+        {"user_id": user_id, "anime_id": anime_id, "times_watched": times_watched},
     )
     database.session.commit()
 
@@ -64,7 +66,7 @@ def add_times_watched(user_id: int, anime_id: int, add: int) -> None:
         WHERE user_id = :user_id AND anime_id = :anime_id
     """
     database.session.execute(
-        sql, {"user_id": user_id, "anime_id": anime_id, "add": add}
+        text(sql), {"user_id": user_id, "anime_id": anime_id, "add": add}
     )
     database.session.commit()
 
@@ -72,7 +74,7 @@ def add_times_watched(user_id: int, anime_id: int, add: int) -> None:
 def set_status(user_id: int, anime_id: int, status: str) -> None:
     sql = "UPDATE list SET status = :status WHERE user_id = :user_id AND anime_id = :anime_id"
     database.session.execute(
-        sql, {"user_id": user_id, "anime_id": anime_id, "status": status}
+        text(sql), {"user_id": user_id, "anime_id": anime_id, "status": status}
     )
     database.session.commit()
 
@@ -84,7 +86,7 @@ def set_episodes_watched(user_id: int, anime_id: int, episodes_watched: int) -> 
     """
 
     database.session.execute(
-        sql,
+        text(sql),
         {
             "user_id": user_id,
             "anime_id": anime_id,
@@ -101,7 +103,7 @@ def get_user_anime_data(user_id: int, anime_id: int) -> Optional[dict]:
         WHERE user_id = :user_id AND anime_id = :anime_id
     """
     row = database.session.execute(
-        sql, {"user_id": user_id, "anime_id": anime_id}
+        text(sql), {"user_id": user_id, "anime_id": anime_id}
     ).fetchone()
 
     return (
@@ -129,7 +131,7 @@ def get_counts(user_id: int) -> dict:
         FROM list
         WHERE user_id = :user_id
     """
-    row = database.session.execute(sql, {"user_id": user_id}).fetchone()
+    row = database.session.execute(text(sql), {"user_id": user_id}).fetchone()
     return {
         "total": row[0],
         "completed": row[1],
@@ -148,7 +150,7 @@ def get_watched_tags(user_id: int) -> list:
         GROUP BY t.tag
         ORDER BY COUNT(l.id) DESC, t.tag
     """
-    result = database.session.execute(sql, {"user_id": user_id}).fetchall()
+    result = database.session.execute(text(sql), {"user_id": user_id}).fetchall()
     return result
 
 
@@ -160,13 +162,13 @@ def get_popular_tags(user_id: int) -> list:
         GROUP BY t.tag
         ORDER BY COALESCE(AVG(l.score), 0) DESC, t.tag
     """
-    result = database.session.execute(sql, {"user_id": user_id}).fetchall()
+    result = database.session.execute(text(sql), {"user_id": user_id}).fetchall()
     return result
 
 
 def get_list_ids(user_id: int) -> list:
     sql = "SELECT anime_id FROM list WHERE user_id = :user_id"
-    result = database.session.execute(sql, {"user_id": user_id})
+    result = database.session.execute(text(sql), {"user_id": user_id})
     return [row[0] for row in result.fetchall()]
 
 
@@ -180,7 +182,7 @@ def get_list_data(user_id: int, status: str, tag: str) -> list:
     """
 
     result = database.session.execute(
-        sql, {"user_id": user_id, "status": status, "tag": tag}
+        text(sql), {"user_id": user_id, "status": status, "tag": tag}
     )
 
     return [
