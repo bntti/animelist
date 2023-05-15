@@ -1,12 +1,13 @@
 # Tietokantasovellus - AnimeList
 
 ## Project Description
-The project is a website where anime are listed and users can search anime, add them to their lists to keep track of what they are watching and what they have watched. This project takes inspiration from [MyAnimeList](https://myanimelist.net). The website doesn't use any javascript and all styling is made by me.  
 
-The website is available in [Heroku](https://tsoha-animelist.herokuapp.com/).  
-Anime data is taken from [here](https://github.com/manami-project/anime-offline-database) and the AGPL-3.0 license is used because of that  
+The project is a website where anime are listed and users can search anime, add them to their lists to keep track of what they are watching and what they have watched. This project takes inspiration from [MyAnimeList](https://myanimelist.net). The website doesn't use any javascript and all css styling is made by me.
+
+Anime data is taken from [here](https://github.com/manami-project/anime-offline-database) and the AGPL-3.0 license is used because of that
 
 ## Features
+
 - `/`
   - Links to various parts of the website
 - `/topanime`
@@ -30,26 +31,31 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
   - Seeing others' profiles
 
 ## Running project
+
 ### Dependencies
+
 - poetry
 
 ### Initializing
+
 1. Create a `.env` file at project root and add the following lines to it:
-    ```
-    SECRET_KEY=<secret_key>
-    DATABASE_URL=<postgresql:///user>
-    ```
-    and replace with corresponding values. SECRET_KEY should be a long random string
+   ```
+   SECRET_KEY=<secret_key>
+   DATABASE_URL=<postgresql:///user>
+   ```
+   and replace with corresponding values. SECRET_KEY should be a long random string
 2. Install dependencies
-    ```
-    poetry install
-    ```
+   ```
+   poetry install
+   ```
 3. Download 'anime-offline-database-minified.json' from [here](https://github.com/manami-project/anime-offline-database) and place the file at this project's root
 4. Initialize the database
    ```
    poetry run invoke initialize-database
    ```
+
 ### Running project
+
 ```
 poetry run invoke start
 ```
