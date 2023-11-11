@@ -3,14 +3,19 @@ from invoke import task
 
 @task
 def start(ctx):
-    ctx.run("cd src && flask run", pty=True)
+    ctx.run('gunicorn --chdir animelist "app:create_app()"', pty=True)
+
+
+@task
+def dev(ctx):
+    ctx.run("cd animelist && flask run", pty=True)
 
 
 @task
 def lint(ctx):
-    ctx.run("pylint src", pty=True)
+    ctx.run("pylint animelist", pty=True)
 
 
 @task
 def initialize_database(ctx):
-    ctx.run("cd src && python3 init_db.py", pty=True)
+    ctx.run("cd animelist && python3 init_db.py", pty=True)

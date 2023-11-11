@@ -57,5 +57,11 @@ Anime data is taken from [here](https://github.com/manami-project/anime-offline-
 ### Running project
 
 ```
+poetry run invoke dev
+```
+
+Or alternatively
+
+```
 poetry run invoke start
 ```
